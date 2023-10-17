@@ -1,5 +1,5 @@
-<nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-    <div class="container">
+<nav class="navbar navbar-expand-md shadow-sm">
+    <div class="container main-navbar">
         <a class="navbar-brand" href="{{ route('home') }}">
             {{ config('app.name', 'Daily Report Yahya') }}
         </a>

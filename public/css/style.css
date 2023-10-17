@@ -59,6 +59,18 @@ body {
     color: white;
 }
 
+.navbar-brand {
+    font-weight: var(--fwbold);
+    font-size: 28px;
+    color: white;
+}
+
+.navbar-brand a:hover {
+    font-weight: var(--fwbold);
+    font-size: 28px;
+    color: var(--yellow) !important;
+}
+
 .main-navbar {
     background: var(--basecolor, 0.4);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -69,16 +81,4 @@ body {
     border-bottom-left-radius: 26px;
     border-bottom-right-radius: 26px;
     z-index: 1;
-}
-
-.navbar-brand {
-    font-weight: var(--fwbold);
-    font-size: 28px;
-    color: white;
-}
-
-.navbar-brand:hover {
-    font-weight: var(--fwbold);
-    font-size: 28px;
-    color: var(--yellow) !important;
 }
