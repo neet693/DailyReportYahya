@@ -47,4 +47,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Task::class, 'task_user_id');
     }
+    public function announcements()
+    {
+        return $this->belongsToMany(Announcement::class);
+    }
 }

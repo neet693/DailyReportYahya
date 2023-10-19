@@ -39,6 +39,16 @@
                     @endif
                 @else
                     <li class="nav-item dropdown">
+                        <a href="{{ route('announcements.index') }}"
+                            class="nav-link {{ request()->is('announcements*') ? 'active' : '' }} position-relative">
+                            <i class="bi bi-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                <span class="visually-hidden">belum dibaca</span>
+                            </span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item dropdown">
                         <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                             {{ Auth::user()->name }}

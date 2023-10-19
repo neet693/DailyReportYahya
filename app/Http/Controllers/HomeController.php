@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -31,6 +32,8 @@ class HomeController extends Controller
             $query->whereDate('task_date', $today);
         }])->get();
 
-        return view('home', compact('usersWithTasks'));
+        $announcements = Announcement::first();
+
+        return view('home', compact('usersWithTasks', 'announcements'));
     }
 }
