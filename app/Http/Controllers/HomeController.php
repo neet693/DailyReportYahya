@@ -32,7 +32,7 @@ class HomeController extends Controller
             $query->whereDate('task_date', $today);
         }])->get();
 
-        $announcements = Announcement::first();
+        $announcements = Announcement::all();
 
         return view('home', compact('usersWithTasks', 'announcements'));
     }

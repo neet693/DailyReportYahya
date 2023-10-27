@@ -29,31 +29,4 @@
             @endforeach
         </div>
     </div>
-
-    {{-- Script Toast --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var toastElement = document.querySelector('.toast');
-            var toast = new bootstrap.Toast(toastElement);
-
-            // Fungsi untuk menampilkan pengumuman
-            function showAnnouncement(title, message) {
-                var titleElement = toastElement.querySelector('.toast-header strong');
-                var bodyElement = toastElement.querySelector('.toast-body');
-
-                titleElement.textContent = title;
-                bodyElement.textContent = message;
-
-                toast.show();
-            }
-
-            // Cek apakah ada data pengumuman
-            @if (isset($announcements))
-                showAnnouncement('{{ $announcements->title }}', '{{ $announcements->message }}');
-            @else
-                // Jika tidak ada pengumuman, tampilkan teks alternatif
-                showAnnouncement('Pengumuman', 'Tidak ada pengumuman hari ini');
-            @endif
-        });
-    </script>
 @endsection
