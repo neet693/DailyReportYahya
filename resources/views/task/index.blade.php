@@ -4,6 +4,10 @@
         <div class="row justify-content-center">
             <div class="col-md-8 mb-3">
                 <a href="{{ route('tasks.create') }}" class="btn btn-primary">Buat Task</a>
+                <a href="{{ route('report.generateWeeklyReport') }}" class="btn btn-warning text-white">Cetak Laporan
+                    Mingguan</a>
+                <a href="{{ route('report.generateMonthlyReport') }}" class="btn btn-danger">Cetak Laporan Bulanan</a>
+
             </div>
             <div class="col-md-8">
                 {{-- {{ __('Halaman Task Anda') }} --}}
@@ -24,7 +28,7 @@
                                     <td>{{ $task->title }}</td>
                                     <td>{{ $task->task_date->format('d M Y') }}</td>
                                     <td>{{ $task->task_start_time->format('H:i A') }}</td>
-                                    <td>{{ $task->task_end_time->format('H:i') }}</td>
+                                    <td>{{ $task->task_end_time->format('H:i A') }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <a class="btn btn-secondary dropdown-toggle" href="#" role="button"

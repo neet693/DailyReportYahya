@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use App\Models\Assignments;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -34,6 +35,8 @@ class HomeController extends Controller
 
         $announcements = Announcement::all();
 
-        return view('home', compact('usersWithTasks', 'announcements'));
+        $assignments = Assignments::all();
+
+        return view('home', compact('usersWithTasks', 'announcements', 'assignments'));
     }
 }
