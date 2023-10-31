@@ -94,4 +94,16 @@ class AssignmentsController extends Controller
 
         return redirect()->route('assignments.index')->with('success', 'Penugasan telah ditandai sebagai selesai.');
     }
+
+    public function reportKendala(Assignments $assignment)
+    {
+        // Validasi input kendala sesuai kebutuhan
+
+        $assignment->update([
+            'progres' => 'Pending',
+            'kendala' => request('kendala'),
+        ]);
+
+        return redirect()->back()->with('success', 'Kendala berhasil dilaporkan.');
+    }
 }

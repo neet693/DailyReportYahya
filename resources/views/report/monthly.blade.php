@@ -9,8 +9,7 @@
             <th>Judul Task</th>
             <th>Tempat</th>
             <th>Tanggal Task</th>
-            <th>Waktu Mulai Task</th>
-            <th>Waktu Selesai Task</th>
+            <th>Jam</th>
             <th>Deskripsi</th>
             <!-- Tambahkan kolom-kolom lain sesuai data yang Anda ingin tampilkan -->
         </tr>
@@ -22,15 +21,15 @@
                 <td>{{ $item->title }}</td>
                 <td>{{ $item->place }}</td>
                 <td>{{ $item->task_date->format('d M Y') }}</td>
-                <td>{{ $item->task_start_time->format('H:i A') }}</td>
-                <td>{{ $item->task_end_time->format('H:i A') }}</td>
-                <td>{{ $item->description }}</td>
+                <td>{{ $item->task_start_time->format('H:i A') }} s/d {{ $item->task_end_time->format('H:i A') }}</td>
+                <td>{!! $item->description !!}</td>
                 <!-- Tambahkan sel-sel lain sesuai data yang Anda ingin tampilkan -->
             </tr>
         @endforeach
     </tbody>
 </table>
 
+<h1>Laporan Penugasan Bulanan Bulanan</h1>
 <table id="myTable" class="display">
     <thead>
         <tr>
@@ -39,7 +38,9 @@
             <th>Tanggal Tugas</th>
             <th>Jam Tugas</th>
             <th>Ditugaskan Oleh</th>
-            <th>Action</th>
+            <th>Progres</th>
+            <th>Deskripsi</th>
+            {{-- <th>Action</th> --}}
         </tr>
     </thead>
     <tbody>
@@ -59,7 +60,7 @@
                         <span class="badge bg-danger">{{ $assignment->progres }}</span>
                     @endif
                 </td>
-                <td>
+                {{-- <td>
                     <div class="dropdown">
                         <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
@@ -88,8 +89,8 @@
                             </li>
                         </ul>
                     </div>
-                </td>
-                {{-- <td>{{ $task->description }}</td> --}}
+                </td> --}}
+                <td>{{ $assignment->description }}</td>
             </tr>
         @endforeach
     </tbody>

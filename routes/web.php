@@ -20,6 +20,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('assignments', AssignmentsController::class);
     Route::resource('profile', ProfileController::class);
     Route::post('assignments/mark-as-complete/{assignment}', [AssignmentsController::class, 'markAsComplete'])->name('assignments.markAsComplete');
+    Route::post('/assignments/report-kendala/{assignment}', [AssignmentsController::class, 'reportKendala'])->name('assignments.report-kendala');
     Route::get('report/weekly', [ReportController::class, 'generateWeeklyReport'])->name('report.generateWeeklyReport');
     Route::get('report/monthly', [ReportController::class, 'generateMonthlyReport'])->name('report.generateMonthlyReport');
     Route::post('/announcements/mark-all-as-read', 'AnnouncementController@markAllAsRead')->name('announcements.markAllAsRead');

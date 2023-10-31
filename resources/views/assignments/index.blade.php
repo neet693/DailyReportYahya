@@ -15,6 +15,7 @@
                             <th>Tanggal Tugas</th>
                             <th>Jam Tugas</th>
                             <th>Ditugaskan Oleh</th>
+                            <th>Progres</th>
                             <th>Action</th>
                         </tr>
                     </thead>

@@ -16,8 +16,8 @@
                         <tr>
                             <th>Judul</th>
                             <th>Tanggal Task</th>
-                            <th>Jam Mulai</th>
-                            <th>Jam Berakhir</th>
+                            <th>Jam</th>
+                            <th>Deskripsi</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -27,8 +27,9 @@
                                 <tr>
                                     <td>{{ $task->title }}</td>
                                     <td>{{ $task->task_date->format('d M Y') }}</td>
-                                    <td>{{ $task->task_start_time->format('H:i A') }}</td>
-                                    <td>{{ $task->task_end_time->format('H:i A') }}</td>
+                                    <td>{{ $task->task_start_time->format('H:i A') }} s/d
+                                        {{ $task->task_end_time->format('H:i A') }}</td>
+                                    <td>{!! $task->description !!}</td>
                                     <td>
                                         <div class="dropdown">
                                             <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
@@ -61,7 +62,6 @@
                                             </ul>
                                         </div>
                                     </td>
-                                    {{-- <td>{{ $task->description }}</td> --}}
                                 </tr>
                             @endif
                         @endforeach
