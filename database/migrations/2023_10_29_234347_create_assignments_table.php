@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('progres')->default('Ditugaskan');
-            $table->text('kendala');
+            $table->text('kendala')->nullable();
             $table->timestamps();
         });
     }

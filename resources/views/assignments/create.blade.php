@@ -87,7 +87,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="kendala">Kendala:</label>
                                 <textarea id="kendala" class="form-control @error('kendala') is-invalid @enderror" name="kendala"
                                     value="{{ old('kendala') }}" rows="4" autofocus></textarea>
@@ -97,7 +97,7 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Buat Penugasan</button>

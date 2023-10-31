@@ -38,7 +38,7 @@ class AssignmentsController extends Controller
             'assignment_date' => 'required',
             'start_assignment_time' => 'required',
             'end_assignment_time' => 'required',
-            'kendala' => 'required',
+            // 'kendala' => 'required',
             'description' => 'required',
         ]);
 
@@ -50,7 +50,7 @@ class AssignmentsController extends Controller
             'start_assignment_time' => $request->start_assignment_time,
             'end_assignment_time' => $request->end_assignment_time,
             'description' => $request->description,
-            'kendala' => $request->kendala,
+            // 'kendala' => $request->kendala,
         ]);
         return redirect()->route('assignments.index');
     }
@@ -89,16 +89,14 @@ class AssignmentsController extends Controller
 
     public function markAsComplete(Assignments $assignment)
     {
-        // Ubah nilai 'progress' menjadi 'Selesai'
-        $assignment->update(['progres' => 'Selesai']);
+
+        $assignment->update(['progres' => 'Selesai']); // Ubah nilai 'progress' menjadi 'Selesai'
 
         return redirect()->route('assignments.index')->with('success', 'Penugasan telah ditandai sebagai selesai.');
     }
 
     public function reportKendala(Assignments $assignment)
     {
-        // Validasi input kendala sesuai kebutuhan
-
         $assignment->update([
             'progres' => 'Pending',
             'kendala' => request('kendala'),

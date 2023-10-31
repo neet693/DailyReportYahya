@@ -16,6 +16,7 @@
                             <th>Jam Tugas</th>
                             <th>Ditugaskan Oleh</th>
                             <th>Progres</th>
+                            <th>Kendala</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -35,6 +36,11 @@
                                     @else
                                         <span class="badge bg-danger">{{ $assignment->progres }}</span>
                                     @endif
+                                </td>
+                                <td>
+                                    <span class="{{ $assignment->kendala ? 'text-danger' : '' }}">
+                                        {{ $assignment->kendala ? $assignment->kendala : 'Tidak ada kendala' }}
+                                    </span>
                                 </td>
                                 <td>
                                     <div class="dropdown">
