@@ -10,9 +10,11 @@
                 <table id="myTable" class="display">
                     <thead>
                         <tr>
-                            <th>Yang ditugaskan</th>
-                            <th>Judul Penugasan</th>
-                            <th>Tanggal Penugasan</th>
+                            <th>Yang bertugas</th>
+                            <th>Tugas</th>
+                            <th>Tanggal Tugas</th>
+                            <th>Jam Tugas</th>
+                            <th>Ditugaskan Oleh</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -22,6 +24,17 @@
                                 <td>{{ $assignment->user->name }}</td>
                                 <td>{{ $assignment->title }}</td>
                                 <td>{{ $assignment->assignment_date->format('d M Y') }}</td>
+                                <td>{{ $assignment->start_assignment_time->format('H:i A') }} s/d
+                                    {{ $assignment->end_assignment_time->format('H:i A') }}
+                                </td>
+                                <td>{{ $assignment->assigner->name }}</td>
+                                <td>
+                                    @if ($assignment->progres === 'Selesai')
+                                        <span class="badge bg-success">{{ $assignment->progres }}</span>
+                                    @else
+                                        <span class="badge bg-danger">{{ $assignment->progres }}</span>
+                                    @endif
+                                </td>
                                 <td>
                                     <div class="dropdown">
                                         <a class="btn btn-secondary dropdown-toggle" href="#" role="button"

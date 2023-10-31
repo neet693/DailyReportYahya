@@ -36,6 +36,8 @@ class AssignmentsController extends Controller
             'title' => 'required',
             'description' => 'required',
             'assignment_date' => 'required',
+            'start_assignment_time' => 'required',
+            'end_assignment_time' => 'required',
             'kendala' => 'required',
             'description' => 'required',
         ]);
@@ -45,6 +47,8 @@ class AssignmentsController extends Controller
             'assigner_id' => auth()->user()->id, // Gunakan auth() untuk mendapatkan pengguna yang sedang masuk
             'title' => $request->title,
             'assignment_date' => $request->assignment_date,
+            'start_assignment_time' => $request->start_assignment_time,
+            'end_assignment_time' => $request->end_assignment_time,
             'description' => $request->description,
             'kendala' => $request->kendala,
         ]);
@@ -81,5 +85,13 @@ class AssignmentsController extends Controller
     public function destroy(Assignments $assignments)
     {
         //
+    }
+
+    public function markAsComplete(Assignments $assignment)
+    {
+        // Ubah nilai 'progress' menjadi 'Selesai'
+        $assignment->update(['progres' => 'Selesai']);
+
+        return redirect()->route('assignments.index')->with('success', 'Penugasan telah ditandai sebagai selesai.');
     }
 }

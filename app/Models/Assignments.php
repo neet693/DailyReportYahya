@@ -11,7 +11,11 @@ class Assignments extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = ['assignment_date' => 'date'];
+    protected $casts = [
+        'assignment_date' => 'date',
+        'start_assignment_time' => 'datetime:H:i',
+        'end_assignment_time' => 'datetime:H:i'
+    ];
 
     public function user()
     {

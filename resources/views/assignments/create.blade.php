@@ -23,22 +23,80 @@
 
                             <div class="form-group">
                                 <label for="title">Judul Penugasan:</label>
-                                <input type="text" name="title" class="form-control" required>
+                                <input id="title" type="text"
+                                    class="form-control @error('title') is-invalid @enderror" name="title"
+                                    value="{{ old('title') }}" required autofocus>
+
+                                @error('title')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
 
                             <div class="form-group">
                                 <label for="assignment_date">Tanggal Penugasan:</label>
-                                <input type="date" name="assignment_date" class="form-control" required>
+                                <input id="assignment_date" type="date"
+                                    class="form-control @error('assignment_date') is-invalid @enderror"
+                                    name="assignment_date" value="{{ old('assignment_date') }}" required autofocus>
+
+                                @error('assignment_date')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="start_assignment_time">Dari Jam:</label>
+                                <input id="start_assignment_time" type="time"
+                                    class="form-control @error('start_assignment_time') is-invalid @enderror"
+                                    name="start_assignment_time" value="{{ old('start_assignment_time') }}" required
+                                    autocomplete="start_assignment_time" autofocus>
+
+                                @error('start_assignment_time')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="end_assignment_time">Sampai Jam:</label>
+                                <input id="end_assignment_time" type="time"
+                                    class="form-control @error('end_assignment_time') is-invalid @enderror"
+                                    name="end_assignment_time" value="{{ old('end_assignment_time') }}" required
+                                    autocomplete="end_assignment_time" autofocus>
+
+                                @error('end_assignment_time')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
 
                             <div class="form-group">
                                 <label for="description">Deskripsi Penugasan:</label>
-                                <textarea name="description" class="form-control" rows="4" required></textarea>
+                                <textarea id="description" class="form-control @error('description') is-invalid @enderror" name="description"
+                                    value="{{ old('description') }}" rows="4" required autofocus></textarea>
+
+                                @error('description')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
 
                             <div class="form-group">
                                 <label for="kendala">Kendala:</label>
-                                <textarea name="kendala" class="form-control" rows="4" required></textarea>
+                                <textarea id="kendala" class="form-control @error('kendala') is-invalid @enderror" name="kendala"
+                                    value="{{ old('kendala') }}" rows="4" autofocus></textarea>
+
+                                @error('kendala')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
 
                             <div class="form-group">

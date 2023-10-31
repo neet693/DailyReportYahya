@@ -52,7 +52,10 @@
                                 <th>Yang Bertugas</th>
                                 <th>Tugas</th>
                                 <th>Tanggal di tugaskan</th>
+                                <th>Jam penugasan</th>
                                 <th>Ditugaskan oleh</th>
+                                <th>Progres</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -65,8 +68,25 @@
                                     </td>
                                     <td>{{ $assignment->title }}</td>
                                     <td>{{ $assignment->assignment_date->format('d M Y') }}</td>
+                                    <td>{{ $assignment->start_assignment_time->format('H:i A') }} s/d
+                                        {{ $assignment->end_assignment_time->format('H:i A') }}
+                                    </td>
+                                    <td>{{ $assignment->assigner->name }}</td>
                                     <td>
-                                        {{ $assignment->assigner->name }}
+                                        @if ($assignment->progres === 'Selesai')
+                                            <span class="badge bg-success">{{ $assignment->progres }}</span>
+                                        @else
+                                            <span class="badge bg-danger">{{ $assignment->progres }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if (auth()->user()->id === $assignment->user_id)
+                                            <form method="POST"
+                                                action="{{ route('assignments.markAsComplete', $assignment) }}">
+                                                @csrf
+                                                <button type="submit" class="btn btn-success">Selesai</button>
+                                            </form>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

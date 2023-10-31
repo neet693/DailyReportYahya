@@ -16,8 +16,11 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('assigner_id')->constrained('users');
             $table->date('assignment_date');
+            $table->time('start_assignment_time');
+            $table->time('end_assignment_time');
             $table->string('title');
             $table->text('description');
+            $table->string('progres')->default('Ditugaskan');
             $table->text('kendala');
             $table->timestamps();
         });
