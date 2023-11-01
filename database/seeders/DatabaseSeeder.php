@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         User::create([
-            'name' => 'Kepala IT',
-            'email' => 'kepala@dailyreportyahya.com',
+            'name' => 'Aloy',
+            'email' => 'aloy@dailyreportyahya.com',
             'password' => bcrypt('rusakdeh'), // Ganti dengan kata sandi yang aman
             'role' => 'kepala',
         ]);

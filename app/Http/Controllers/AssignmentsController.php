@@ -10,8 +10,19 @@ class AssignmentsController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Assignment::class);
         $assignments = Assignments::all();
         return view('assignments.index', compact('assignments'));
+
+        // if ($this->authorize('viewAny', Assignment::class)) {
+        //     $assignments = Assignments::all();
+        //     return view('assignments.index', compact('assignments'));
+        // } else {
+        //     return redirect()
+        //         ->back()
+        //         ->with('error', 'Anda tidak diotorisasi untuk mengakses halaman ini.')
+        //         ->with('timeout', 2);
+        // }
     }
 
     public function create()
