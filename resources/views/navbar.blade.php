@@ -1,7 +1,8 @@
 <nav class="navbar navbar-expand-md shadow-sm">
     <div class="container main-navbar">
         <a class="navbar-brand" href="{{ route('home') }}">
-            {{ config('app.name', 'Daily Report Yahya') }}
+            <img src="{{ asset('asset/logo-itdept.jpg') }}" width="70" height="70" alt="Logo" class="rounded">
+            {{ config('app.name', 'Routine Report') }}
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
