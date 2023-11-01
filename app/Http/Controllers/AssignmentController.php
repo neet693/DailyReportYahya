@@ -2,27 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Assignments;
+use App\Models\Assignment;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class AssignmentsController extends Controller
+class AssignmentController extends Controller
 {
     public function index()
     {
         $this->authorize('viewAny', Assignment::class);
-        $assignments = Assignments::all();
+        $assignments = Assignment::all();
         return view('assignments.index', compact('assignments'));
-
-        // if ($this->authorize('viewAny', Assignment::class)) {
-        //     $assignments = Assignments::all();
-        //     return view('assignments.index', compact('assignments'));
-        // } else {
-        //     return redirect()
-        //         ->back()
-        //         ->with('error', 'Anda tidak diotorisasi untuk mengakses halaman ini.')
-        //         ->with('timeout', 2);
-        // }
     }
 
     public function create()
@@ -44,7 +34,7 @@ class AssignmentsController extends Controller
             'description' => 'required',
         ]);
 
-        Assignments::create([
+        Assignment::create([
             'user_id' => $request->user_id,
             'assigner_id' => auth()->user()->id, // Gunakan auth() untuk mendapatkan pengguna yang sedang masuk
             'title' => $request->title,
@@ -57,27 +47,27 @@ class AssignmentsController extends Controller
         return redirect()->route('assignments.index');
     }
 
-    public function show(Assignments $assignments)
+    public function show(Assignment $assignment)
     {
         //
     }
 
-    public function edit(Assignments $assignments)
+    public function edit(Assignment $assignment)
     {
         //
     }
 
-    public function update(Request $request, Assignments $assignments)
+    public function update(Request $request, Assignment $assignment)
     {
         //
     }
 
-    public function destroy(Assignments $assignments)
+    public function destroy(Assignment $assignment)
     {
         //
     }
 
-    public function markAsComplete(Assignments $assignment)
+    public function markAsComplete(Assignment $assignment)
     {
 
         $assignment->update(['progres' => 'Selesai']); // Ubah nilai 'progress' menjadi 'Selesai'
@@ -85,7 +75,7 @@ class AssignmentsController extends Controller
         return redirect()->route('assignments.index')->with('success', 'Penugasan telah ditandai sebagai selesai.');
     }
 
-    public function reportKendala(Assignments $assignment)
+    public function reportKendala(Assignment $assignment)
     {
         $assignment->update([
             'progres' => 'Pending',

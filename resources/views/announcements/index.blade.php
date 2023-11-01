@@ -18,7 +18,7 @@
                 @foreach ($announcements as $announcement)
                     <tr>
                         <td>{{ $announcement->title }}</td>
-                        <td>{{ $announcement->message }}</td>
+                        <td>{!! $announcement->message !!}</td>
                         <td>{{ $announcement->created_at->format('j F Y') }}</td>
                         <td>
                             <div class="dropdown">
@@ -37,7 +37,7 @@
                                     <li> <!-- Tombol Show -->
                                         <a href="{{ route('announcements.show', $announcement->id) }}"
                                             class="btn btn-info text-white mb-2"><i class="bi bi-eye"></i>
-                                            Edit
+                                            Show
                                         </a>
                                     </li>
                                     @if (auth()->user()->role === 'admin' || auth()->user()->role === 'kepala')

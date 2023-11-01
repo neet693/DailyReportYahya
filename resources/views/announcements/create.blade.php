@@ -14,7 +14,7 @@
 
             <div class="mb-3">
                 <label for="message" class="form-label">Isi Pengumuman</label>
-                <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                <trix-editor input="message"></trix-editor>
             </div>
 
             <button type="submit" class="btn btn-primary">Buat Pengumuman</button>

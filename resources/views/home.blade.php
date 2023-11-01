@@ -23,7 +23,12 @@
                                     @endif
                                 @endforeach
                             </ul>
-                            <a href="{{ route('tasks.create') }}" class="btn btn-primary">Buat Task Anda</a>
+                            @if (auth()->user()->role === 'admin' || auth()->user()->role === 'kepala')
+                                <a href="{{ route('assignments.create') }}" class="btn btn-primary">Tugaskan
+                                    {{ $data->name }}</a>
+                            @elseif (auth()->user()->id === $data->id)
+                                <a href="{{ route('tasks.create') }}" class="btn btn-primary">Buat Task Anda</a>
+                            @endif
                         </div>
                     </div>
                 </div>
