@@ -59,7 +59,7 @@
                                             <li> <!-- Tombol Show -->
                                                 <a href="{{ route('assignments.show', $assignment->id) }}"
                                                     class="btn btn-info text-white mb-2"><i class="bi bi-eye"></i>
-                                                    Edit
+                                                    Show
                                                 </a>
                                             </li>
                                             <li> <!-- Tombol Hapus -->

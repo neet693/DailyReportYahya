@@ -25,7 +25,7 @@ class HomeController extends Controller
 
         $announcements = Announcement::all();
 
-        $assignments = Assignment::all();
+        $assignments = Assignment::orderBy('assignment_date', 'asc')->get();
 
         return view('home', compact('usersWithTasks', 'announcements', 'assignments'));
     }

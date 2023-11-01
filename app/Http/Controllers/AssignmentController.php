@@ -54,17 +54,20 @@ class AssignmentController extends Controller
 
     public function edit(Assignment $assignment)
     {
-        //
+        $users = User::all();
+        return view('assignments.edit', compact('assignment', 'users'));
     }
 
     public function update(Request $request, Assignment $assignment)
     {
-        //
+        $assignment->update($request->all());
+        return redirect()->route('assignments.index');
     }
 
     public function destroy(Assignment $assignment)
     {
-        //
+        $assignment->delete();
+        return redirect()->route('assignments.index');
     }
 
     public function markAsComplete(Assignment $assignment)
