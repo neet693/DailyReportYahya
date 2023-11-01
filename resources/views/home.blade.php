@@ -34,16 +34,14 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="card">
-                <div class="card-header border-0">
-                    <h3 class="card-title">Penugasan</h3>
-                    <div class="card-tools">
-                        <a href="#" class="btn btn-tool btn-sm">
-                            <i class="fas fa-download"></i>
-                        </a>
-                        <a href="#" class="btn btn-tool btn-sm">
-                            <i class="fas fa-bars"></i>
-                        </a>
-                    </div>
+                <h3 class="card-title">Penugasan</h3>
+                <div class="card-tools">
+                    <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-download"></i>
+                    </a>
+                    <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-bars"></i>
+                    </a>
                 </div>
                 <div class="card-body table-responsive p-0">
                     <table class="table table-striped table-valign-middle">
@@ -68,8 +66,8 @@
                                     </td>
                                     <td>{{ $assignment->title }}</td>
                                     <td>{{ $assignment->assignment_date->format('d M Y') }}</td>
-                                    <td>{{ $assignment->start_assignment_time->format('H:i A') }} s/d
-                                        {{ $assignment->end_assignment_time->format('H:i A') }}
+                                    <td>{{ $assignment->start_assignment_time->format('H:i') }} s/d
+                                        {{ $assignment->end_assignment_time->format('H:i') }}
                                     </td>
                                     <td>{{ $assignment->assigner->name }}</td>
                                     <td>
@@ -86,13 +84,15 @@
                                             <form method="POST"
                                                 action="{{ route('assignments.markAsComplete', $assignment) }}">
                                                 @csrf
-                                                <button type="submit" class="btn btn-success">Selesai</button>
+                                                <button type="submit" title="Selesai" class="btn btn-success mb-2"><i
+                                                        class="bi bi-check-circle-fill bg-green"></i>
+                                                </button>
                                             </form>
 
                                             <!-- Button trigger modal -->
-                                            <button type="button" class="btn btn-warning" data-bs-toggle="modal"
-                                                data-bs-target="#exampleModal">
-                                                Pending
+                                            <button type="button" title="Pending" class="btn btn-warning text-white"
+                                                data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                <i class="bi bi-dash-circle bg-warning"></i>
                                             </button>
 
                                             <!-- Modal -->

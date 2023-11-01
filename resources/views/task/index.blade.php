@@ -27,9 +27,9 @@
                                 <tr>
                                     <td>{{ $task->title }}</td>
                                     <td>{{ $task->task_date->format('d M Y') }}</td>
-                                    <td>{{ $task->task_start_time->format('H:i A') }} s/d
-                                        {{ $task->task_end_time->format('H:i A') }}</td>
-                                    <td>{!! $task->description !!}</td>
+                                    <td>{{ $task->task_start_time->format('H:i') }} s/d
+                                        {{ $task->task_end_time->format('H:i') }}</td>
+                                    <td>{!! $task->taskExcerpt() !!}</td>
                                     <td>
                                         <div class="dropdown">
                                             <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
@@ -48,17 +48,17 @@
                                                 <li> <!-- Tombol Show -->
                                                     <a href="{{ route('tasks.show', $task->id) }}"
                                                         class="btn btn-info text-white mb-2"><i class="bi bi-eye"></i>
-                                                        Edit
+                                                        Show
                                                     </a>
                                                 </li>
-                                                <li> <!-- Tombol Hapus -->
+                                                {{-- <li> <!-- Tombol Hapus -->
                                                     <form action="{{ route('tasks.destroy', $task->id) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-danger"><i
                                                                 class="bi bi-trash"></i> Hapus</button>
                                                     </form>
-                                                </li>
+                                                </li> --}}
                                             </ul>
                                         </div>
                                     </td>

@@ -16,4 +16,9 @@ class Task extends Model
     {
         return $this->belongsTo(User::class, 'task_user_id');
     }
+
+    public function taskExcerpt($length = 30)
+    {
+        return strlen($this->description) > $length ? substr($this->description, 0, $length) . '...' : $this->description;
+    }
 }

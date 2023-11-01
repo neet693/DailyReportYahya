@@ -41,36 +41,25 @@ class TaskController extends Controller
         $task->description = $request->input('description');
         $task->save();
 
-        return redirect()->back()->with('success', 'Data Berhasil dibuat');
+        return redirect('/tasks')->with('success', 'Data Berhasil dibuat');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Task $task)
     {
-        //
+        return view('task.show', compact('task'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Task $task)
     {
         return view('task.edit', compact('task'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Task $task)
     {
-        //
+        $task->update($request->all());
+        return redirect('/tasks')->with('success', 'Data Berhasil dibuat');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Task $task)
     {
         //
