@@ -44,8 +44,8 @@
                                         {{ $assignment->kendala ? $assignment->kendala : 'Tidak ada kendala' }}
                                     </span>
                                 </td>
-                                @if (auth()->user()->role === 'admin' || auth()->user()->role === 'kepala')
-                                    <td>
+                                <td>
+                                    @if (auth()->user()->role === 'admin' || auth()->user()->role === 'kepala')
                                         <div class="dropdown">
                                             <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
                                                 data-bs-toggle="dropdown" aria-expanded="false">
@@ -76,9 +76,9 @@
                                                 </li>
                                             </ul>
                                         </div>
-                                    </td>
-                                    {{-- <td>{{ $task->description }}</td> --}}
-                                @endif
+                                    @endif
+                                </td>
+                                {{-- <td>{{ $task->description }}</td> --}}
                             </tr>
                         @endforeach
                     </tbody>
