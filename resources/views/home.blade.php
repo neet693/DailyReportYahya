@@ -7,8 +7,13 @@
             @foreach ($usersWithTasks as $data)
                 <div class="col-md-4 mb-3">
                     <div class="card" style="width: 18rem;">
-                        <img src="{{ asset('asset/logo-itdept.png') }}" class="card-img-top rounded-circle" style="width: 30%"
-                            alt="Foto Profil">
+                        @if ($data->profile_image)
+                            <img src="{{ asset('profile_images/' . $data->profile_image) }}"
+                                class="card-img-top rounded-circle" style="width: 30%" alt="Foto Profil">
+                        @else
+                            <img src="{{ asset('asset/logo-itdept.png') }}" class="card-img-top rounded-circle"
+                                style="width: 30%" alt="Foto Profil">
+                        @endif
                         <div class="card-body">
                             <h5 class="card-title">{{ $data->name }}</h5>
                             <h6 class="card-subtitle mb-2 text-muted">Tasks for Today</h6>
@@ -64,8 +69,8 @@
                             @foreach ($assignments as $assignment)
                                 <tr>
                                     <td>
-                                        @if (auth()->user()->profile_image)
-                                            <img src="{{ asset('profile_images/' . auth()->user()->profile_image) }}"
+                                        @if ($assignment->user->profile_image)
+                                            <img src="{{ asset('profile_images/' . $assignment->user->profile_image) }}"
                                                 alt="Profil Gambar" class="rounded-circle" style="width: 50px">
                                         @else
                                             <img src="{{ asset('asset/logo-itdept.png') }}" alt="Logo IT Dept"

@@ -7,6 +7,7 @@ use App\Models\Assignment;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -27,6 +28,8 @@ class HomeController extends Controller
 
         $assignments = Assignment::orderBy('assignment_date', 'asc')->get();
 
-        return view('home', compact('usersWithTasks', 'announcements', 'assignments'));
+        $user = Auth::user();
+
+        return view('home', compact('usersWithTasks', 'announcements', 'assignments', 'user'));
     }
 }
