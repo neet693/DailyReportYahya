@@ -16,15 +16,18 @@
     </thead>
     <tbody>
         @foreach ($data as $item)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->title }}</td>
-                <td>{{ $item->place }}</td>
-                <td>{{ $item->task_date->format('d M Y') }}</td>
-                <td>{{ $item->task_start_time->format('H:i A') }} s/d {{ $item->task_end_time->format('H:i A') }}</td>
-                <td>{!! $item->description !!}</td>
-                <!-- Tambahkan sel-sel lain sesuai data yang Anda ingin tampilkan -->
-            </tr>
+            @if ($assignment->user->id === auth()->user()->id)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $item->title }}</td>
+                    <td>{{ $item->place }}</td>
+                    <td>{{ $item->task_date->format('d M Y') }}</td>
+                    <td>{{ $item->task_start_time->format('H:i A') }} s/d {{ $item->task_end_time->format('H:i A') }}
+                    </td>
+                    <td>{!! $item->description !!}</td>
+                    <!-- Tambahkan sel-sel lain sesuai data yang Anda ingin tampilkan -->
+                </tr>
+            @endif
         @endforeach
     </tbody>
 </table>
@@ -45,22 +48,23 @@
     </thead>
     <tbody>
         @foreach ($assignments as $assignment)
-            <tr>
-                <td>{{ $assignment->user->name }}</td>
-                <td>{{ $assignment->title }}</td>
-                <td>{{ $assignment->assignment_date->format('d M Y') }}</td>
-                <td>{{ $assignment->start_assignment_time->format('H:i A') }} s/d
-                    {{ $assignment->end_assignment_time->format('H:i A') }}
-                </td>
-                <td>{{ $assignment->assigner->name }}</td>
-                <td>
-                    @if ($assignment->progres === 'Selesai')
-                        <span class="badge bg-success">{{ $assignment->progres }}</span>
-                    @else
-                        <span class="badge bg-danger">{{ $assignment->progres }}</span>
-                    @endif
-                </td>
-                {{-- <td>
+            @if ($assignment->user->id === auth()->user()->id)
+                <tr>
+                    <td>{{ $assignment->user->name }}</td>
+                    <td>{{ $assignment->title }}</td>
+                    <td>{{ $assignment->assignment_date->format('d M Y') }}</td>
+                    <td>{{ $assignment->start_assignment_time->format('H:i A') }} s/d
+                        {{ $assignment->end_assignment_time->format('H:i A') }}
+                    </td>
+                    <td>{{ $assignment->assigner->name }}</td>
+                    <td>
+                        @if ($assignment->progres === 'Selesai')
+                            <span class="badge bg-success">{{ $assignment->progres }}</span>
+                        @else
+                            <span class="badge bg-danger">{{ $assignment->progres }}</span>
+                        @endif
+                    </td>
+                    {{-- <td>
                     <div class="dropdown">
                         <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
@@ -90,8 +94,9 @@
                         </ul>
                     </div>
                 </td> --}}
-                <td>{{ $assignment->description }}</td>
-            </tr>
+                    <td>{{ $assignment->description }}</td>
+                </tr>
+            @endif
         @endforeach
     </tbody>
 </table>

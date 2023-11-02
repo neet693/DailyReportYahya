@@ -16,15 +16,18 @@
     </thead>
     <tbody>
         @foreach ($data as $item)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->title }}</td>
-                <td>{{ $item->place }}</td>
-                <td>{{ $item->task_date->format('d M Y') }}</td>
-                <td>{{ $item->task_start_time->format('H:i A') }} s/d {{ $item->task_end_time->format('H:i A') }}</td>
-                <td>{!! $item->description !!}</td>
-                <!-- Tambahkan sel-sel lain sesuai data yang Anda ingin tampilkan -->
-            </tr>
+            @if ($item->user->id === auth()->user()->id)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $item->title }}</td>
+                    <td>{{ $item->place }}</td>
+                    <td>{{ $item->task_date->format('d M Y') }}</td>
+                    <td>{{ $item->task_start_time->format('H:i A') }} s/d {{ $item->task_end_time->format('H:i A') }}
+                    </td>
+                    <td>{!! $item->description !!}</td>
+                    <!-- Tambahkan sel-sel lain sesuai data yang Anda ingin tampilkan -->
+                </tr>
+            @endif
         @endforeach
     </tbody>
 </table>
