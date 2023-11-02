@@ -64,8 +64,13 @@
                             @foreach ($assignments as $assignment)
                                 <tr>
                                     <td>
-                                        <img src="{{ asset('asset/logo-itdept.png') }}" alt="Product 1"
-                                            class="rounded-circle" style="width: 10%">
+                                        @if (auth()->user()->profile_image)
+                                            <img src="{{ asset('profile_images/' . auth()->user()->profile_image) }}"
+                                                alt="Profil Gambar" class="rounded-circle" style="width: 50px">
+                                        @else
+                                            <img src="{{ asset('asset/logo-itdept.png') }}" alt="Logo IT Dept"
+                                                class="rounded-circle" style="width: 50px">
+                                        @endif
                                         {{ $assignment->user->name }}
                                     </td>
                                     <td>{{ $assignment->title }}</td>

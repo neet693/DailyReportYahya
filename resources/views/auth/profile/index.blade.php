@@ -7,9 +7,19 @@
                 <div class="card">
                     <div class="card-header">Edit Profile</div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('profile.update', ['profile' => $user->id]) }}">
+                        <form method="POST" action="{{ route('profile.update', ['profile' => $user->id]) }}"
+                            enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
+                            <div class="form-group">
+                                <label for="profile_image">Foto Profil:</label>
+                                <img src="{{ asset('profile_images/' . auth()->user()->profile_image) }}" id="current_image"
+                                    alt="Profil Gambar" class="rounded-circle" style="max-width: 200px;">
+                                <img src="" id="image_preview" alt="Pratinjau Gambar"
+                                    style="display: none; max-width: 200px;" class="rounded-circle mb-3">
+                                <input class="form-control @error('name') is-invalid @enderror" type="file"
+                                    name="profile_image" id="profile_image">
+                            </div>
 
                             <div class="form-group">
                                 <label for="name">Name</label>
@@ -59,4 +69,28 @@
             </div>
         </div>
     </div>
+    <script>
+        // Fungsi ini akan dipanggil setiap kali gambar yang dipilih berubah
+        function previewImage() {
+            const input = document.getElementById('profile_image');
+            const preview = document.getElementById('image_preview');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    preview.setAttribute('src', e.target.result);
+                    preview.style.display = 'block'; // Menampilkan pratinjau gambar
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none'; // Sembunyikan pratinjau jika tidak ada gambar yang dipilih
+            }
+        }
+
+        // Mengikat fungsi pratinjau ke perubahan input gambar
+        const fileInput = document.getElementById('profile_image');
+        fileInput.addEventListener('change', previewImage);
+    </script>
 @endsection

@@ -20,6 +20,7 @@ class ProfileController extends Controller
         $request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
+            'profile_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         if ($request->filled('password')) {
@@ -27,6 +28,13 @@ class ProfileController extends Controller
                 'password' => 'required|min:8|confirmed',
             ]);
             $user->password = bcrypt($request->input('password'));
+        }
+
+        if ($request->hasFile('profile_image')) {
+            $image = $request->file('profile_image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('profile_images'), $imageName);
+            $user->profile_image = $imageName;
         }
 
         if ($request->filled('name')) {
