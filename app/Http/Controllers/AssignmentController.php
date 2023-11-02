@@ -10,13 +10,14 @@ class AssignmentController extends Controller
 {
     public function index()
     {
-        $this->authorize('viewAny', Assignment::class);
+        // $this->authorize('viewAny', Assignment::class);
         $assignments = Assignment::all();
         return view('assignments.index', compact('assignments'));
     }
 
     public function create()
     {
+        $this->authorize('create', Assignment::class);
         $users = User::all();
         return view('assignments.create', compact('users'));
     }

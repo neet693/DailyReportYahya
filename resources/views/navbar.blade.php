@@ -21,12 +21,10 @@
                         <a class="nav-link {{ request()->is('tasks*') ? 'active' : '' }}"
                             href="{{ route('tasks.index') }}">Task</a>
                     </li>
-                    @if (auth()->user()->role === 'admin' || auth()->user()->role === 'kepala')
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->is('assignments*') ? 'active' : '' }}"
-                                href="{{ route('assignments.index') }}">Penugasan</a>
-                        </li>
-                    @endif
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('assignments*') ? 'active' : '' }}"
+                            href="{{ route('assignments.index') }}">Penugasan</a>
+                    </li>
                 </ul>
             @endauth
             <!-- Right Side Of Navbar -->
