@@ -16,7 +16,7 @@
     </thead>
     <tbody>
         @foreach ($data as $item)
-            @if ($assignment->user->id === auth()->user()->id)
+            @if ($item->user->id === auth()->user()->id)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->title }}</td>
