@@ -7,8 +7,8 @@
             @foreach ($usersWithTasks as $data)
                 <div class="col-md-4 mb-3">
                     <div class="card" style="width: 18rem;">
-                        <img src="https://adminlte.io/themes/v3/dist/img/default-150x150.png"
-                            class="card-img-top rounded-circle" style="width: 30%" alt="Foto Profil">
+                        <img src="{{ asset('asset/logo-itdept.png') }}" class="card-img-top rounded-circle" style="width: 30%"
+                            alt="Foto Profil">
                         <div class="card-body">
                             <h5 class="card-title">{{ $data->name }}</h5>
                             <h6 class="card-subtitle mb-2 text-muted">Tasks for Today</h6>
