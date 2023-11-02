@@ -17,8 +17,8 @@
                                     @if ($task->task_date->isToday())
                                         <!-- Filter tasks for today -->
                                         <li>{{ $task->title }} | {{ $task->place }} |
-                                            {{ $task->task_start_time->format('h:i') }} s/d
-                                            {{ $task->task_end_time->format('h:i') }}
+                                            {{ $task->task_start_time->format('H:i') }} s/d
+                                            {{ $task->task_end_time->format('H:i') }}
                                         </li>
                                     @endif
                                 @endforeach
@@ -64,8 +64,8 @@
                             @foreach ($assignments as $assignment)
                                 <tr>
                                     <td>
-                                        <img src="https://adminlte.io/themes/v3/dist/img/default-150x150.png"
-                                            alt="Product 1" class="rounded-circle" style="width: 10%">
+                                        <img src="{{ asset('asset/logo-itdept.png') }}" alt="Product 1"
+                                            class="rounded-circle" style="width: 10%">
                                         {{ $assignment->user->name }}
                                     </td>
                                     <td>{{ $assignment->title }}</td>
