@@ -25,6 +25,10 @@
                         <a class="nav-link {{ request()->is('assignments*') ? 'active' : '' }}"
                             href="{{ route('assignments.index') }}">Penugasan</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('jobdesks*') ? 'active' : '' }}"
+                            href="{{ route('jobdesks.index') }}">Job Desk</a>
+                    </li>
                 </ul>
             @endauth
             <!-- Right Side Of Navbar -->

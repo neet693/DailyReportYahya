@@ -53,4 +53,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Announcement::class);
     }
+
+    public function jobdesk()
+    {
+        return $this->hasOne(JobDesk::class, 'jobdesk_user_id');
+    }
 }

@@ -7,15 +7,22 @@
             @foreach ($usersWithTasks as $data)
                 <div class="col-md-4 mb-3">
                     <div class="card" style="width: 18rem;">
-                        @if ($data->profile_image)
-                            <img src="{{ asset('profile_images/' . $data->profile_image) }}"
-                                class="card-img-top rounded-circle" style="width: 30%" alt="Foto Profil">
-                        @else
-                            <img src="{{ asset('asset/logo-itdept.png') }}" class="card-img-top rounded-circle"
-                                style="width: 30%" alt="Foto Profil">
-                        @endif
+
+                        <div class="d-flex align-items-center">
+                            @if ($data->profile_image)
+                                <img src="{{ asset('profile_images/' . $data->profile_image) }}"
+                                    class="card-img-top rounded-circle" style="width: 30%" alt="Foto Profil">
+                            @else
+                                <img src="{{ asset('asset/logo-itdept.png') }}" class="card-img-top rounded-circle"
+                                    style="width: 30%" alt="Foto Profil">
+                            @endif
+                            <div class="p-2">
+                                <h5 class="card-title">{{ $data->name }}</h5>
+                                <p class="card-subtitle text-muted">
+                                    {{ $data->jobdesk ? $data->jobdesk->title : 'Belum ada Job Desc' }}</p>
+                            </div>
+                        </div>
                         <div class="card-body">
-                            <h5 class="card-title">{{ $data->name }}</h5>
                             <h6 class="card-subtitle mb-2 text-muted">Tasks for Today</h6>
                             <ul>
                                 @foreach ($data->tasks as $task)
