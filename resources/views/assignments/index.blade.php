@@ -35,6 +35,8 @@
                                 <td>
                                     @if ($assignment->progres === 'Selesai')
                                         <span class="badge bg-success">{{ $assignment->progres }}</span>
+                                    @elseif ($assignment->progres === 'Pending')
+                                        <span class="badge bg-warning">{{ $assignment->progres }}</span>
                                     @else
                                         <span class="badge bg-danger">{{ $assignment->progres }}</span>
                                     @endif

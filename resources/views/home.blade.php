@@ -95,66 +95,28 @@
                                     </td>
                                     <td>
                                         @if (auth()->user()->id === $assignment->user_id)
-                                            <form method="POST"
-                                                action="{{ route('assignments.markAsComplete', $assignment) }}">
-                                                @csrf
-                                                <button type="submit" title="Selesai" class="btn btn-success mb-2"><i
-                                                        class="bi bi-check-circle-fill bg-green"></i>
+                                            @if ($assignment->progres !== 'Selesai')
+                                                <form method="POST"
+                                                    action="{{ route('assignments.markAsComplete', $assignment) }}">
+                                                    @csrf
+                                                    <button type="submit" title="Selesai" class="btn btn-success mb-2"><i
+                                                            class="bi bi-check-circle-fill bg-green"></i>
+                                                    </button>
+                                                </form>
+
+                                                <!-- Button trigger modal -->
+                                                <button type="button" title="Pending" class="btn btn-warning text-white"
+                                                    data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    <i class="bi bi-dash-circle bg-warning"></i>
                                                 </button>
-                                            </form>
-
-                                            <!-- Button trigger modal -->
-                                            <button type="button" title="Pending" class="btn btn-warning text-white"
-                                                data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                <i class="bi bi-dash-circle bg-warning"></i>
-                                            </button>
-
-                                            <!-- Modal -->
-                                            <div class="modal fade" id="exampleModal" tabindex="-1"
-                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Laporkan
-                                                                Kendala</h1>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form
-                                                                action="{{ route('assignments.report-kendala', $assignment) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                <div class="modal-body">
-                                                                    <div class="form-group">
-                                                                        <label for="kendala">Kendala:</label>
-                                                                        <textarea id="kendala" name="kendala" class="form-control @error('kendala') is-invalid @enderror" rows="4"
-                                                                            autofocus></textarea>
-
-                                                                        @error('kendala')
-                                                                            <span class="invalid-feedback" role="alert">
-                                                                                <strong>{{ $message }}</strong>
-                                                                            </span>
-                                                                        @enderror
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary"
-                                                                        data-bs-dismiss="modal">Close</button>
-                                                                    <button type="submit" class="btn btn-primary">Save
-                                                                        changes</button>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                @include('components.modal_pending', [
+                                                    'assignment' => $assignment,
+                                                ])
+                                            @endif
                                         @endif
                                     </td>
-
                                 </tr>
                             @endforeach
-
                         </tbody>
                     </table>
                 </div>

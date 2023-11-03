@@ -22,7 +22,11 @@ class HomeController extends Controller
 
         $usersWithTasks = User::with(['tasks' => function ($query) use ($today) {
             $query->whereDate('task_date', $today);
-        }])->get();
+        }])->where('role', '!=', 'admin')->get();
+
+        $usersWithTasks = $usersWithTasks->sortBy(function ($user) {
+            return $user->id !== auth()->user()->id;
+        });
 
         $announcements = Announcement::all();
 
