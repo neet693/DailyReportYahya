@@ -1,10 +1,11 @@
                             <!-- Modal -->
-                            <div class="modal fade" id="completeModal" tabindex="-1" aria-labelledby="completeModalLabel"
-                                aria-hidden="true">
+                            <div class="modal fade" id="completeModal{{ $task->id }}" tabindex="-1"
+                                aria-labelledby="completeModalLabel{{ $task->id }}"aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="completeModalLabel">Selesaikan Task</h1>
+                                            <h1 class="modal-title fs-5" id="completeModalLabel{{ $task->id }}">
+                                                Selesaikan Task</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>

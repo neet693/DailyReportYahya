@@ -38,16 +38,17 @@
                                         @elseif ($task->progres == 0)
                                             <span style="color:  red">✖</span>
                                         @endif |
+                                        {{-- Bagian ini di ganti sampai mark as pending --}}
                                         @if (auth()->user()->id === $data->id)
-                                            <a href="{{ route('tasks.markAsComplete', $task->id) }}" title="Selesai"
+                                            <a href="{{ route('tasks.markAsComplete', $task) }}" title="Selesai"
                                                 style="text-decoration: none; color:green;" data-bs-toggle="modal"
-                                                data-bs-target="#completeModal">✔</a>
+                                                data-bs-target="#completeModal{{ $task->id }}">✔</a>
                                             @include('components.task_modal_complete', [
                                                 'task' => $task,
                                             ])
-                                            <a href="{{ route('tasks.markAsPending', $task->id) }}" title="Pending"
+                                            <a href="{{ route('tasks.markAsPending', $task) }}" title="Pending"
                                                 style="text-decoration: none; color:red;" data-bs-toggle="modal"
-                                                data-bs-target="#pendingModal">✖</a>
+                                                data-bs-target="#pendingModal{{ $task->id }}">✖</a>
                                             @include('components.task_modal_pending', [
                                                 'task' => $task,
                                             ])
