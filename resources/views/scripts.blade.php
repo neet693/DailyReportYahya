@@ -5,5 +5,11 @@
 <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
 <!-- Kemudian inisialisasi DataTables -->
 <script>
-    let table = new DataTable('#myTable');
+    $(document).ready(function() {
+        $('#myTable').DataTable({
+            "order": [
+                [2, 'asc']
+            ]
+        });
+    });
 </script>
