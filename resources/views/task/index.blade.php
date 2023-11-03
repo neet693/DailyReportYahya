@@ -18,6 +18,7 @@
                             <th>Tanggal Task</th>
                             <th>Jam</th>
                             <th>Deskripsi</th>
+                            <th>Progres</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -30,6 +31,13 @@
                                     <td>{{ $task->task_start_time->format('H:i') }} s/d
                                         {{ $task->task_end_time->format('H:i') }}</td>
                                     <td>{!! $task->taskExcerpt() !!}</td>
+                                    <td>
+                                        @if ($task->progres == 1)
+                                            <span style="color:  green">✔</span>
+                                        @elseif ($task->progres == 0)
+                                            <span style="color:  red">✖</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <div class="dropdown">
                                             <a class="btn btn-secondary dropdown-toggle" href="#" role="button"

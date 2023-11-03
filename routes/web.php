@@ -17,6 +17,8 @@ Route::get('/', function () {
 Auth::routes();
 Route::middleware(['auth'])->group(function () {
     Route::resource('tasks', TaskController::class);
+    Route::post('tasks/mark-as-complete/{task}', [TaskController::class, 'markAsComplete'])->name('tasks.markAsComplete');
+    Route::post('tasks/mark-as-pending/{task}', [TaskController::class, 'markAsPending'])->name('tasks.markAsPending');
     Route::resource('announcements', AnnouncementController::class);
     Route::resource('assignments', AssignmentController::class);
     Route::resource('profile', ProfileController::class);

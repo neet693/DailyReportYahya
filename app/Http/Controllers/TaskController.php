@@ -64,4 +64,28 @@ class TaskController extends Controller
     {
         //
     }
+
+    public function markAsComplete(Request $request, Task $task)
+    {
+        $task->update([
+            'progres' => 1,
+            // 'description' => $request->input('description')
+            'description' => 'Task Selesai'
+        ]);
+
+        return back()->with('success', 'Tugas selesai.');
+    }
+
+    public function markAsPending(Request $request, Task $task)
+    {
+        $request->validate([
+            'description' => 'required',
+        ]);
+        $task->update([
+            'progres' => 0,
+            'description' => $request->input('description')
+        ]);
+
+        return back()->with('success', 'Tugas ditandai sebagai pending.');
+    }
 }

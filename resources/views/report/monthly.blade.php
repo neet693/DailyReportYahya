@@ -11,6 +11,7 @@
             <th>Tanggal Task</th>
             <th>Jam</th>
             <th>Deskripsi</th>
+            <th>Progres</th>
             <!-- Tambahkan kolom-kolom lain sesuai data yang Anda ingin tampilkan -->
         </tr>
     </thead>
@@ -25,6 +26,13 @@
                     <td>{{ $item->task_start_time->format('H:i A') }} s/d {{ $item->task_end_time->format('H:i A') }}
                     </td>
                     <td>{!! $item->description !!}</td>
+                    <td>
+                        @if ($item->progres == 1)
+                            <span class="badge text-bg-success">Success</span>
+                        @elseif ($item->progres == 0)
+                            <span class="badge text-bg-danger">Danger</span>
+                        @endif
+                    </td>
                     <!-- Tambahkan sel-sel lain sesuai data yang Anda ingin tampilkan -->
                 </tr>
             @endif

@@ -26,13 +26,33 @@
                             <h6 class="card-subtitle mb-2 text-muted">Tasks for Today</h6>
                             <ul>
                                 @foreach ($data->tasks as $task)
-                                    @if ($task->task_date->isToday())
+                                    {{-- @if ($task->task_date->isToday())
                                         <!-- Filter tasks for today -->
-                                        <li>{{ $task->title }} | {{ $task->place }} |
-                                            {{ $task->task_start_time->format('H:i') }} s/d
-                                            {{ $task->task_end_time->format('H:i') }}
-                                        </li>
-                                    @endif
+                                    @endif --}}
+                                    <li>
+                                        {{ $task->title }} | {{ $task->place }} |
+                                        {{ $task->task_start_time->format('H:i') }} s/d
+                                        {{ $task->task_end_time->format('H:i') }} |
+                                        @if ($task->progres == 1)
+                                            <span style="color:  green">✔</span>
+                                        @elseif ($task->progres == 0)
+                                            <span style="color:  red">✖</span>
+                                        @endif |
+                                        @if (auth()->user()->id === $data->id)
+                                            <a href="{{ route('tasks.markAsComplete', $task->id) }}" title="Selesai"
+                                                style="text-decoration: none; color:green;" data-bs-toggle="modal"
+                                                data-bs-target="#completeModal">✔</a>
+                                            @include('components.task_modal_complete', [
+                                                'task' => $task,
+                                            ])
+                                            <a href="{{ route('tasks.markAsPending', $task->id) }}" title="Pending"
+                                                style="text-decoration: none; color:red;" data-bs-toggle="modal"
+                                                data-bs-target="#pendingModal">✖</a>
+                                            @include('components.task_modal_pending', [
+                                                'task' => $task,
+                                            ])
+                                        @endif
+                                    </li>
                                 @endforeach
                             </ul>
                             @if (auth()->user()->role === 'admin' || auth()->user()->role === 'kepala')
