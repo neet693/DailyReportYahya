@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AnnouncementController extends Controller
@@ -21,12 +22,19 @@ class AnnouncementController extends Controller
 
     public function create()
     {
-        return view('announcements.create');
+        $users = User::all();
+        return view('announcements.create', compact('users'));
     }
 
     public function store(Request $request)
     {
+        if ($request->category === 'umum') {
+            $request['recipient_id'] = 0;
+        }
+
+        // Buat pengumuman
         Announcement::create($request->all());
+
         return redirect()->route('announcements.index');
     }
 

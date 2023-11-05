@@ -12,8 +12,31 @@
                 <input type="text" class="form-control" id="title" name="title" required>
             </div>
 
+            {{-- @if (auth()->user()->role === 'admin' || auth()->user()->role === 'kepala') --}}
+            <div class="form-group mb-3">
+                <label for="category" class="form-label">Kategori</label>
+                <select name="category" id="category" class="form-select" required>
+                    <option value="umum">Umum</option>
+                    <option value="personal">Personal</option>
+                </select>
+            </div>
+
+            @if (auth()->user()->role === 'admin' || auth()->user()->role === 'kepala')
+                <div class="form-group mb-3">
+                    <label for="recipient_id" class="form-label">Penerima <span style="color: red;">(hanya jika
+                            personal):</span></label>
+                    <select name="recipient_id" id="recipient_id" class="form-select">
+                        @foreach ($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+
             <div class="mb-3">
                 <label for="message" class="form-label">Isi Pengumuman</label>
+                <input id="message" type="hidden" class="form-control @error('message') is-invalid @enderror"
+                    name="message" value="{{ old('message') }}" required autocomplete="message" autofocus>
                 <trix-editor input="message"></trix-editor>
             </div>
 

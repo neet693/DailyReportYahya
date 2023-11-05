@@ -43,7 +43,9 @@ class HomeController extends Controller
         $assignments = Assignment::orderBy('assignment_date', 'asc')->get();
 
         $user = Auth::user();
-
-        return view('home', compact('usersWithTasks', 'announcements', 'assignments', 'user'));
+        $personalAnnouncements = Announcement::where('category', 'personal')
+            ->where('recipient_id', $user->id)
+            ->get();
+        return view('home', compact('usersWithTasks', 'announcements', 'assignments', 'user', 'personalAnnouncements'));
     }
 }
