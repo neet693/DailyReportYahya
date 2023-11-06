@@ -4,7 +4,7 @@
     <div class="container">
         <h1>Daftar Permohonan Surat Izin/Surat Sakit</h1>
         <div class="col-md-8 mb-3">
-            <a href="{{ route('permissionrequest.create') }}" class="btn btn-primary">Buat Task</a>
+            <a href="{{ route('permissionrequest.create') }}" class="btn btn-primary">Buat Izin</a>
 
         </div>
         <table id="myTable" class="display">
@@ -31,7 +31,7 @@
                                 <span class="badge text-bg-danger">{{ $data->status_permohonan }}</span>
                             @endif
                         </td>
-                        <td>{{ $data->approver->name }}</td>
+                        <td>{{ $data->approver ? $data->approver->name : 'Under Review' }}</td>
                         <td>
                             @can('approve', $data)
                                 <form method="POST" action="{{ route('permission-requests.approve', $data) }}">
