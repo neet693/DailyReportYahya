@@ -29,6 +29,10 @@
                         <a class="nav-link {{ request()->is('jobdesks*') ? 'active' : '' }}"
                             href="{{ route('jobdesks.index') }}">Job Desk</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('permissionrequest*') ? 'active' : '' }}"
+                            href="{{ route('permissionrequest.index') }}">Perizinan</a>
+                    </li>
                 </ul>
             @endauth
             <!-- Right Side Of Navbar -->
