@@ -26,7 +26,7 @@
             <div class="modal-footer d-flex justify-content-between">
                 <div>
                     <p>Yang Memberi Izin:</p>
-                    <p>{{ $permissionRequests->approver->name }}</p>
+                    <p>{{ $permissionRequests->approver ? $permissionRequests->approver->name : 'Under Review' }}</p>
                 </div>
                 <div>
                     <p>Pemohon Izin:</p>
