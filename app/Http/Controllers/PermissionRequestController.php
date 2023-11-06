@@ -12,6 +12,7 @@ class PermissionRequestController extends Controller
     public function index()
     {
         $permissionRequests = PermissionRequest::all();
+        $daysDifference = [];
 
         foreach ($permissionRequests as $request) {
             $startDate = Carbon::parse($request->start_date);
