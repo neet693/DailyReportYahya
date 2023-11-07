@@ -50,7 +50,7 @@
                             @endcan
 
                             <button type="button" title="Lihat Detail" class="btn btn-info text-white"
-                                data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                data-bs-toggle="modal" data-bs-target="#exampleModal{{ $data->id }}">
                                 <i class="bi bi-eye"></i>
                             </button>
                             @include('components.permission_request_modal', [
