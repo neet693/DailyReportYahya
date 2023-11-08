@@ -45,7 +45,7 @@ class PermissionRequestController extends Controller
         // Simpan permohonan ke dalam database
         PermissionRequest::create($validatedData);
 
-        return redirect('permission-requests.index')->with('success', 'Permohonan berhasil dibuat.');
+        return redirect('/permissionrequest')->with('success', 'Permohonan berhasil dibuat.');
     }
 
     public function show(PermissionRequest $permissionRequest)
@@ -63,10 +63,16 @@ class PermissionRequestController extends Controller
         //
     }
 
-    public function destroy(PermissionRequest $permissionRequest)
+    public function destroy($id)
     {
-        //
+        $permissionRequest = PermissionRequest::findOrFail($id);
+        $this->authorize('delete', $permissionRequest);
+        $permissionRequest->delete();
+
+        return redirect('/permissionrequest')
+            ->with('success', 'Permission request berhasil dihapus.');
     }
+
 
     public function approve(PermissionRequest $permissionRequest)
     {

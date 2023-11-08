@@ -21,4 +21,10 @@ class PermissionRequestPolicy
         // Jika pengguna adalah 'admin' atau 'kepala' dan permohonan belum disetujui
         return in_array($user->role, ['admin', 'kepala']) && $permissionRequest->status_permohonan === 'Menunggu Persetujuan';
     }
+
+    public function delete(User $user)
+    {
+        // Jika pengguna adalah 'admin' atau 'kepala' dan permohonan belum disetujui
+        return in_array($user->role, ['admin', 'kepala']);
+    }
 }

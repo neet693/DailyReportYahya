@@ -33,29 +33,55 @@
                         </td>
                         <td>{{ $data->approver ? $data->approver->name : 'Under Review' }}</td>
                         <td>
-                            @can('approve', $data)
-                                <form method="POST" action="{{ route('permission-requests.approve', $data) }}">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="btn btn-success">Approve</button>
-                                </form>
-                            @endcan
 
-                            @can('reject', $data)
-                                <form method="POST" action="{{ route('permission-requests.reject', $data) }}">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="btn btn-danger">Reject</button>
-                                </form>
-                            @endcan
+                            <div class="dropdown">
+                                <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-gear"></i>
+                                </a>
 
-                            <button type="button" title="Lihat Detail" class="btn btn-info text-white"
-                                data-bs-toggle="modal" data-bs-target="#exampleModal{{ $data->id }}">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            @include('components.permission_request_modal', [
-                                'permissionRequests' => $data,
-                            ])
+                                <ul class="dropdown-menu">
+                                    @can('approve', $data)
+                                        <li>
+                                            <form method="POST" action="{{ route('permissionrequest.approve', $data) }}">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-success" title="Approve"><i
+                                                        class="bi bi-check"></i></button>
+                                            </form>
+                                        </li>
+                                    @endcan
+                                    @can('reject', $data)
+                                        <li>
+                                            <form method="POST" action="{{ route('permissionrequests.reject', $data) }}">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-danger" title="Reject"><i
+                                                        class="bi bi-x"></i></button>
+                                            </form>
+                                        </li>
+                                    @endcan
+                                    @can('delete', $data)
+                                        <li>
+                                            <form action="{{ route('permissionrequest.destroy', $data->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger" title="Hapus"><i
+                                                        class="bi bi-trash"></i></button>
+                                            </form>
+                                        </li>
+                                    @endcan
+                                    <li>
+                                        <button type="button" title="Lihat Detail" class="btn btn-info text-white"
+                                            data-bs-toggle="modal" data-bs-target="#exampleModal{{ $data->id }}">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        @include('components.permission_request_modal', [
+                                            'permissionRequests' => $data,
+                                        ])
+                                    </li>
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                 @endforeach

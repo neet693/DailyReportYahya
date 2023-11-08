@@ -17,20 +17,27 @@ Route::get('/', function () {
 
 Auth::routes();
 Route::middleware(['auth'])->group(function () {
+    // Task Route
     Route::resource('tasks', TaskController::class);
     Route::post('tasks/mark-as-complete/{task}', [TaskController::class, 'markAsComplete'])->name('tasks.markAsComplete');
     Route::post('tasks/mark-as-pending/{task}', [TaskController::class, 'markAsPending'])->name('tasks.markAsPending');
-    Route::resource('announcements', AnnouncementController::class);
+
+    // Assignment Route
     Route::resource('assignments', AssignmentController::class);
-    Route::resource('profile', ProfileController::class);
-    Route::resource('jobdesks', JobDeskController::class);
-    Route::resource('permissionrequest', PermissionRequestController::class);
-    Route::patch('/permission-requests/{permissionRequest}/approve', [PermissionRequestController::class, 'approve'])->name('permission-requests.approve');
-    Route::patch('/permission-requests/{permissionRequest}/reject', [PermissionRequestController::class, 'reject'])->name('permission-requests.reject');
     Route::post('assignments/mark-as-complete/{assignment}', [AssignmentController::class, 'markAsComplete'])->name('assignments.markAsComplete');
     Route::post('/assignments/report-kendala/{assignment}', [AssignmentController::class, 'reportKendala'])->name('assignments.report-kendala');
+    // Permission Request Route
+    Route::resource('permissionrequest', PermissionRequestController::class);
+    Route::patch('/permissionrequests/{permissionRequest}/approve', [PermissionRequestController::class, 'approve'])->name('permissionrequest.approve');
+    Route::patch('/permissionrequests/{permissionRequest}/reject', [PermissionRequestController::class, 'reject'])->name('permissionrequests.reject');
+
+    // Generate Report Route
     Route::get('report/weekly', [ReportController::class, 'generateWeeklyReport'])->name('report.generateWeeklyReport');
     Route::get('report/monthly', [ReportController::class, 'generateMonthlyReport'])->name('report.generateMonthlyReport');
     Route::post('/announcements/mark-all-as-read', 'AnnouncementController@markAllAsRead')->name('announcements.markAllAsRead');
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    Route::resource('announcements', AnnouncementController::class);
+    Route::resource('profile', ProfileController::class);
+    Route::resource('jobdesks', JobDeskController::class);
 });
