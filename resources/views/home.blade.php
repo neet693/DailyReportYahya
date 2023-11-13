@@ -98,15 +98,15 @@
                         <tbody>
                             @foreach ($assignments as $assignment)
                                 <tr>
+                                    <td hidden>{{ $assignment->user->name }}</td>
                                     <td>
                                         @if ($assignment->user->profile_image)
                                             <img src="{{ asset('profile_images/' . $assignment->user->profile_image) }}"
-                                                alt="Profil Gambar" class="rounded-circle" style="width: 50px">
+                                                alt="Profil Gambar" title="{{ $assignment->user->name }}" class="rounded-circle" style="width: 50px">
                                         @else
                                             <img src="{{ asset('asset/logo-itdept.png') }}" alt="Logo IT Dept"
                                                 class="rounded-circle" style="width: 50px">
                                         @endif
-                                        {{ $assignment->user->name }}
                                     </td>
                                     <td>{{ $assignment->title }}</td>
                                     <td>{{ $assignment->assignment_date->format('d M Y') }}</td>

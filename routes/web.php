@@ -4,6 +4,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobDeskController;
+use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\PermissionRequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
@@ -40,4 +41,5 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('announcements', AnnouncementController::class);
     Route::resource('profile', ProfileController::class);
     Route::resource('jobdesks', JobDeskController::class);
+    Route::resource('meetings', MeetingController::class);
 });

@@ -14,25 +14,32 @@
             @auth
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->is('home') ? 'active' : '' }}" aria-current="page"
-                            href="{{ route('home') }}">Home</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link {{ request()->is('tasks*') ? 'active' : '' }}"
                             href="{{ route('tasks.index') }}">Task</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('assignments*') ? 'active' : '' }}"
-                            href="{{ route('assignments.index') }}">Penugasan</a>
+                    <li class="nav-item dropdown">
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            Menu Birokrasi
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-end main-navbar" aria-labelledby="navbarDropdown">
+                            <a class="nav-link {{ request()->is('assignments*') ? 'active' : '' }}"
+                                href="{{ route('assignments.index') }}">Penugasan</a>
+                            <a class="nav-link {{ request()->is('permissionrequest*') ? 'active' : '' }}"
+                                href="{{ route('permissionrequest.index') }}">Perizinan</a>
+                            <a class="nav-link {{ request()->is('meetings*') ? 'active' : '' }}"
+                                href="{{ route('meetings.index') }}">Rapat</a>
+                            <a class="nav-link {{ request()->is('jobdesks*') ? 'active' : '' }}"
+                                href="{{ route('jobdesks.index') }}">Job Desk</a>
+
+                        </div>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('jobdesks*') ? 'active' : '' }}"
-                            href="{{ route('jobdesks.index') }}">Job Desk</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('permissionrequest*') ? 'active' : '' }}"
-                            href="{{ route('permissionrequest.index') }}">Perizinan</a>
-                    </li>
+                    {{-- <li class="nav-item">
+                        <a class="nav-link {{ request()->is('home') ? 'active' : '' }}" aria-current="page"
+                            href="{{ route('home') }}">Home</a>
+                    </li> --}}
+
                 </ul>
             @endauth
             <!-- Right Side Of Navbar -->
