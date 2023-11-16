@@ -102,7 +102,8 @@
                                     <td>
                                         @if ($assignment->user->profile_image)
                                             <img src="{{ asset('profile_images/' . $assignment->user->profile_image) }}"
-                                                alt="Profil Gambar" title="{{ $assignment->user->name }}" class="rounded-circle" style="width: 50px">
+                                                alt="Profil Gambar" title="{{ $assignment->user->name }}"
+                                                class="rounded-circle" style="width: 50px">
                                         @else
                                             <img src="{{ asset('asset/logo-itdept.png') }}" alt="Logo IT Dept"
                                                 class="rounded-circle" style="width: 50px">
@@ -136,7 +137,8 @@
 
                                                 <!-- Button trigger modal -->
                                                 <button type="button" title="Pending" class="btn btn-warning text-white"
-                                                    data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#penugasanPendingModal{{ $assignment->id }}">
                                                     <i class="bi bi-dash-circle bg-warning"></i>
                                                 </button>
                                                 @include('components.modal_pending', [
