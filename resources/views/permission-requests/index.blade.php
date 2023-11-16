@@ -5,7 +5,6 @@
         <h1>Daftar Permohonan Surat Izin/Surat Sakit</h1>
         <div class="col-md-8 mb-3">
             <a href="{{ route('permissionrequest.create') }}" class="btn btn-primary">Buat Izin</a>
-
         </div>
         <table id="myTable" class="display">
             <thead>
@@ -33,13 +32,11 @@
                         </td>
                         <td>{{ $data->approver ? $data->approver->name : 'Under Review' }}</td>
                         <td>
-
                             <div class="dropdown">
-                                <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
                                     <i class="bi bi-gear"></i>
-                                </a>
-
+                                </button>
                                 <ul class="dropdown-menu">
                                     @can('approve', $data)
                                         <li>
@@ -73,17 +70,20 @@
                                     @endcan
                                     <li>
                                         <button type="button" title="Lihat Detail" class="btn btn-info text-white"
-                                            data-bs-toggle="modal" data-bs-target="#exampleModal{{ $data->id }}">
+                                            data-bs-toggle="modal" data-bs-target="#permissionRequests{{ $data->id }}">
                                             <i class="bi bi-eye"></i>
                                         </button>
-                                        @include('components.permission_request_modal', [
-                                            'permissionRequests' => $data,
-                                        ])
+
                                     </li>
                                 </ul>
                             </div>
                         </td>
                     </tr>
+                    {{-- Modal Start Here --}}
+                    @include('components.permission_request_modal', [
+                        'permissionRequests' => $data,
+                        'daysDifference' => $daysDifference,
+                    ])
                 @endforeach
             </tbody>
         </table>
