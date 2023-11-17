@@ -10,7 +10,11 @@
                 <p>Nama: {{ $data->nama }}</p>
                 <p>Jabatan: {{ $data->jabatan }}</p>
                 <p>Status Pegawai: {{ $data->jenis_pegawai }}</p>
-                <p>Memohon ijin tidak bekerja selama: {{ $daysDifference[$data->id] }} hari</p>
+                <p>Memohon izin tidak bekerja selama:
+                    {{ $durations[$data->id]['days'] }} hari,
+                    {{ $durations[$data->id]['hours'] }} jam,
+                    {{ $durations[$data->id]['minutes'] }} menit
+                </p>
                 <p>Hari / Tanggal: <br>{{ $data->start_date->format('l, d F Y') }} s/d
                     {{ $data->end_date->format('l, d F Y') }} </p>
                 <p>Keterangan: <br> {{ $data->description }}</p>

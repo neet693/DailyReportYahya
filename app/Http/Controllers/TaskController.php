@@ -69,8 +69,6 @@ class TaskController extends Controller
     {
         $task->update([
             'progres' => 1,
-            // 'description' => $request->input('description')
-            'description' => 'Task Selesai'
         ]);
 
         return back()->with('success', 'Tugas selesai.');

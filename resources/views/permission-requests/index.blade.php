@@ -82,7 +82,6 @@
                     {{-- Modal Start Here --}}
                     @include('components.permission_request_modal', [
                         'permissionRequests' => $data,
-                        'daysDifference' => $daysDifference,
                     ])
                 @endforeach
             </tbody>

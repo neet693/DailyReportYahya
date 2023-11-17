@@ -12,19 +12,45 @@ class PermissionRequestController extends Controller
     public function index()
     {
         $permissionRequests = PermissionRequest::all();
-        $daysDifference = [];
+        $durations = [];
 
         foreach ($permissionRequests as $request) {
             $startDate = Carbon::parse($request->start_date);
             $endDate = Carbon::parse($request->end_date);
-            $differenceInDays = $startDate->diffInDays($endDate);
+
+            // Hitung selisih waktu dalam menit
+            $durationInMinutes = $startDate->diffInMinutes($endDate);
+
+            // Hitung jumlah hari
+            $days = $startDate->diffInDays($endDate);
+
+            // Hitung selisih waktu dalam jam dan menit
+            $hours = floor($durationInMinutes / 60);
+            $minutes = $durationInMinutes % 60;
+
+            // Tampilkan 23 jam 59 menit jika start_date dan end_date sama
+            if ($startDate->eq($endDate)) {
+                $displayDays = 0;
+                $hours = 23;
+                $minutes = 59;
+            } else {
+                $displayDays = $days . " hari ";
+                $hours = 23;
+                $minutes = 59;
+            }
 
             // Tambahkan hasil perhitungan ke array
-            $daysDifference[$request->id] = $differenceInDays;
+            $durations[$request->id] = [
+                'days' => $displayDays,
+                'hours' => $hours,
+                'minutes' => $minutes,
+            ];
         }
 
-        return view('permission-requests.index', compact('permissionRequests', 'daysDifference'));
+
+        return view('permission-requests.index', compact('permissionRequests', 'durations'));
     }
+
 
     public function create()
     {

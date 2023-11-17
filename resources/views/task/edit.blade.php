@@ -97,11 +97,10 @@
                             <div class="row mb-3">
                                 <label for="description"
                                     class="col-md-4 col-form-label text-md-end">{{ __('Keterangan') }}</label>
-                                <div class="">
-                                    <input id="description" type="hidden"
-                                        class="form-control @error('description') is-invalid @enderror" name="description"
-                                        value="{{ old('description', $task->description) }}" required
-                                        autocomplete="description" autofocus>
+                                <div>
+                                    <input id="description" type="hidden" name="description"
+                                        value="{{ $task->description }}"
+                                        class="form-control @error('task_end_time') is-invalid @enderror">
                                     <trix-editor input="description"></trix-editor>
                                     @error('description')
                                         <span class="invalid-feedback" role="alert">

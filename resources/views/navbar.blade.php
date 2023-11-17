@@ -35,6 +35,10 @@
 
                         </div>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('agendas*') ? 'active' : '' }}"
+                            href="{{ route('agendas.index') }}">Agenda</a>
+                    </li>
                     {{-- <li class="nav-item">
                         <a class="nav-link {{ request()->is('home') ? 'active' : '' }}" aria-current="page"
                             href="{{ route('home') }}">Home</a>
