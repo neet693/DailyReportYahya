@@ -19,8 +19,9 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
-                                <img src="{{ asset('profile_images/' . $data->user->profile_image) }}" alt="Profil Gambar"
-                                    class="rounded-circle" style="width: 50px">
+                                <img src="{{ asset('profile_images/' . $data->user->profile_image) }}"
+                                    style="width: 70px; height: 70px" alt="Profil Gambar" class="rounded-circle"
+                                    style="width: 50px">
                                 <div class="p-2">
                                     <h5 class="card-title">{{ $data->user->name }}</h5>
                                     <p class="card-subtitle text-muted">{{ $data->title }}</p>

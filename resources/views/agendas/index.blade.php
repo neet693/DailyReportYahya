@@ -15,6 +15,11 @@
                             <span>
                                 Periode: {{ $agenda->period }}
                             </span>
+                            <br>
+                            <span>
+                                Dari: {{ $agenda->start_date->format('d F Y') }} sampai
+                                {{ $agenda->end_date->format('d F Y') }}
+                            </span>
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                 {{ $agenda->status }}
                                 <span class="visually-hidden">unread messages</span>
@@ -29,12 +34,12 @@
                                     @foreach ($agenda->executors as $executor)
                                         @if ($executor->profile_image)
                                             <img src="{{ asset('profile_images/' . $executor->profile_image) }}"
-                                                class="card-img-top rounded-circle" style="width: 30px"
+                                                class="card-img-top rounded-circle" style="width: 30px; height: 30px;"
                                                 title="{{ $executor->name }}" alt="Foto Profil">
                                         @else
                                             <img src="{{ asset('asset/logo-itdept.png') }}"
-                                                class="card-img-top rounded-circle" style="width: 30px" alt="Foto Profil"
-                                                title="{{ $executor->name }}">
+                                                class="card-img-top rounded-circle" style="width: 30px; height: 30px;"
+                                                alt="Foto Profil" title="{{ $executor->name }}">
                                         @endif
                                     @endforeach
                                 </div>

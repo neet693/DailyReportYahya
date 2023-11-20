@@ -11,10 +11,10 @@
                         <div class="d-flex align-items-center">
                             @if ($data->profile_image)
                                 <img src="{{ asset('profile_images/' . $data->profile_image) }}"
-                                    class="card-img-top rounded-circle" style="width: 30%" alt="Foto Profil">
+                                    class="card-img-top rounded-circle" style="width:70px; height:70px;" alt="Foto Profil">
                             @else
                                 <img src="{{ asset('asset/logo-itdept.png') }}" class="card-img-top rounded-circle"
-                                    style="width: 30%" alt="Foto Profil">
+                                    style="width:70px; height:70px;" alt="Foto Profil">
                             @endif
                             <div class="p-2">
                                 <h5 class="card-title">{{ $data->name }}</h5>

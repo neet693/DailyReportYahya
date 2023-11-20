@@ -19,11 +19,11 @@
                 @foreach ($agenda->executors as $executor)
                     @if ($executor->profile_image)
                         <img src="{{ asset('profile_images/' . $executor->profile_image) }}"
-                            class="card-img-top rounded-circle" style="width: 50px" title="{{ $executor->name }}"
-                            alt="Foto Profil">
+                            class="card-img-top rounded-circle" style="height:50px; width: 50px;"
+                            title="{{ $executor->name }}" alt="Foto Profil">
                     @else
                         <img src="{{ asset('asset/logo-itdept.png') }}" class="card-img-top rounded-circle"
-                            style="width: 50px" alt="Foto Profil" title="{{ $executor->name }}">
+                            style="height:50px; width: 50px;" alt="Foto Profil" title="{{ $executor->name }}">
                     @endif
                 @endforeach
             </div>
