@@ -30,16 +30,19 @@
         </div>
 
         <h3>Log Agenda</h3>
-
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addLogModal">
+            Tambah Log Agenda
+        </button>
+        @include('components.modal_add_log_agenda', ['agendaId' => $agenda->id])
         <!-- Tampilkan log-log agenda -->
-        {{-- @foreach ($agenda->logs as $log)
+        @foreach ($agenda->logs as $log)
             <div class="card mb-3">
                 <div class="card-body">
-                    <p class="card-text">Aksi: {{ $log->action }}</p>
-                    <p class="card-text">Detail: {{ $log->details }}</p>
+                    <p class="card-text">Oleh: {{ $log->executor->name }}</p>
+                    <p class="card-text">Detail: {!! $log->log_detail !!}</p>
                     <p class="card-text">Dibuat pada: {{ $log->created_at->format('d M Y H:i:s') }}</p>
                 </div>
             </div>
-        @endforeach --}}
+        @endforeach
     </div>
 @endsection

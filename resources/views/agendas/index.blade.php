@@ -47,10 +47,22 @@
                             <div class="">
                                 <a href="{{ route('agendas.show', $agenda->id) }}" class="btn btn-info btn-sm me-2"><i
                                         class="bi bi-eye"></i></a>
-                                <a href="{{ route('agendas.edit', $agenda->id) }}" class="btn btn-warning btn-sm me-2"><i
-                                        class="bi bi-pencil-square"></i></a>
+                                @can('edit', $agenda)
+                                    <a href="{{ route('agendas.edit', $agenda->id) }}" class="btn btn-warning btn-sm me-2"><i
+                                            class="bi bi-pencil-square"></i></a>
+                                @endcan
                                 <a href="{{ route('agendas.print', $agenda->id) }}" class="btn btn-primary btn-sm"><i
                                         class="bi bi-printer"></i></a>
+                                @can('delete', $agenda)
+                                    <form action="{{ route('agendas.destroy', $agenda) }}" method="POST"
+                                        style="display:inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger"
+                                            onclick="return confirm('Are you sure?')"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                @endcan
+
                             </div>
                         </div>
                     </div>

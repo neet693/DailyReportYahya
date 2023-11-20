@@ -5,6 +5,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobDeskController;
+use App\Http\Controllers\LogAgendaController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\PermissionRequestController;
 use App\Http\Controllers\ProfileController;
@@ -44,5 +45,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('jobdesks', JobDeskController::class);
     Route::resource('meetings', MeetingController::class);
     Route::resource('agendas', AgendaController::class);
+    Route::resource('logAgendas', LogAgendaController::class);
     Route::get('agendas/{id}/generate', [AgendaController::class, 'generateAgenda'])->name('agendas.print');
 });

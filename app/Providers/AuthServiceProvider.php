@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Models\Assignments;
 use App\Models\PermissionRequest;
+use App\Policies\AgendaPolicy;
 use App\Policies\AssignmentPolicy;
 use App\Policies\PermissionRequestPolicy;
 use Illuminate\Auth\Access\Gate;
@@ -21,6 +22,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Assignments::class => AssignmentPolicy::class,
         PermissionRequest::class => PermissionRequestPolicy::class,
+        Agenda::class => AgendaPolicy::class
     ];
 
     /**

@@ -51,4 +51,9 @@ class Agenda extends Model
 
         return trim($period);
     }
+
+    public function logs()
+    {
+        return $this->hasMany(LogAgenda::class);
+    }
 }

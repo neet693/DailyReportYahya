@@ -57,6 +57,7 @@ class AgendaController extends Controller
 
     public function update(Request $request, Agenda $agenda)
     {
+        $this->authorize('update', $agenda);
         $request->validate([
             'title' => 'required',
             'start_date' => 'required|date',
@@ -84,6 +85,7 @@ class AgendaController extends Controller
 
     public function destroy(Agenda $agenda)
     {
+        $this->authorize('delete', $agenda);
         $agenda->executors()->detach();
         $agenda->delete();
 
