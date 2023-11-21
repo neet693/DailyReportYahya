@@ -17,45 +17,36 @@
 @endif
 
 @if (count($agendas) > 0)
-    <div id="agenda_executor_announcement">
-        @php $notificationShown = false; @endphp
+    <div id="agenda_executor_announcement" class="alert alert-danger alert-dismissible executor"
+        style="position: relative; display: none;">
+        <button type="button" class="btn-close me-2 m-auto" data-dismiss="alert" aria-label="Close"
+            style="position: absolute; top: 50; right: 0;">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        Anda tergabung dalam agenda:
         @foreach ($agendas as $agenda)
             @foreach ($agenda->executors as $executor)
                 @if ($executor->id === auth()->user()->id)
-                    @if (!$notificationShown)
-                        <div class="alert alert-danger alert-dismissible executor" style="position: relative;">
-                            <button type="button" class="btn-close me-2 m-auto" data-dismiss="alert" aria-label="Close"
-                                style="position: absolute; top: 50; right: 0;">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            Anda tergabung dalam agenda:
-                            @foreach ($agendas as $agenda)
-                                {{ $agenda->title }}
-                                @if (!$loop->last)
-                                    ,
-                                @endif
-                            @endforeach
-                        </div>
-                        @php $notificationShown = true; @endphp
-                    @endif
+                    {{ $agenda->title }}
                 @endif
             @endforeach
         @endforeach
     </div>
 @endif
 
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const AgendaExecutors = document.querySelectorAll('[id^="alert_"]');
+        const agendaExecutorAnnouncement = document.getElementById('agenda_executor_announcement');
+        if (agendaExecutorAnnouncement) {
+            agendaExecutorAnnouncement.style.display = 'block';
 
-        AgendaExecutors.forEach(function(AgendaExecutor) {
-            AgendaExecutor.querySelector('.btn-close').addEventListener('click', function() {
-                AgendaExecutor.style.display = 'none';
+            agendaExecutorAnnouncement.querySelector('.btn-close').addEventListener('click', function() {
+                agendaExecutorAnnouncement.style.display = 'none';
             });
-        });
+        }
     });
 </script>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
