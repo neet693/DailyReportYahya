@@ -44,7 +44,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('profile', ProfileController::class);
     Route::resource('jobdesks', JobDeskController::class);
     Route::resource('meetings', MeetingController::class);
+
+    // Agenda dan Log agenda Routes
     Route::resource('agendas', AgendaController::class);
     Route::resource('logAgendas', LogAgendaController::class);
     Route::get('agendas/{id}/generate', [AgendaController::class, 'generateAgenda'])->name('agendas.print');
+    Route::patch('agendas/{id}/update-status', [AgendaController::class, 'updateStatus'])->name('agendas.updateStatus');
 });

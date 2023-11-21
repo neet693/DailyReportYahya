@@ -20,9 +20,11 @@
                                 Dari: {{ $agenda->start_date->format('d F Y') }} sampai
                                 {{ $agenda->end_date->format('d F Y') }}
                             </span>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill
+                            {{ $agenda->status === 'on progress' ? 'bg-warning' : ($agenda->status === 'selesai' ? 'bg-success' : 'bg-danger') }}">
                                 {{ $agenda->status }}
-                                <span class="visually-hidden">unread messages</span>
+                                <span class="visually-hidden">Status Agenda</span>
                             </span>
                         </div>
                         <div class="card-body">
@@ -60,6 +62,17 @@
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger"
                                             onclick="return confirm('Are you sure?')"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                @endcan
+                                @can('updateStatus', $agenda)
+                                    <form action="{{ route('agendas.updateStatus', $agenda->id) }}" method="post">
+                                        @csrf
+                                        @method('patch')
+
+                                        <button type="submit" name="status" value="on progress" class="btn btn-info">On
+                                            Progress</button>
+                                        <button type="submit" name="status" value="finish"
+                                            class="btn btn-success">Selesai</button>
                                     </form>
                                 @endcan
 

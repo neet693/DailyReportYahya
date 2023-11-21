@@ -16,6 +16,47 @@
     </div>
 @endif
 
+@if (count($agendas) > 0)
+    <div id="agenda_executor_announcement">
+        @php $notificationShown = false; @endphp
+        @foreach ($agendas as $agenda)
+            @foreach ($agenda->executors as $executor)
+                @if ($executor->id === auth()->user()->id)
+                    @if (!$notificationShown)
+                        <div class="alert alert-danger alert-dismissible executor" style="position: relative;">
+                            <button type="button" class="btn-close me-2 m-auto" data-dismiss="alert" aria-label="Close"
+                                style="position: absolute; top: 50; right: 0;">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            Anda tergabung dalam agenda:
+                            @foreach ($agendas as $agenda)
+                                {{ $agenda->title }}
+                                @if (!$loop->last)
+                                    ,
+                                @endif
+                            @endforeach
+                        </div>
+                        @php $notificationShown = true; @endphp
+                    @endif
+                @endif
+            @endforeach
+        @endforeach
+    </div>
+@endif
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const AgendaExecutors = document.querySelectorAll('[id^="alert_"]');
+
+        AgendaExecutors.forEach(function(AgendaExecutor) {
+            AgendaExecutor.querySelector('.btn-close').addEventListener('click', function() {
+                AgendaExecutor.style.display = 'none';
+            });
+        });
+    });
+</script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const announcements = document.querySelectorAll('.announcement');

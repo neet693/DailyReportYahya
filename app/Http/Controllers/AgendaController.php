@@ -102,4 +102,18 @@ class AgendaController extends Controller
 
         return $pdf->download('agenda.pdf');
     }
+
+    public function updateStatus(Request $request, Agenda $agenda, $id)
+    {
+        if ($this->authorize('updateStatus', $agenda)) {
+            $agenda = Agenda::findOrFail($id);
+
+            $agenda->status = $request->input('status');
+            $agenda->save();
+
+            return redirect()->route('agendas.index')->with('success', 'Status agenda berhasil diperbarui.');
+        }
+
+        abort(403, 'Unauthorized action.');
+    }
 }

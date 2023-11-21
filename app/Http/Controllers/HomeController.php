@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agenda;
 use App\Models\Announcement;
 use App\Models\Assignment;
 use App\Models\User;
@@ -38,6 +39,8 @@ class HomeController extends Controller
             return $user->id !== auth()->user()->id;
         });
 
+        $agendas = Auth::user()->agendas()->get();
+
         $announcements = Announcement::all();
 
         $assignments = Assignment::orderBy('assignment_date', 'asc')->get();
@@ -46,6 +49,6 @@ class HomeController extends Controller
         $personalAnnouncements = Announcement::where('category', 'personal')
             ->where('recipient_id', $user->id)
             ->get();
-        return view('home', compact('usersWithTasks', 'announcements', 'assignments', 'user', 'personalAnnouncements'));
+        return view('home', compact('usersWithTasks', 'announcements', 'assignments', 'user', 'personalAnnouncements', 'agendas'));
     }
 }

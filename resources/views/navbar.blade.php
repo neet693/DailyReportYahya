@@ -65,7 +65,7 @@
                     <li class="nav-item dropdown">
                         <a href="{{ route('announcements.index') }}"
                             class="nav-link {{ request()->is('announcements*') ? 'active' : '' }} position-relative">
-                            <i class="bi bi-bell"></i>
+                            <i class="bi bi-megaphone"></i>
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                 <span class="visually-hidden">belum dibaca</span>
                             </span>

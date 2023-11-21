@@ -18,4 +18,9 @@ class AgendaPolicy
         // Hanya izinkan admin yang dapat melakukan delete
         return in_array($user->role, ['admin', 'kepala']);
     }
+    public function updateStatus(User $user, Agenda $agenda): bool
+    {
+        // Hanya izinkan admin yang dapat melakukan delete
+        return in_array($user->role, ['admin', 'kepala']);
+    }
 }

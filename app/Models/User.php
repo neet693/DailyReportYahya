@@ -58,4 +58,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(JobDesk::class, 'jobdesk_user_id');
     }
+
+    public function agendas()
+    {
+        return $this->belongsToMany(Agenda::class, 'agenda_executor', 'executor_id', 'agenda_id');
+    }
 }
