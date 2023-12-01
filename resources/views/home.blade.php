@@ -9,13 +9,8 @@
                     <div class="card" style="width: 18rem;">
 
                         <div class="d-flex align-items-center">
-                            @if ($data->profile_image)
-                                <img src="{{ asset('profile_images/' . $data->profile_image) }}"
-                                    class="card-img-top rounded-circle" style="width:70px; height:70px;" alt="Foto Profil">
-                            @else
-                                <img src="{{ asset('asset/logo-itdept.png') }}" class="card-img-top rounded-circle"
-                                    style="width:70px; height:70px;" alt="Foto Profil">
-                            @endif
+                            <img src="{{ $data->profile_image ? asset('profile_images/' . $data->profile_image) : asset('asset/default_profile.jpg') }}"
+                                class="card-img-top rounded-circle" style="width:70px; height:70px;" alt="Foto Profil">
                             <div class="p-2">
                                 <h5 class="card-title">{{ $data->name }}</h5>
                                 <p class="card-subtitle text-muted">

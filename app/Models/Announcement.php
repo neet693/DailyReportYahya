@@ -16,8 +16,14 @@ class Announcement extends Model
     {
         return $this->belongsToMany(User::class);
     }
-    public function recipient()
+
+    public function scopeGeneral($query)
     {
-        return $this->belongsTo(User::class, 'recipient_id');
+        return $query->where('category', 'umum');
+    }
+
+    public function scopePersonal($query)
+    {
+        return $query->where('category', 'personal');
     }
 }

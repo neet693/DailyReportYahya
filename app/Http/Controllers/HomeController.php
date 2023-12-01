@@ -12,36 +12,28 @@ use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
 
     public function index()
     {
         $today = now()->toDateString();
+        $month = now()->month;
 
-        $usersWithTasks = User::with(['tasks' => function ($query) use ($today) {
-            $query->todayOrPending($today);
-        }])->where('role', '!=', 'admin')
-            ->get()
-            ->each(function ($user) {
-                $user->tasks = $user->tasks->sortBy('task_date');
-            })
-            ->sortBy(function ($user) {
-                return $user->id !== auth()->user()->id;
-            });
+        $usersWithTasks = User::with([
+            'jobdesk',
+            'tasks' => function ($query) use ($today) {
+                $query->todayOrPending($today);
+            },
+            'agendas', // Memanggil relasi agendas
+        ])->where('role', '!=', 'admin')->get()->unique('id');
 
-        $agendas = Auth::user()->load('agendas')->agendas;
 
-        $announcements = Announcement::all();
+        // $agendas = Auth::user()->agendas;
+        $assignments = Assignment::whereMonth('assignment_date', $month)
+            ->orderBy('assignment_date', 'asc')->get();
 
-        $assignments = Assignment::orderBy('assignment_date', 'asc')->get();
-
-        $user = Auth::user();
-        $personalAnnouncements = Announcement::where('category', 'personal')
-            ->where('recipient_id', $user->id)
-            ->get();
-        return view('home', compact('usersWithTasks', 'announcements', 'assignments', 'user', 'personalAnnouncements', 'agendas'));
+        $generalAnnouncements = Announcement::general()->get();
+        $personalAnnouncements = Announcement::personal()->where('recipient_id', auth()->user()->id)->get();
+        $announcements = $generalAnnouncements->merge($personalAnnouncements);
+        return view('home', compact('usersWithTasks', 'announcements', 'assignments'));
     }
 }

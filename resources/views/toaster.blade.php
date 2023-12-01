@@ -1,38 +1,39 @@
-@if (count($announcements) > 0)
-    <div id="announcements">
-        @foreach ($announcements as $announcement)
-            @if (
-                $announcement->category === 'umum' ||
-                    ($announcement->category === 'personal' && $announcement->recipient_id === auth()->user()->id))
-                <div class="alert alert-danger alert-dismissible announcement" style="position: relative;">
-                    <button type="button" class="btn-close me-2 m-auto" data-dismiss="alert" aria-label="Close"
-                        style="position: absolute; top: 50; right: 0;">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    {{ $announcement->title }} <br> {!! $announcement->message ?? 'Tidak ada Pengumuman' !!}
-                </div>
-            @endif
-        @endforeach
-    </div>
-@endif
+<div id="announcements">
+    @foreach ($announcements as $announcement)
+        <div class="alert alert-danger alert-dismissible announcement" style="position: relative;">
+            <button type="button" class="btn-close me-2 m-auto" data-dismiss="alert" aria-label="Close"
+                style="position: absolute; top: 50; right: 0;">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            {{ $announcement->title }} <br> {!! $announcement->message ?? 'Tidak ada Pengumuman' !!}
+        </div>
+    @endforeach
+</div>
 
-@if (count($agendas) > 0)
-    <div id="agenda_executor_announcement" class="alert alert-danger alert-dismissible executor"
-        style="position: relative; display: none;">
-        <button type="button" class="btn-close me-2 m-auto" data-dismiss="alert" aria-label="Close"
-            style="position: absolute; top: 50; right: 0;">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        Anda tergabung dalam agenda:
-        @foreach ($agendas as $agenda)
-            @foreach ($agenda->executors as $executor)
-                @if ($executor->id === auth()->user()->id)
-                    {{ $agenda->title }}
-                @endif
-            @endforeach
-        @endforeach
-    </div>
-@endif
+
+
+<div id="agenda_executor_announcement" class="alert alert-danger alert-dismissible executor">
+    <button type="button" class="btn-close me-2 m-auto" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+
+    @auth
+        @if ($agendas = auth()->user()->agendas)
+            <p>{{ auth()->user()->name }} tergabung dalam agenda:</p>
+            <ul>
+                @foreach ($agendas as $agenda)
+                    <li><strong>{{ $agenda->title }}</strong></li>
+                @endforeach
+            </ul>
+        @else
+            <p>{{ auth()->user()->name }} tidak tergabung dalam agenda apapun saat ini.</p>
+        @endif
+    @endauth
+</div>
+
+
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

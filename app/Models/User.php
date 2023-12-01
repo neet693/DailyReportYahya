@@ -63,4 +63,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Agenda::class, 'agenda_executor', 'executor_id', 'agenda_id');
     }
+
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class, 'user_id');
+    }
 }
