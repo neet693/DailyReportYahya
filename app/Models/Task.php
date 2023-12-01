@@ -21,4 +21,13 @@ class Task extends Model
     {
         return strlen($this->description) > $length ? substr($this->description, 0, $length) . '...' : $this->description;
     }
+
+    public function scopeTodayOrPending($query, $today)
+    {
+        return $query->whereDate('task_date', $today)
+            ->orWhere(function ($query) use ($today) {
+                $query->where('progres', 0)
+                    ->whereDate('task_date', '<', $today);
+            });
+    }
 }

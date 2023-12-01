@@ -19,27 +19,20 @@ class HomeController extends Controller
 
     public function index()
     {
-        $today = Carbon::now()->toDateString();
+        $today = now()->toDateString();
 
         $usersWithTasks = User::with(['tasks' => function ($query) use ($today) {
-            $query->where(function ($query) use ($today) {
-                $query->whereDate('task_date', $today)
-                    ->orWhere(function ($query) use ($today) {
-                        $query->where('progres', 0)
-                            ->whereDate('task_date', '<', $today);
-                    });
+            $query->todayOrPending($today);
+        }])->where('role', '!=', 'admin')
+            ->get()
+            ->each(function ($user) {
+                $user->tasks = $user->tasks->sortBy('task_date');
+            })
+            ->sortBy(function ($user) {
+                return $user->id !== auth()->user()->id;
             });
-        }])->where('role', '!=', 'admin')->get();
 
-        $usersWithTasks->each(function ($user) {
-            $user->tasks = $user->tasks->sortBy('task_date');
-        });
-
-        $usersWithTasks = $usersWithTasks->sortBy(function ($user) {
-            return $user->id !== auth()->user()->id;
-        });
-
-        $agendas = Auth::user()->agendas()->get();
+        $agendas = Auth::user()->load('agendas')->agendas;
 
         $announcements = Announcement::all();
 
