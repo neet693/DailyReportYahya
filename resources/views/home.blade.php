@@ -70,12 +70,12 @@
             <div class="card">
                 <h3 class="card-title">Penugasan</h3>
                 <div class="card-tools">
-                    <a href="#" class="btn btn-tool btn-sm">
+                    {{-- <a href="#" class="btn btn-tool btn-sm">
                         <i class="fas fa-download"></i>
                     </a>
                     <a href="#" class="btn btn-tool btn-sm">
                         <i class="fas fa-bars"></i>
-                    </a>
+                    </a> --}}
                 </div>
                 <div class="card-body table-responsive p-0">
                     <table class="table table-striped table-valign-middle">
@@ -93,7 +93,7 @@
                         <tbody>
                             @foreach ($assignments as $assignment)
                                 <tr>
-                                    <td hidden>{{ $assignment->user->name }}</td>
+                                    {{-- <td hidden>{{ $assignment->user->name }}</td> --}}
                                     <td>
                                         @if ($assignment->user->profile_image)
                                             <img src="{{ asset('profile_images/' . $assignment->user->profile_image) }}"
