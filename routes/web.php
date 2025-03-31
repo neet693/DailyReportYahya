@@ -3,6 +3,8 @@
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AssignmentController;
+use App\Http\Controllers\EducationHistoryController;
+use App\Http\Controllers\EmploymentDetailController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobDeskController;
 use App\Http\Controllers\LogAgendaController;
@@ -11,6 +13,7 @@ use App\Http\Controllers\PermissionRequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TrainingController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +47,13 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('profile', ProfileController::class);
     Route::resource('jobdesks', JobDeskController::class);
     Route::resource('meetings', MeetingController::class);
+
+    Route::resource('/employment-detail', EmploymentDetailController::class);
+
+    //Education
+    Route::resource('education', EducationHistoryController::class);
+    //Training
+    Route::resource('training', TrainingController::class);
 
     // Agenda dan Log agenda Routes
     Route::resource('agendas', AgendaController::class);

@@ -23,6 +23,10 @@ class User extends Authenticatable
         'password',
         'role',
         'profile_image',
+        'address',
+        'gender',
+        'martial_status',
+        'birth_date'
     ];
 
     /**
@@ -42,6 +46,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'birth_date' => 'datetime',
         'password' => 'hashed',
     ];
 
@@ -67,5 +72,20 @@ class User extends Authenticatable
     public function assignments()
     {
         return $this->hasMany(Assignment::class, 'user_id');
+    }
+
+    public function employmentDetail()
+    {
+        return $this->hasOne(EmploymentDetail::class);
+    }
+
+    public function educationHistories()
+    {
+        return $this->hasMany(EducationHistory::class);
+    }
+
+    public function trainings()
+    {
+        return $this->hasMany(Training::class);
     }
 }

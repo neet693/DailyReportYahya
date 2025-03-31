@@ -34,11 +34,71 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="gender">Jenis Kelamin</label>
+                                <select id="gender" name="gender"
+                                    class="form-control @error('gender') is-invalid @enderror">
+                                    <option value="">Pilih Gender</option>
+                                    <option value="Laki-laki"
+                                        {{ old('gender', auth()->user()->gender) == 'Laki-laki' ? 'selected' : '' }}>
+                                        Laki-laki</option>
+                                    <option value="Perempuan"
+                                        {{ old('gender', auth()->user()->gender) == 'Perempuan' ? 'selected' : '' }}>
+                                        Perempuan</option>
+                                </select>
+                                @error('gender')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
                                 <label for="email">Email</label>
                                 <input id="email" type="email"
                                     class="form-control @error('email') is-invalid @enderror" name="email"
                                     value="{{ old('email', auth()->user()->email) }}" required>
                                 @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="marital_status">Jenis Kelamin</label>
+                                <select id="marital_status" name="marital_status"
+                                    class="form-control @error('marital_status') is-invalid @enderror">
+                                    <option value="">Pilih Perkawinan</option>
+                                    <option value="Belum Kawin"
+                                        {{ old('marital_status', auth()->user()->marital_status) == 'Belum Kawin' ? 'selected' : '' }}>
+                                        Belum Kawin</option>
+                                    <option value="Kawin"
+                                        {{ old('marital_status', auth()->user()->marital_status) == 'Kawin' ? 'selected' : '' }}>
+                                        Kawin</option>
+                                </select>
+                                @error('marital_status')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="birth_date">Tanggal Lahir</label>
+                                <input id="birth_date" type="date"
+                                    class="form-control @error('birth_date') is-invalid @enderror" name="birth_date"
+                                    value="{{ old('birth_date', auth()->user()->birth_date ? auth()->user()->birth_date->format('Y-m-d') : '') }}">
+                                @error('birth_date')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="address">Alamat</label>
+                                <textarea id="address" name="address" class="form-control @error('address') is-invalid @enderror" rows="3">{{ old('address', auth()->user()->address) }}</textarea>
+                                @error('address')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

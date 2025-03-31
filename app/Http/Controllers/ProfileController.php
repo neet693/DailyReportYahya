@@ -20,7 +20,11 @@ class ProfileController extends Controller
         $request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
-            'profile_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'profile_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'address' => 'nullable|string|max:500',
+            'gender' => 'nullable|in:Laki-laki,Perempuan',
+            'marital_status' => 'nullable',
+            'birth_date' => 'nullable|date'
         ]);
 
         if ($request->filled('password')) {
@@ -37,13 +41,13 @@ class ProfileController extends Controller
             $user->profile_image = $imageName;
         }
 
-        if ($request->filled('name')) {
-            $user->name = $request->input('name');
-        }
-
-        if ($request->filled('email')) {
-            $user->email = $request->input('email');
-        }
+        // Simpan data yang baru diinput
+        $user->name = $request->input('name', $user->name);
+        $user->email = $request->input('email', $user->email);
+        $user->address = $request->input('address', $user->address);
+        $user->gender = $request->input('gender', $user->gender);
+        $user->birth_date = $request->input('birth_date', $user->birth_date);
+        $user->marital_status = $request->input('marital_status', $user->marital_status);
 
         $user->save();
 
