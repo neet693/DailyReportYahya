@@ -1,52 +1,52 @@
-{{-- resources/views/agendas/index.blade.php --}}
-
 @extends('layouts.app')
 
 @section('content')
     <div class="container">
-        <h2>Agenda List</h2>
-        <a href="{{ route('agendas.create') }}" class="btn btn-primary">Buat Agenda</a>
-        <div class="row">
+        <!-- Header dengan ikon dan tombol -->
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="d-flex align-items-center">
+                <i class="bi bi-calendar2-check text-primary me-2"></i> Agenda List
+            </h2>
+            <a href="{{ route('agendas.create') }}" class="btn btn-primary">+ Buat Agenda</a>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 g-4">
             @foreach ($agendas as $agenda)
-                <div class="col-md-6 mt-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title">{{ $agenda->title }}</h5>
-                            <span>
-                                Periode: {{ $agenda->period }}
-                            </span>
-                            <br>
-                            <span>
-                                Dari: {{ $agenda->start_date->format('d F Y') }} sampai
-                                {{ $agenda->end_date->format('d F Y') }}
-                            </span>
+                <div class="col">
+                    <div class="card shadow-lg border-0 rounded-3 h-100">
+                        <div class="card-header bg-light position-relative">
+                            <h5 class="card-title mb-0">{{ $agenda->title }}</h5>
                             <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill
-                            {{ $agenda->status === 'on progress' ? 'bg-warning' : ($agenda->status === 'selesai' ? 'bg-success' : 'bg-danger') }}">
-                                {{ $agenda->status }}
-                                <span class="visually-hidden">Status Agenda</span>
+                                class="position-absolute top-0 end-0 m-2 badge rounded-pill
+                                {{ $agenda->status === 'on progress' ? 'bg-warning text-dark' : ($agenda->status === 'selesai' ? 'bg-success' : 'bg-danger') }}">
+                                {{ ucfirst($agenda->status) }}
                             </span>
                         </div>
-                        <div class="card-body">
-                            <p class="card-text">{!! $agenda->description !!}</p>
+
+                        <div class="card-body d-flex flex-column">
+                            <p class="mb-1"><strong>Periode:</strong> {{ $agenda->period }}</p>
+                            <p class="mb-1">
+                                <strong>Dari:</strong> {{ $agenda->start_date->format('d M Y') }}
+                                <strong>sampai</strong> {{ $agenda->end_date->format('d M Y') }}
+                            </p>
+                            <p class="flex-grow-1">{!! $agenda->description !!}</p> <!-- Deskripsi tetap ada -->
                         </div>
+
                         <div class="card-footer d-flex justify-content-between">
-                            <div>
-                                <div class="d-flex">
-                                    @foreach ($agenda->executors as $executor)
-                                        @if ($executor->profile_image)
-                                            <img src="{{ asset('profile_images/' . $executor->profile_image) }}"
-                                                class="card-img-top rounded-circle" style="width: 30px; height: 30px;"
-                                                title="{{ $executor->name }}" alt="Foto Profil">
-                                        @else
-                                            <img src="{{ asset('asset/logo-itdept.png') }}"
-                                                class="card-img-top rounded-circle" style="width: 30px; height: 30px;"
-                                                alt="Foto Profil" title="{{ $executor->name }}">
-                                        @endif
-                                    @endforeach
-                                </div>
+                            <div class="d-flex">
+                                @foreach ($agenda->executors as $executor)
+                                    @if ($executor->profile_image)
+                                        <img src="{{ asset('profile_images/' . $executor->profile_image) }}"
+                                            class="card-img-top rounded-circle" style="width: 30px; height: 30px;"
+                                            title="{{ $executor->name }}" alt="Foto Profil">
+                                    @else
+                                        <img src="{{ asset('asset/logo-itdept.png') }}" class="card-img-top rounded-circle"
+                                            style="width: 30px; height: 30px;" alt="Foto Profil"
+                                            title="{{ $executor->name }}">
+                                    @endif
+                                @endforeach
                             </div>
-                            <div class="">
+                            <div>
                                 <a href="{{ route('agendas.show', $agenda->id) }}" class="btn btn-info btn-sm me-2"><i
                                         class="bi bi-eye"></i></a>
                                 @can('edit', $agenda)
@@ -64,20 +64,9 @@
                                             onclick="return confirm('Are you sure?')"><i class="bi bi-trash"></i></button>
                                     </form>
                                 @endcan
-                                @can('updateStatus', $agenda)
-                                    <form action="{{ route('agendas.updateStatus', $agenda->id) }}" method="post">
-                                        @csrf
-                                        @method('patch')
-
-                                        <button type="submit" name="status" value="on progress" class="btn btn-info">On
-                                            Progress</button>
-                                        <button type="submit" name="status" value="finish"
-                                            class="btn btn-success">Selesai</button>
-                                    </form>
-                                @endcan
-
                             </div>
                         </div>
+
                     </div>
                 </div>
             @endforeach

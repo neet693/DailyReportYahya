@@ -1,46 +1,43 @@
-<!-- resources/views/agendas/show.blade.php -->
-
 @extends('layouts.app')
 
 @section('content')
     <div class="container">
-        <h2>Detail Agenda</h2>
+        <h2 class="mb-3">Detail Agenda</h2>
 
-        <div class="card mb-3">
-            <div class="card-header">
-                <h4 class="card-title">{{ $agenda->title }}</h4>
-                <span>Periode: {{ $agenda->period }}</span>
-            </div>
+        <div class="card shadow-lg border rounded-3 p-4 mb-4">
             <div class="card-body">
-                {!! $agenda->description !!}
-                <p class="card-text">Status: {{ $agenda->status }}</p>
-            </div>
-            <div class="card-footer">
-                @foreach ($agenda->executors as $executor)
-                    @if ($executor->profile_image)
-                        <img src="{{ asset('profile_images/' . $executor->profile_image) }}"
-                            class="card-img-top rounded-circle" style="height:50px; width: 50px;"
+                <h4 class="fw-bold">{{ $agenda->title }}</h4>
+                <span class="badge bg-{{ $agenda->status == 'planned' ? 'danger' : 'success' }}">
+                    {{ ucfirst($agenda->status) }}
+                </span>
+                <hr>
+                <p><strong>Periode:</strong> {{ $agenda->period }}</p>
+                <p class="mb-3">{!! $agenda->description !!}</p>
+
+                <div class="d-flex align-items-center">
+                    <strong class="me-2">Eksekutor:</strong>
+                    @foreach ($agenda->executors as $executor)
+                        <img src="{{ $executor->profile_image ? asset('profile_images/' . $executor->profile_image) : asset('asset/logo-itdept.png') }}"
+                            class="rounded-circle border border-2 me-2" width="45" height="45"
                             title="{{ $executor->name }}" alt="Foto Profil">
-                    @else
-                        <img src="{{ asset('asset/logo-itdept.png') }}" class="card-img-top rounded-circle"
-                            style="height:50px; width: 50px;" alt="Foto Profil" title="{{ $executor->name }}">
-                    @endif
-                @endforeach
+                    @endforeach
+                </div>
             </div>
         </div>
 
+        <!-- Log Agenda -->
         <h3>Log Agenda</h3>
-        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addLogModal">
-            Tambah Log Agenda
+        <button type="button" class="btn btn-primary btn-sm mb-3" data-bs-toggle="modal" data-bs-target="#addLogModal">
+            <i class="bi bi-plus"></i> Tambah Log Agenda
         </button>
         @include('components.modal_add_log_agenda', ['agendaId' => $agenda->id])
-        <!-- Tampilkan log-log agenda -->
+
         @foreach ($agenda->logs as $log)
-            <div class="card mb-3">
+            <div class="card shadow-lg border rounded-3 p-3 mb-3">
                 <div class="card-body">
-                    <p class="card-text">Oleh: {{ $log->executor->name }}</p>
-                    <p class="card-text">Detail: {!! $log->log_detail !!}</p>
-                    <p class="card-text">Dibuat pada: {{ $log->created_at->format('d M Y H:i:s') }}</p>
+                    <p class="fw-bold">Oleh: {{ $log->executor->name }}</p>
+                    <p>Detail: {!! $log->log_detail !!}</p>
+                    <p class="text-muted small">Dibuat pada: {{ $log->created_at->format('d M Y H:i:s') }}</p>
                 </div>
             </div>
         @endforeach

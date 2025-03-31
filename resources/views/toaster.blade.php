@@ -30,16 +30,16 @@
         @endif
     @endauth
 </div>
-
-
-
-
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const agendaExecutorAnnouncement = document.getElementById('agenda_executor_announcement');
         if (agendaExecutorAnnouncement) {
             agendaExecutorAnnouncement.style.display = 'block';
+
+            // Sembunyikan setelah 10 detik
+            setTimeout(function() {
+                agendaExecutorAnnouncement.style.display = 'none';
+            }, 10000);
 
             agendaExecutorAnnouncement.querySelector('.btn-close').addEventListener('click', function() {
                 agendaExecutorAnnouncement.style.display = 'none';
@@ -48,12 +48,16 @@
     });
 </script>
 
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const announcements = document.querySelectorAll('.announcement');
 
         announcements.forEach(function(announcement) {
+            // Sembunyikan setelah 10 detik
+            setTimeout(function() {
+                announcement.style.display = 'none';
+            }, 10000);
+
             announcement.querySelector('.btn-close').addEventListener('click', function() {
                 announcement.style.display = 'none';
             });
