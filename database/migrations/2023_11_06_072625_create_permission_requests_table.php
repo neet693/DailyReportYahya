@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nama');
             $table->string('jabatan');
             $table->enum('jenis_pegawai', ['Pegawai Tetap', 'Pegawai Tidak Tetap']);
+            $table->foreignId('unit_kerja_id')->nullable()->constrained('unit_kerjas')->onDelete('set null');
             $table->date('start_date');
             $table->date('end_date');
             $table->text('description');

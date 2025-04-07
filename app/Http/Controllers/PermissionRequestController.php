@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\PermissionRequest;
+use App\Models\UnitKerja;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,54 +13,58 @@ class PermissionRequestController extends Controller
 {
     public function index()
     {
-        $permissionRequests = PermissionRequest::all();
+        $user = Auth::user();
+
+        $permissionRequests = PermissionRequest::with(['unitKerja', 'approver'])
+            ->when(
+                $user->role !== 'admin' && optional($user->employmentDetail)->unit_kerja_id,
+                function ($query) use ($user) {
+                    $query->where('unit_kerja_id', $user->employmentDetail->unit_kerja_id);
+                }
+            )
+            ->get()
+            ->groupBy(function ($item) {
+                return optional($item->unitKerja)->name ?? 'Uncategorized Unit';
+            });
+
         $durations = [];
 
-        foreach ($permissionRequests as $request) {
-            $startDate = Carbon::parse($request->start_date);
-            $endDate = Carbon::parse($request->end_date);
-
-            // Hitung selisih waktu dalam menit
-            $durationInMinutes = $startDate->diffInMinutes($endDate);
-
-            // Hitung jumlah hari
-            $days = $startDate->diffInDays($endDate);
-
-            // Hitung selisih waktu dalam jam dan menit
-            $hours = floor($durationInMinutes / 60);
-            $minutes = $durationInMinutes % 60;
-
-            // Tampilkan 23 jam 59 menit jika start_date dan end_date sama
-            if ($startDate->eq($endDate)) {
-                $displayDays = 0;
-                $hours = 23;
-                $minutes = 59;
-            } else {
-                $displayDays = $days . " hari ";
-                $hours = 23;
-                $minutes = 59;
-            }
-
-            // Tambahkan hasil perhitungan ke array
-            $durations[$request->id] = [
-                'days' => $displayDays,
-                'hours' => $hours,
-                'minutes' => $minutes,
-            ];
+        foreach ($permissionRequests->flatten() as $request) {
+            $durations[$request->id] = $this->calculateDuration($request->start_date, $request->end_date);
         }
 
-
         return view('permission-requests.index', compact('permissionRequests', 'durations'));
+    }
+    /**
+     * Hitung durasi perizinan antara dua tanggal.
+     */
+    private function calculateDuration($startDate, $endDate)
+    {
+        $start = Carbon::parse($startDate);
+        $end = Carbon::parse($endDate);
+
+        if ($start->eq($end)) {
+            return ['days' => 0, 'hours' => 23, 'minutes' => 59];
+        }
+
+        return [
+            'days' => $start->diffInDays($end) . ' hari',
+            'hours' => 23,
+            'minutes' => 59
+        ];
     }
 
 
     public function create()
     {
-        return view('permission-requests.create');
+        $units = UnitKerja::all(); // Ambil semua unit
+        return view('permission-requests.create', compact('units'));
     }
 
     public function store(Request $request)
     {
+        $user = Auth::user();
+
         $validatedData = $request->validate([
             'nama' => 'required',
             'jabatan' => 'required',
@@ -66,13 +72,24 @@ class PermissionRequestController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'description' => 'required',
+            'unit_kerja_id' => 'required|exists:unit_kerjas,id',
         ]);
 
-        // Simpan permohonan ke dalam database
+        // Ambil unit_id dari employmentDetail user
+        $unitId = $request->unit_kerja_id;
+
+        $approver = User::whereHas('employmentDetail', function ($query) use ($unitId) {
+            $query->where('unit_kerja_id', $unitId);
+        })->where('role', 'kepala')->first();
+
+        $validatedData['approver_id'] = $approver?->id ?? null;
+
+        // Simpan ke database
         PermissionRequest::create($validatedData);
 
         return redirect('/permissionrequest')->with('success', 'Permohonan berhasil dibuat.');
     }
+
 
     public function show(PermissionRequest $permissionRequest)
     {

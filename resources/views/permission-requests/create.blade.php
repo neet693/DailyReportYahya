@@ -26,6 +26,17 @@
             </div>
 
             <div class="form-group">
+                <label for="unit_kerja_id">Unit:</label>
+                <select name="unit_kerja_id" id="unit_kerja_id" class="form-control" required>
+                    <option value="">-- Pilih Unit --</option>
+                    @foreach ($units as $unit)
+                        <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+
+            <div class="form-group">
                 <label for="start_date">Tanggal Mulai:</label>
                 <input type="date" name="start_date" id="start_date" class="form-control" required>
             </div>

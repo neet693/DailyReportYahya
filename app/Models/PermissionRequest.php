@@ -19,4 +19,9 @@ class PermissionRequest extends Model
     {
         return $this->belongsTo(User::class, 'approver_id');
     }
+
+    public function unitKerja()
+    {
+        return $this->belongsTo(UnitKerja::class, 'unit_kerja_id');
+    }
 }

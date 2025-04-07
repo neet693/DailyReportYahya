@@ -19,8 +19,8 @@ class HomeController extends Controller
         $user = Auth::user();
 
         // Jika user tidak memiliki employmentDetail, arahkan ke halaman profil
-        if (!$user->employmentDetail) {
-            return redirect()->route('profile')->with('error', 'Lengkapi data unit kerja terlebih dahulu.');
+        if ($user->role !== 'admin' && !$user->employmentDetail) {
+            return redirect()->route('profile.index')->with('error', 'Lengkapi data unit kerja terlebih dahulu.');
         }
 
         // Query untuk menampilkan user dengan tugasnya
