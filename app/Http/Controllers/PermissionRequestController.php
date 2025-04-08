@@ -15,26 +15,31 @@ class PermissionRequestController extends Controller
     {
         $user = Auth::user();
 
-        $permissionRequests = PermissionRequest::with(['unitKerja', 'approver'])
-            ->when(
-                $user->role !== 'admin' && optional($user->employmentDetail)->unit_kerja_id,
-                function ($query) use ($user) {
-                    $query->where('unit_kerja_id', $user->employmentDetail->unit_kerja_id);
-                }
-            )
-            ->get()
-            ->groupBy(function ($item) {
-                return optional($item->unitKerja)->name ?? 'Uncategorized Unit';
-            });
+        // Ambil semua izin, dengan relasi: user, unit kerja saat input izin, dan yang menyetujui
+        $permissionRequestsQuery = PermissionRequest::with([
+            'approver',
+            'user',
+            'unitKerja',
+        ]);
 
+        // Filter jika bukan admin
+        if ($user->role !== 'admin' && optional($user->employmentDetail)->unit_kerja_id) {
+            $permissionRequestsQuery->where('unit_kerja_id', $user->employmentDetail->unit_kerja_id);
+        }
+
+        // Eksekusi query
+        $permissionRequests = $permissionRequestsQuery->get();
+
+        // Hitung durasi per izin
         $durations = [];
-
-        foreach ($permissionRequests->flatten() as $request) {
+        foreach ($permissionRequests as $request) {
             $durations[$request->id] = $this->calculateDuration($request->start_date, $request->end_date);
         }
 
         return view('permission-requests.index', compact('permissionRequests', 'durations'));
     }
+
+
     /**
      * Hitung durasi perizinan antara dua tanggal.
      */

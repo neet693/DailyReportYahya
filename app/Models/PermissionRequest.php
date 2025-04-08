@@ -15,6 +15,12 @@ class PermissionRequest extends Model
         'start_date' => 'date',
         'end_date' => 'date',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function approver()
     {
         return $this->belongsTo(User::class, 'approver_id');

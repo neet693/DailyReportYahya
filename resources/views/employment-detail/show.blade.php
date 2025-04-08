@@ -13,7 +13,7 @@
                     <div class="col-md-6">
                         <p><strong>Employee Number:</strong>{{ $user->employmentDetail->employee_number ?? 'N/A' }}</p>
                         <p><strong>Tanggal Lahir:</strong> <span
-                                class="fw-bold">{{ $user->birth_date->format('d F Y') }}</span></p>
+                                class="fw-bold">{{ $user->birth_date->format('d F Y') ?? 'Belum Diisi' }}</span></p>
                         <p><strong>Alamat:</strong> {{ $user->address }}</p>
                     </div>
                     <div class="col-md-6">
