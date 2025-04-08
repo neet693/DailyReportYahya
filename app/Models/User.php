@@ -12,11 +12,27 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+
+    //Constant Helper
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_KEPALA_UNIT = 'kepala';
+    public const ROLE_PEGAWAI = 'pegawai';
+
+    public function isAdmin()
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isKepalaUnit()
+    {
+        return $this->role === self::ROLE_KEPALA_UNIT;
+    }
+
+    public function isPegawai()
+    {
+        return $this->role === self::ROLE_PEGAWAI;
+    }
+
     protected $fillable = [
         'name',
         'email',

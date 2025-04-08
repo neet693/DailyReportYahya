@@ -18,34 +18,57 @@ class HomeController extends Controller
         $month = now()->month;
         $user = Auth::user();
 
-        // Jika user tidak memiliki employmentDetail, arahkan ke halaman profil
-        if ($user->role !== 'admin' && !$user->employmentDetail) {
+        // Jika bukan admin dan belum isi unit kerja
+        if (!$user->isAdmin() && !$user->employmentDetail) {
             return redirect()->route('profile.index')->with('error', 'Lengkapi data unit kerja terlebih dahulu.');
         }
 
-        // Query untuk menampilkan user dengan tugasnya
-        $usersWithTasks = User::with([
-            'jobdesk',
-            'tasks' => function ($query) use ($today) {
-                $query->todayOrPending($today);
-            },
-            'agendas',
-            'employmentDetail.unit'
-        ])->whereHas('employmentDetail', function ($query) {
-            $query->whereNotNull('unit_kerja_id');
-        })->where('role', '!=', 'admin')->get();
+        // Ambil users sesuai role dan unit
+        $usersWithTasks = collect(); // default kosong
 
-        // Ambil assignments sesuai bulan ini
+        if ($user->isAdmin()) {
+            // Admin lihat semua user yang punya unit
+            $usersWithTasks = User::with([
+                'jobdesk',
+                'tasks' => fn($query) => $query->todayOrPending($today),
+                'agendas',
+                'employmentDetail.unit'
+            ])->whereHas('employmentDetail', fn($query) => $query->whereNotNull('unit_kerja_id'))
+                ->where('role', '!=', User::ROLE_ADMIN)
+                ->get();
+        } elseif ($user->employmentDetail?->unit_kerja_id) {
+            // Selain admin, lihat hanya rekan satu unit
+            $usersWithTasks = User::with([
+                'jobdesk',
+                'tasks' => fn($query) => $query->todayOrPending($today),
+                'agendas',
+                'employmentDetail.unit'
+            ])->whereHas(
+                'employmentDetail',
+                fn($query) =>
+                $query->where('unit_kerja_id', $user->employmentDetail->unit_kerja_id)
+            )->where('role', '!=', User::ROLE_ADMIN)
+                ->get();
+        } else {
+            // Tidak punya unit: tampilkan hanya dirinya
+            $usersWithTasks = collect([$user->load(['jobdesk', 'tasks', 'agendas', 'employmentDetail.unit'])]);
+        }
+
+        // Assignment sesuai bulan ini, filter berdasarkan unit
         $assignments = Assignment::whereMonth('assignment_date', $month)
             ->orderBy('assignment_date', 'asc')
-            ->when($user->role !== 'admin', function ($query) use ($user) {
-                return $query->whereHas('user.employmentDetail', function ($q) use ($user) {
-                    $q->where('unit_kerja_id', $user->employmentDetail?->unit_kerja_id);
-                });
-            })
+            ->when(
+                !$user->isAdmin(),
+                fn($query) =>
+                $query->whereHas(
+                    'user.employmentDetail',
+                    fn($q) =>
+                    $q->where('unit_kerja_id', $user->employmentDetail?->unit_kerja_id)
+                )
+            )
             ->get();
 
-        // Ambil pengumuman (general & personal)
+        // Ambil pengumuman
         $generalAnnouncements = Announcement::general()->get();
         $personalAnnouncements = Announcement::personal()->where('recipient_id', $user->id)->get();
         $announcements = $generalAnnouncements->merge($personalAnnouncements);

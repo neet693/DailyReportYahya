@@ -12,14 +12,21 @@
 
                             <div class="form-group">
                                 <label for="user_id">Pengguna yang Ditugaskan:</label>
-                                <select name="user_id" class="form-control">
+                                <select name="user_id" class="form-control" required>
+                                    <option value="">-- Pilih Pegawai --</option>
                                     @foreach ($users as $user)
-                                        @if ($user->id != auth()->user()->id)
-                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        @if ($user->id != auth()->id())
+                                            <option value="{{ $user->id }}">
+                                                {{ $user->name }}
+                                                @if ($user->employmentDetail && $user->employmentDetail->unit)
+                                                    - {{ $user->employmentDetail->unit->name }}
+                                                @endif
+                                            </option>
                                         @endif
                                     @endforeach
                                 </select>
                             </div>
+
 
                             <div class="form-group">
                                 <label for="title">Judul Penugasan:</label>

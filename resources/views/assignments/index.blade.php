@@ -3,18 +3,22 @@
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
+
+            {{-- Tombol Buat Penugasan --}}
             <div class="col-md-8 mb-3">
-                @if (auth()->user()->role === 'admin' || auth()->user()->role === 'kepala')
+                @if ($currentUser->isAdmin() || $currentUser->isKepalaUnit())
                     <a href="{{ route('assignments.create') }}" class="btn btn-primary">Buat Penugasan</a>
                 @endif
             </div>
+
+            {{-- Tabel Penugasan --}}
             <div class="col-md-8">
-                <table id="myTable" class="display">
+                <table id="myTable" class="display table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>Yang bertugas</th>
-                            <th>Tugas</th>
-                            <th>Tanggal Tugas</th>
+                            <th>Yang Bertugas</th>
+                            <th>Judul Tugas</th>
+                            <th>Tanggal</th>
                             <th>Jam Tugas</th>
                             <th>Ditugaskan Oleh</th>
                             <th>Progres</th>
@@ -25,62 +29,70 @@
                     <tbody>
                         @foreach ($assignments as $assignment)
                             <tr>
-                                <td>{{ $assignment->user->name }}</td>
+                                <td>{{ $assignment->user->name ?? '-' }}</td>
                                 <td>{{ $assignment->title }}</td>
                                 <td>{{ $assignment->assignment_date->format('d M Y') }}</td>
                                 <td>{{ $assignment->start_assignment_time->format('H:i A') }} s/d
                                     {{ $assignment->end_assignment_time->format('H:i A') }}
                                 </td>
-                                <td>{{ $assignment->assigner->name }}</td>
+                                <td>{{ $assignment->assigner->name ?? '-' }}</td>
+
+                                {{-- Badge Progres --}}
                                 <td>
-                                    @if ($assignment->progres === 'Selesai')
-                                        <span class="badge bg-success">{{ $assignment->progres }}</span>
-                                    @elseif ($assignment->progres === 'Pending')
-                                        <span class="badge bg-warning">{{ $assignment->progres }}</span>
-                                    @else
-                                        <span class="badge bg-danger">{{ $assignment->progres }}</span>
-                                    @endif
+                                    @php
+                                        $status = $assignment->progres;
+                                        $badgeClass = match ($status) {
+                                            'Selesai' => 'success',
+                                            'Pending' => 'warning',
+                                            default => 'danger',
+                                        };
+                                    @endphp
+                                    <span class="badge bg-{{ $badgeClass }}"
+                                        title="{{ $status }}">{{ $status }}</span>
                                 </td>
+
+                                {{-- Kendala --}}
                                 <td>
                                     <span class="{{ $assignment->kendala ? 'text-danger' : '' }}">
-                                        {{ $assignment->kendala ? $assignment->kendala : 'Tidak ada kendala' }}
+                                        {{ $assignment->kendala ?? 'Tidak ada kendala' }}
                                     </span>
                                 </td>
+
+                                {{-- Action --}}
                                 <td>
                                     @if (auth()->user()->role === 'admin' || auth()->user()->role === 'kepala')
                                         <div class="dropdown">
-                                            <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
+                                            <button class="btn btn-secondary dropdown-toggle" type="button"
                                                 data-bs-toggle="dropdown" aria-expanded="false">
                                                 <i class="bi bi-gear"></i>
-                                            </a>
+                                            </button>
                                             <ul class="dropdown-menu">
-                                                <li> <!-- Tombol Edit -->
+                                                <li>
                                                     <a href="{{ route('assignments.edit', $assignment->id) }}"
-                                                        class="btn btn-warning text-white mb-2"><i
-                                                            class="bi bi-pencil-square"></i>
-                                                        Edit
+                                                        class="dropdown-item">
+                                                        <i class="bi bi-pencil-square"></i> Edit
                                                     </a>
                                                 </li>
-                                                <li> <!-- Tombol Show -->
+                                                <li>
                                                     <a href="{{ route('assignments.show', $assignment->id) }}"
-                                                        class="btn btn-info text-white mb-2"><i class="bi bi-eye"></i>
-                                                        Show
+                                                        class="dropdown-item">
+                                                        <i class="bi bi-eye"></i> Show
                                                     </a>
                                                 </li>
-                                                <li> <!-- Tombol Hapus -->
+                                                <li>
                                                     <form action="{{ route('assignments.destroy', $assignment->id) }}"
                                                         method="POST">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger"><i
-                                                                class="bi bi-trash"></i> Hapus</button>
+                                                        <button type="submit" class="dropdown-item text-danger">
+                                                            <i class="bi bi-trash"></i> Hapus
+                                                        </button>
                                                     </form>
                                                 </li>
                                             </ul>
                                         </div>
                                     @endif
                                 </td>
-                                {{-- <td>{{ $task->description }}</td> --}}
                             </tr>
                         @endforeach
                     </tbody>
