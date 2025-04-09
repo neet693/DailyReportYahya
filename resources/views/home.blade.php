@@ -106,7 +106,7 @@
                                     <tr>
                                         <td>
                                             <img src="{{ asset($assignment->user->profile_image ? 'profile_images/' . $assignment->user->profile_image : 'asset/logo-itdept.png') }}"
-                                                class="rounded-circle border border-2" width="40" height="40">
+                                                class="rounded-circle  border-2" width="40" height="40">
                                             {{ $assignment->user->name }}
                                         </td>
                                         <td><strong>{{ $assignment->title }}</strong></td>

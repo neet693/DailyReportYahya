@@ -22,7 +22,7 @@
                     <strong class="me-2">Eksekutor:</strong>
                     @foreach ($agenda->executors as $executor)
                         <img src="{{ $executor->profile_image ? asset('profile_images/' . $executor->profile_image) : asset('asset/logo-itdept.png') }}"
-                            class="rounded-circle border border-2 me-2" width="45" height="45"
+                            class="rounded-circle  border-2 me-2" width="45" height="45"
                             title="{{ $executor->name }}" alt="Foto Profil">
                     @endforeach
                 </div>
