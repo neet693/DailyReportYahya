@@ -5,32 +5,48 @@ namespace App\Http\Controllers;
 use App\Models\Meeting;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MeetingController extends Controller
 {
-    // Menampilkan daftar semua rapat
     public function index()
     {
-        $meetings = Meeting::all();
+        $user = auth()->user();
+
+        // Ambil rapat sesuai role user
+        $meetings = Meeting::with('participants.employmentDetail.unit') // eager load untuk efisiensi
+            ->when(!$user->isAdmin(), function ($query) use ($user) {
+                $query->whereHas('participants.employmentDetail', function ($q) use ($user) {
+                    $q->where('unit_kerja_id', $user->employmentDetail->unit_kerja_id);
+                });
+            })
+            ->orderByDesc('meeting_date') // urutan terbaru duluan (opsional)
+            ->get();
+
+        // Ambil peserta untuk tiap meeting
         $participants = [];
+        foreach ($meetings as $meeting) {
+            $participants[$meeting->id] = $meeting->participants;
+        }
 
-    foreach ($meetings as $meeting) {
-        $participants[$meeting->id] = $meeting->participants;
-    }
-        return view('meetings.index', compact('meetings','participants'));
+        return view('meetings.index', compact('meetings', 'participants'));
     }
 
-    // Menampilkan formulir untuk membuat rapat baru
     public function create()
     {
-        $users = User::all();
+        $currentUser = Auth::user();
+        $unitId = $currentUser->employmentDetail->unit_kerja_id;
+
+        // Hanya ambil user dari unit yang sama
+        $users = User::whereHas('employmentDetail', function ($query) use ($unitId) {
+            $query->where('unit_kerja_id', $unitId);
+        })->get();
+
         return view('meetings.create', compact('users'));
     }
 
-    // Menyimpan rapat baru ke dalam database
     public function store(Request $request)
     {
-        // Validasi data rapat
         $request->validate([
             'title' => 'required',
             'meeting_date' => 'required|date',
@@ -38,39 +54,43 @@ class MeetingController extends Controller
             'meeting_end_time' => 'required',
             'meeting_location' => 'required',
             'meeting_result' => 'required',
-            'participant_id' => 'required|array', // Pastikan 'users' adalah array
+            'participant_id' => 'required|array',
         ]);
 
-        // Simpan data rapat
         $meeting = Meeting::create($request->all());
-
-        // Simpan peserta rapat
         $meeting->participants()->attach($request->input('participant_id'));
 
         return redirect()->route('meetings.index')->with('success', 'Rapat berhasil ditambahkan.');
     }
 
-    // Menampilkan detail rapat
     public function show($id)
     {
-        $meeting = Meeting::findOrFail($id);
-        $peserta = $meeting->participants;
-        return view('meetings.show', compact('meeting','peserta'));
+        $meeting = Meeting::with('participants')->findOrFail($id);
+        return view('meetings.show', compact('meeting'));
     }
 
-    // Menampilkan formulir untuk mengedit rapat
     public function edit($id)
     {
-        $meeting = Meeting::findOrFail($id);
-        $users = User::all();
+        $currentUser = Auth::user();
+        $unitId = $currentUser->employmentDetail->unit_kerja_id;
+
+        // Eager load semua yang mungkin digunakan
+        $meeting = Meeting::with([
+            'participants.employmentDetail.unit'
+        ])->findOrFail($id);
+        $users = User::with('employmentDetail.unit') // <- tambahkan eager loading di sini!
+            ->whereHas('employmentDetail', function ($query) use ($unitId) {
+                $query->where('unit_kerja_id', $unitId);
+            })->get();
+
+        // Ini sebenarnya tidak butuh query tambahan karena sudah eager load
         $selectedUsers = $meeting->participants->pluck('id')->toArray();
+
         return view('meetings.edit', compact('meeting', 'users', 'selectedUsers'));
     }
 
-    // Menyimpan perubahan data rapat ke dalam database
     public function update(Request $request, $id)
     {
-        // Validasi data yang diterima dari formulir
         $request->validate([
             'title' => 'required',
             'meeting_date' => 'required|date',
@@ -78,32 +98,21 @@ class MeetingController extends Controller
             'meeting_end_time' => 'required',
             'meeting_location' => 'required',
             'meeting_result' => 'required',
-            'participant_id' => 'required|array', // Pastikan 'users' adalah array
+            'participant_id' => 'required|array',
         ]);
 
-        // Temukan rapat yang akan diperbarui berdasarkan ID
         $meeting = Meeting::findOrFail($id);
-
-        // Update data rapat dengan data yang diterima
         $meeting->update($request->all());
-
-        // Sinkronkan peserta rapat
         $meeting->participants()->sync($request->input('participant_id'));
 
-        // Redirect ke halaman daftar rapat dengan pesan sukses
         return redirect()->route('meetings.index')->with('success', 'Rapat berhasil diperbarui.');
     }
 
-    // Menghapus rapat dari database
     public function destroy($id)
     {
-        // Temukan rapat yang akan dihapus berdasarkan ID
         $meeting = Meeting::findOrFail($id);
-
-        // Hapus rapat dari database
         $meeting->delete();
 
-        // Redirect ke halaman daftar rapat dengan pesan sukses
         return redirect()->route('meetings.index')->with('success', 'Rapat berhasil dihapus.');
     }
 }

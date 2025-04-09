@@ -82,3 +82,22 @@ body {
     font-size: 28px;
     color: var(--yellow) !important;
 }
+
+/* Select2 Multiple Tag Style */
+.select2-container--bootstrap-5 .select2-selection--multiple {
+    border: 1px solid #ced4da;
+    min-height: 38px;
+    border-radius: 6px;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+}
+
+.select2-container--bootstrap-5 .select2-selection__choice {
+    background-color: var(--basecolor);
+    color: white;
+    border: none;
+    margin-top: 0.25rem;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-weight: var(--fwsemibold);
+}

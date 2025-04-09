@@ -1,79 +1,86 @@
-{{-- resources/views/meetings/index.blade.php --}}
-
 @extends('layouts.app')
 
 @section('content')
     <div class="container">
-        <h1>Daftar Rapat</h1>
-        <a href="{{ route('meetings.create') }}" class="btn btn-success">Tambah Rapat Baru</a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Daftar Rapat</h1>
+            <a href="{{ route('meetings.create') }}" class="btn btn-success">Tambah Rapat Baru</a>
+        </div>
 
         @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
+            <div class="alert alert-success">{{ session('success') }}</div>
         @endif
-        <table id="myTable" class="display">
-            <thead>
-                <tr>
-                    <th>Rapat</th>
-                    <th>Peserta Rapat</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($meetings as $meeting)
-                    <tr>
-                        <td>{{ $meeting->title }} <br>
-                            {{ $meeting->meeting_date->format('l, d F Y') }} <br>
-                            {{ $meeting->meeting_start_time->format('H:i') }} s/d
-                            {{ $meeting->meeting_end_time->format('H:i') }} <br>
-                            {{ $meeting->meeting_location }}
-                        </td>
-                        <td>
-                            @foreach ($participants[$meeting->id] as $participant)
-                                <li hidden>{{ $participant->name }}</li>
-                                @if ($participant->profile_image)
-                                    <img src="{{ asset('profile_images/' . $participant->profile_image) }}"
-                                        class="card-img-top rounded-circle" style="width: 50px; height: 50px;S"
-                                        title="{{ $participant->name }}" alt="Foto Profil">
-                                @else
-                                    <img src="{{ asset('asset/logo-itdept.png') }}" class="card-img-top rounded-circle"
-                                        style="width: 50px; height: 50px;" alt="Foto Profil" TITLE>
-                                @endif
-                            @endforeach
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-gear"></i>
-                                </a>
 
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <form action="{{ route('meetings.destroy', $meeting->id) }}" method="POST"
-                                            style="display: inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"
-                                                onclick="return confirm('Apakah Anda yakin ingin menghapus rapat ini?')"><i
-                                                    class="bi bi-trash"></i></button>
-                                        </form>
-                                    </li>
-                                    <li> <!-- Tombol Edit -->
-                                        <a href="{{ route('meetings.edit', $meeting->id) }}" title="Edit"
-                                            class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
-                                    </li>
-                                    <li> <!-- Tombol Show -->
-                                        <a href="{{ route('meetings.show', $meeting->id) }}" title="Lihat"
-                                            class="btn btn-info"><i class="bi bi-eye"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle text-center" id="myTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width: 30%">Rapat</th>
+                        <th>Peserta</th>
+                        <th style="width: 10%">Aksi</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @forelse ($meetings as $meeting)
+                        <tr>
+                            <td class="text-start">
+                                <strong>{{ $meeting->title }}</strong><br>
+                                <small>{{ $meeting->meeting_date->format('l, d F Y') }}</small><br>
+                                <small>{{ $meeting->meeting_start_time->format('H:i') }} -
+                                    {{ $meeting->meeting_end_time->format('H:i') }}</small><br>
+                                <small><i class="bi bi-geo-alt-fill"></i> {{ $meeting->meeting_location }}</small>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center flex-wrap gap-2">
+                                    @foreach ($participants[$meeting->id] as $participant)
+                                        <div class="text-center" title="{{ $participant->name }}">
+                                            <img src="{{ $participant->profile_image
+                                                ? asset('profile_images/' . $participant->profile_image)
+                                                : asset('asset/logo-itdept.png') }}"
+                                                alt="Foto Profil" class="rounded-circle"
+                                                style="width: 40px; height: 40px; object-fit: cover;">
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown">
+                                        <i class="bi bi-gear-fill"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a href="{{ route('meetings.show', $meeting->id) }}" class="dropdown-item">
+                                                <i class="bi bi-eye-fill"></i> Lihat
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('meetings.edit', $meeting->id) }}" class="dropdown-item">
+                                                <i class="bi bi-pencil-square"></i> Edit
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <form action="{{ route('meetings.destroy', $meeting->id) }}" method="POST"
+                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus rapat ini?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="dropdown-item text-danger">
+                                                    <i class="bi bi-trash-fill"></i> Hapus
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3">Belum ada rapat yang tersedia.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 @endsection
