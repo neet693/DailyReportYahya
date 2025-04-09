@@ -33,24 +33,37 @@ class Agenda extends Model
     // Fungsi untuk menghitung periode
     private function calculatePeriod()
     {
+        if (!$this->start_date || !$this->end_date) {
+            return '-';
+        }
+
         $startDate = Carbon::parse($this->start_date);
         $endDate = Carbon::parse($this->end_date);
 
-        $weeks = $startDate->diffInWeeks($endDate);
-        $months = $startDate->diffInMonths($endDate);
         $years = $startDate->diffInYears($endDate);
+        $months = $startDate->diffInMonths($endDate) % 12;
+        $weeks = $startDate->diffInWeeks($endDate) % 4;
 
         $period = '';
         if ($years > 0) {
             $period .= $years . ' tahun ';
-        } elseif ($months > 0) {
+        }
+        if ($months > 0) {
             $period .= $months . ' bulan ';
-        } elseif ($weeks > 0) {
+        }
+        if ($weeks > 0) {
             $period .= $weeks . ' minggu ';
+        }
+
+        // Fallback kalau semua 0
+        if ($period === '') {
+            $days = $startDate->diffInDays($endDate);
+            $period = $days . ' hari';
         }
 
         return trim($period);
     }
+
 
     public function logs()
     {

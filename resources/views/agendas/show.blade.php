@@ -12,6 +12,10 @@
                 </span>
                 <hr>
                 <p><strong>Periode:</strong> {{ $agenda->period }}</p>
+                <p class="mb-1">
+                    <strong>Dari:</strong> {{ $agenda->start_date->format('d M Y') }}
+                    <strong>sampai</strong> {{ $agenda->end_date->format('d M Y') }}
+                </p>
                 <p class="mb-3">{!! $agenda->description !!}</p>
 
                 <div class="d-flex align-items-center">

@@ -13,9 +13,19 @@ class AgendaController extends Controller
 {
     public function index()
     {
-        $agendas = Agenda::all();
+        $user = auth()->user();
+
+        if ($user->isAdmin()) {
+            // Admin bisa lihat semua agenda
+            $agendas = Agenda::with('executors')->get();
+        } else {
+            // User biasa hanya lihat agenda yang mereka ikuti
+            $agendas = $user->agendas()->with('executors')->get();
+        }
+
         return view('agendas.index', compact('agendas'));
     }
+
 
     public function create()
     {

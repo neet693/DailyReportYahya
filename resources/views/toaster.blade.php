@@ -22,7 +22,11 @@
             <p>{{ auth()->user()->name }} tergabung dalam agenda:</p>
             <ul>
                 @foreach ($agendas as $agenda)
-                    <li><strong>{{ $agenda->title }}</strong></li>
+                    <li>
+                        <strong>{{ $agenda->title }}</strong>
+                        – <a href="{{ route('agendas.show', $agenda->id) }}" class="text-decoration-underline">Lihat
+                            progress agenda</a>
+                    </li>
                 @endforeach
             </ul>
         @else
@@ -39,7 +43,7 @@
             // Sembunyikan setelah 10 detik
             setTimeout(function() {
                 agendaExecutorAnnouncement.style.display = 'none';
-            }, 10000);
+            }, 600000);
 
             agendaExecutorAnnouncement.querySelector('.btn-close').addEventListener('click', function() {
                 agendaExecutorAnnouncement.style.display = 'none';
@@ -56,7 +60,7 @@
             // Sembunyikan setelah 10 detik
             setTimeout(function() {
                 announcement.style.display = 'none';
-            }, 10000);
+            }, 600000);
 
             announcement.querySelector('.btn-close').addEventListener('click', function() {
                 announcement.style.display = 'none';

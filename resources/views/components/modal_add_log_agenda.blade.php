@@ -11,8 +11,6 @@
                         <form action="{{ route('logAgendas.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="agenda_id" value="{{ $agendaId }}">
-                            <input type="hidden" name="executor_id" value="{{ auth()->id() }}">
-
                             <div class="mb-3">
                                 <label for="log_detail" class="form-label">Detail Log</label>
                                 <input id="log_detail" type="hidden" name="log_detail">
