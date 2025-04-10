@@ -51,7 +51,7 @@
                                             <i class="bi bi-clock me-1"></i>{{ $task->task_start_time->format('H:i') }} -
                                             {{ $task->task_end_time->format('H:i') }}
                                         </div>
-                                        @if (auth()->user()->id === $data->id && $task->progres === 0)
+                                        @if (auth()->user()->id == $data->id && $task->progres == 0)
                                             <div class="d-flex">
                                                 <button class="btn btn-sm btn-success me-2" data-bs-toggle="modal"
                                                     data-bs-target="#completeModal{{ $task->id }}">
