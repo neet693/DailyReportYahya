@@ -37,7 +37,7 @@
 
                             <ul class="list-group list-group-flush">
                                 {{-- 2 Tugas Pertama --}}
-                                @forelse ($data->tasks->take(2) as $task)
+                                @forelse ($data->tasks->take(1) as $task)
                                     <li class="list-group-item">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
                                             <strong>{{ $task->title }}</strong>
@@ -71,22 +71,23 @@
                                         @endif
                                     </li>
                                 @empty
-                                    <li class="list-group-item text-muted">Tidak ada tugas hari ini.</li>
+                                    <li class="list-group-item text-muted">
+                                        {{ $data->name }} Belum membuat Task hari ini.</li>
                                 @endforelse
                             </ul>
-                            @if ($data->tasks->count() > 2)
+                            @if ($data->tasks->count() > 1)
                                 <button class="btn btn-light w-100 text-start position-relative toggle-tasks mt-2">
                                     <i class="bi bi-chevron-down me-1 toggle-icon"></i>
                                     Lihat tugas lainnya
                                     <span
                                         class="position-absolute top-50 end-0 translate-middle badge rounded-pill bg-danger me-3">
-                                        {{ $data->tasks->count() - 2 }}
+                                        {{ $data->tasks->count() - 1 }}
                                         <span class="visually-hidden">tugas lainnya</span>
                                     </span>
                                 </button>
 
                                 <ul class="more-tasks list-unstyled mt-2 d-none small">
-                                    @foreach ($data->tasks->slice(2) as $task)
+                                    @foreach ($data->tasks->slice(1) as $task)
                                         <li class="list-group-item">
                                             <div class="d-flex justify-content-between align-items-center mb-1">
                                                 <strong>{{ $task->title }}</strong>
@@ -101,7 +102,7 @@
                                                 -
                                                 {{ $task->task_end_time->format('H:i') }}
                                             </div>
-                                            @if (auth()->user()->id === $data->id && $task->progres === 0)
+                                            @if (auth()->user()->id == $data->id && $task->progres == 0)
                                                 <div class="d-flex">
                                                     <button class="btn btn-sm btn-success me-2" data-bs-toggle="modal"
                                                         data-bs-target="#completeModal{{ $task->id }}">
