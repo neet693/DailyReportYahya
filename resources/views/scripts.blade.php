@@ -27,3 +27,32 @@
         });
     });
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.toggle-tasks').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const moreTasks = this.nextElementSibling;
+                const totalExtraTasks = moreTasks.children.length;
+
+                moreTasks.classList.toggle('d-none');
+
+                if (moreTasks.classList.contains('d-none')) {
+                    this.innerHTML = `
+                        Lihat ${totalExtraTasks} tugas lainnya
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            ${totalExtraTasks}
+                        </span>
+                    `;
+                } else {
+                    this.innerHTML = `
+                        Tutup tugas lainnya
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            ${totalExtraTasks}
+                        </span>
+                    `;
+                }
+            });
+        });
+    });
+</script>

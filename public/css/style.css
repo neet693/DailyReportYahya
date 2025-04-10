@@ -82,3 +82,69 @@ body {
     border-bottom-right-radius: 26px;
     z-index: 1;
 }
+
+.card-custom {
+    background-color: #fff8c6 !important;
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.15) !important;
+    position: relative;
+    padding: 1.25rem;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.card-custom:hover {
+    transform: translateY(-3px);
+    box-shadow: 5px 5px 18px rgba(0, 0, 0, 0.2);
+}
+
+.card-custom::before {
+    content: "";
+    background-image: url("/asset/pin.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 40px;
+    height: 40px;
+    z-index: 2;
+}
+
+.card-custom .list-group-item {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border: none;
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+
+.profile-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 3px solid #0d6efd;
+}
+
+.title-section {
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+.task-item small {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.badge-custom {
+    font-size: 0.75rem;
+    padding: 0.4em 0.6em;
+}
+
+.toggle-tasks {
+    transition: all 0.3s ease;
+}
+
+.toggle-tasks .badge {
+    font-size: 0.65rem;
+    padding: 4px 6px;
+}

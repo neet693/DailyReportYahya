@@ -16,65 +16,113 @@
 
             @foreach ($usersWithTasks as $data)
                 <div class="col-md-4 mb-3">
-                    <div class="card shadow-sm border-2 rounded">
-                        <div class="d-flex align-items-center p-3">
+                    <div class="card-custom">
+                        {{-- Header: Foto & Nama --}}
+                        <div class="d-flex align-items-center p-4">
                             <img src="{{ $data->profile_image ? asset('profile_images/' . $data->profile_image) : asset('asset/default_profile.jpg') }}"
-                                class="rounded-circle border-2 border-primary" style="width:70px; height:70px;"
-                                alt="Foto Profil">
+                                class="rounded-circle profile-img" alt="Foto Profil">
                             <div class="ms-3">
-                                <h5 class="card-title mb-0">{{ $data->name }}</h5>
-                                <p class="card-subtitle text-muted small">
-                                    {{ $data->jobdesk ? $data->jobdesk->title : 'Belum ada Job Desc' }}
+                                <h5 class="mb-0">{{ $data->name }}</h5>
+                                <p class="text-muted small mb-0">
+                                    {{ $data->jobdesk->title ?? 'Belum ada Job Desc' }}
                                 </p>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <h6 class="text-muted">Tasks for Today</h6>
-                            <ul class="list-group list-group-flush">
-                                @foreach ($data->tasks as $task)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong>{{ $task->title }}</strong> <br>
-                                            <small class="text-muted">{{ $task->place }} |
-                                                {{ $task->task_start_time->format('H:i') }} -
-                                                {{ $task->task_end_time->format('H:i') }}</small>
-                                        </div>
-                                        <div class="d-flex align-items-center">
-                                            @if ($task->progres == 1)
-                                                <span class="badge bg-success me-2">
-                                                    <i class="bi bi-check-circle"></i> Selesai
-                                                </span>
-                                            @elseif ($task->progres == 0)
-                                                <span class="badge bg-danger me-2">
-                                                    <i class="bi bi-x-circle"></i> Belum Selesai
-                                                </span>
-                                            @endif
 
-                                            @if (auth()->user()->id === $data->id)
-                                                @if ($task->progres === 0)
-                                                    <a href="{{ route('tasks.markAsComplete', $task) }}" title="Selesai"
-                                                        class="btn btn-sm btn-success me-1" data-bs-toggle="modal"
+                        {{-- Body: Tugas --}}
+                        <div class="card-body">
+                            <h6 class="title-section mb-3">
+                                <i class="bi bi-clipboard-check me-2"></i> Tasks for Today
+                            </h6>
+
+                            <ul class="list-group list-group-flush">
+                                {{-- 2 Tugas Pertama --}}
+                                @forelse ($data->tasks->take(2) as $task)
+                                    <li class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <strong>{{ $task->title }}</strong>
+                                            <span
+                                                class="badge rounded-pill {{ $task->progres ? 'bg-success' : 'bg-danger' }}">
+                                                {{ $task->progres ? 'Selesai' : 'Belum Selesai' }}
+                                            </span>
+                                        </div>
+                                        <div class="text-muted small mb-2 fs-6">
+                                            <i class="bi bi-geo-alt me-1"></i>{{ $task->place }} |
+                                            <i class="bi bi-clock me-1"></i>{{ $task->task_start_time->format('H:i') }} -
+                                            {{ $task->task_end_time->format('H:i') }}
+                                        </div>
+                                        @if (auth()->user()->id === $data->id && $task->progres === 0)
+                                            <div class="d-flex">
+                                                <button class="btn btn-sm btn-success me-2" data-bs-toggle="modal"
+                                                    data-bs-target="#completeModal{{ $task->id }}">
+                                                    <i class="bi bi-check-lg"></i> Selesai
+                                                </button>
+                                                @include('components.task_modal_complete', [
+                                                    'task' => $task,
+                                                ])
+                                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                                    data-bs-target="#pendingModal{{ $task->id }}">
+                                                    <i class="bi bi-hourglass-split text-white"></i> Pending
+                                                </button>
+                                                @include('components.task_modal_pending', [
+                                                    'task' => $task,
+                                                ])
+                                            </div>
+                                        @endif
+                                    </li>
+                                @empty
+                                    <li class="list-group-item text-muted">Tidak ada tugas hari ini.</li>
+                                @endforelse
+                            </ul>
+                            @if ($data->tasks->count() > 2)
+                                <button class="btn btn-light w-100 text-start position-relative toggle-tasks mt-2">
+                                    <i class="bi bi-chevron-down me-1 toggle-icon"></i>
+                                    Lihat tugas lainnya
+                                    <span
+                                        class="position-absolute top-50 end-0 translate-middle badge rounded-pill bg-danger me-3">
+                                        {{ $data->tasks->count() - 2 }}
+                                        <span class="visually-hidden">tugas lainnya</span>
+                                    </span>
+                                </button>
+
+                                <ul class="more-tasks list-unstyled mt-2 d-none small">
+                                    @foreach ($data->tasks->slice(2) as $task)
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <strong>{{ $task->title }}</strong>
+                                                <span
+                                                    class="badge rounded-pill {{ $task->progres ? 'bg-success' : 'bg-danger' }}">
+                                                    {{ $task->progres ? 'Selesai' : 'Belum Selesai' }}
+                                                </span>
+                                            </div>
+                                            <div class="text-muted small mb-2 fs-6">
+                                                <i class="bi bi-geo-alt me-1"></i>{{ $task->place }} |
+                                                <i class="bi bi-clock me-1"></i>{{ $task->task_start_time->format('H:i') }}
+                                                -
+                                                {{ $task->task_end_time->format('H:i') }}
+                                            </div>
+                                            @if (auth()->user()->id === $data->id && $task->progres === 0)
+                                                <div class="d-flex">
+                                                    <button class="btn btn-sm btn-success me-2" data-bs-toggle="modal"
                                                         data-bs-target="#completeModal{{ $task->id }}">
-                                                        <i class="bi bi-check-lg"></i>
-                                                    </a>
+                                                        <i class="bi bi-check-lg"></i> Selesai
+                                                    </button>
                                                     @include('components.task_modal_complete', [
                                                         'task' => $task,
                                                     ])
-
-                                                    <a href="{{ route('tasks.markAsPending', $task) }}" title="Pending"
-                                                        class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                                         data-bs-target="#pendingModal{{ $task->id }}">
-                                                        <i class="bi bi-hourglass-split text-white"></i>
-                                                    </a>
+                                                        <i class="bi bi-hourglass-split text-white"></i> Pending
+                                                    </button>
                                                     @include('components.task_modal_pending', [
                                                         'task' => $task,
                                                     ])
-                                                @endif
+                                                </div>
                                             @endif
-                                        </div>
-                                    </li>
-                                @endforeach
-                            </ul>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
                         </div>
                     </div>
                 </div>
