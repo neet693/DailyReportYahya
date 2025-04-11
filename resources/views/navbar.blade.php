@@ -32,6 +32,8 @@
                                 href="{{ route('meetings.index') }}">Rapat</a>
                             <a class="nav-link {{ request()->is('jobdesks*') ? 'active' : '' }}"
                                 href="{{ route('jobdesks.index') }}">Job Desk</a>
+                            <a class="nav-link {{ request()->is('unit*') ? 'active' : '' }}"
+                                href="{{ route('Unit.index') }}">Unit</a>
 
                         </div>
                     </li>

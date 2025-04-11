@@ -12,8 +12,10 @@ use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\PermissionRequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SwitchUserController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\UnitKerjaController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -60,4 +62,12 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('logAgendas', LogAgendaController::class);
     Route::get('agendas/{id}/generate', [AgendaController::class, 'generateAgenda'])->name('agendas.print');
     Route::patch('agendas/{id}/update-status', [AgendaController::class, 'updateStatus'])->name('agendas.updateStatus');
+
+    //Switch Unit User
+    Route::post('/switch-unit', [SwitchUserController::class, 'switchUnit'])->name('switchUnit');
+
+    //ROute Assign User
+    Route::resource('Unit', UnitKerjaController::class);
+    Route::get('/unit/{unit}/assign-users', [UnitKerjaController::class, 'assignForm'])->name('unit.assign.form');
+    Route::post('/unit/{unit}/assign-users', [UnitKerjaController::class, 'assignUsers'])->name('unit.assign.users');
 });

@@ -27,6 +27,27 @@
                                 </select>
                             </div>
 
+                            <div class="form-group">
+                                <label for="unit_id">{{ __('Unit Kerja') }}</label>
+                                <select id="unit_id" name="unit_id"
+                                    class="form-select @error('unit_id') is-invalid @enderror" required>
+                                    <option value="">-- Pilih Unit --</option>
+                                    @foreach (auth()->user()->units as $unit)
+                                        <option value="{{ $unit->id }}"
+                                            {{ old('unit_id') == $unit->id ? 'selected' : '' }}>
+                                            {{ $unit->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                @error('unit_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+
 
                             <div class="form-group">
                                 <label for="title">Judul Penugasan:</label>

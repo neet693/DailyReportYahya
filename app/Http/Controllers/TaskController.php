@@ -28,7 +28,8 @@ class TaskController extends Controller
             'task_date' => 'required|date',
             'task_start_time' => 'required|date_format:H:i',
             'task_end_time' => 'required|date_format:H:i|after:start_task_time',
-            'description' => 'required'
+            'description' => 'required',
+            'unit_id' => 'required|exists:unit_kerjas,id'
         ]);
 
         $task = new Task();
@@ -39,6 +40,7 @@ class TaskController extends Controller
         $task->task_start_time = $request->input('task_start_time');
         $task->task_end_time = $request->input('task_end_time');
         $task->description = $request->input('description');
+        $task->unit_id = $request->unit_id; // simpan unitnya
         $task->save();
 
         return redirect('/tasks')->with('success', 'Data Berhasil dibuat');

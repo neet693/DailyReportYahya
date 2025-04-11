@@ -14,21 +14,18 @@ class AssignmentController extends Controller
 
         $assignments = Assignment::query()
             ->when($currentUser->isKepalaUnit(), function ($query) use ($currentUser) {
-                // Kepala unit hanya melihat assignment pegawai di unitnya
-                return $query->whereHas('user.employmentDetail', function ($q) use ($currentUser) {
-                    $q->where('unit_kerja_id', $currentUser->employmentDetail?->unit_kerja_id);
+                return $query->whereHas('user.units', function ($q) use ($currentUser) {
+                    $q->whereIn('unit_id', $currentUser->units->pluck('id'));
                 });
             })
             ->when($currentUser->isPegawai(), function ($query) use ($currentUser) {
-                // Pegawai hanya melihat assignment dirinya sendiri
                 return $query->where('user_id', $currentUser->id);
             })
-            ->with(['user', 'assigner']) // eager loading biar hemat query
+            ->with(['user', 'assigner'])
             ->get();
 
         return view('assignments.index', compact('assignments', 'currentUser'));
     }
-
 
     public function create()
     {
@@ -36,13 +33,12 @@ class AssignmentController extends Controller
 
         $currentUser = auth()->user();
 
-        // Admin bisa lihat semua user
-        if ($currentUser->role === 'admin') {
-            $users = User::where('id', '!=', $currentUser->id)->get(); // exclude diri sendiri
+        if ($currentUser->isAdmin()) {
+            $users = User::where('id', '!=', $currentUser->id)->get(); // semua user kecuali diri sendiri
         } else {
-            // Kepala unit hanya bisa menugaskan ke unit yang sama
-            $users = User::whereHas('employmentDetail', function ($q) use ($currentUser) {
-                $q->where('unit_kerja_id', $currentUser->employmentDetail->unit_kerja_id);
+            // Kepala unit hanya bisa menugaskan user yang satu unit dengannya
+            $users = User::whereHas('units', function ($q) use ($currentUser) {
+                $q->whereIn('unit_id', $currentUser->units->pluck('id'));
             })
                 ->where('id', '!=', $currentUser->id)
                 ->get();
@@ -50,6 +46,7 @@ class AssignmentController extends Controller
 
         return view('assignments.create', compact('users'));
     }
+
 
     public function store(Request $request)
     {
@@ -60,17 +57,20 @@ class AssignmentController extends Controller
             'assignment_date' => 'required|date',
             'start_assignment_time' => 'required',
             'end_assignment_time' => 'required',
+            'unit_id' => 'required|exists:unit_kerjas,id',
         ]);
 
         $currentUser = auth()->user();
         $targetUser = User::findOrFail($request->user_id);
 
-        // Admin bebas assign siapa saja, kepala unit harus sama unit
-        if (
-            $currentUser->role !== 'admin' &&
-            $targetUser->employmentDetail->unit_kerja_id !== $currentUser->employmentDetail->unit_kerja_id
-        ) {
-            abort(403, 'Kamu hanya boleh menugaskan pegawai di unit kamu.');
+        // Jika kepala unit, pastikan dia assign user dari unit yang sama
+        if ($currentUser->isKepalaUnit()) {
+            $unitValid = $currentUser->units->pluck('id')->contains($request->unit_id);
+            $userInUnit = $targetUser->units->pluck('id')->contains($request->unit_id);
+
+            if (! $unitValid || ! $userInUnit) {
+                abort(403, 'Anda hanya bisa menugaskan pegawai yang berada di unit Anda.');
+            }
         }
 
         Assignment::create([
@@ -81,10 +81,12 @@ class AssignmentController extends Controller
             'start_assignment_time' => $request->start_assignment_time,
             'end_assignment_time' => $request->end_assignment_time,
             'description' => $request->description,
+            'unit_id' => $request->unit_id,
         ]);
 
         return redirect()->route('assignments.index')->with('success', 'Penugasan berhasil dibuat.');
     }
+
 
 
     public function show(Assignment $assignment)

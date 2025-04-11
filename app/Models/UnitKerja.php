@@ -15,4 +15,10 @@ class UnitKerja extends Model
     {
         return $this->hasMany(EmploymentDetail::class);
     }
+
+    // Di UnitKerja.php
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'unit_user', 'unit_id', 'user_id');
+    }
 }

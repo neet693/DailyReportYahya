@@ -22,18 +22,16 @@ class HomeController extends Controller
             return redirect()->route('profile.index')->with('error', 'Lengkapi data unit kerja terlebih dahulu.');
         }
 
+        $activeUnitId = session('active_unit_id');
+
         if ($user->isAdmin()) {
             $usersWithTasks = $this->getUsersWithTasks($today);
+        } elseif ($activeUnitId) {
+            $usersWithTasks = $this->getUsersWithTasks($today, $activeUnitId);
         } elseif ($user->employmentDetail?->unit_kerja_id) {
             $usersWithTasks = $this->getUsersWithTasks($today, $user->employmentDetail->unit_kerja_id);
-        } else {
-            $usersWithTasks = collect([$user->load([
-                'jobdesk',
-                'tasks' => fn($query) => $query->todayOrPending($today),
-                'agendas',
-                'employmentDetail.unit'
-            ])]);
         }
+
 
         $assignments = Assignment::with(['user.employmentDetail.unit', 'assigner'])
             ->whereMonth('assignment_date', $month)
@@ -63,15 +61,21 @@ class HomeController extends Controller
     {
         $query = User::with([
             'jobdesk',
-            'tasks' => fn($query) => $query->todayOrPending($today),
+            'tasks' => function ($query) use ($today, $unitId) {
+                $query->todayOrPending($today);
+                if ($unitId) {
+                    $query->where('unit_id', $unitId); // filter task by selected unit
+                }
+            },
             'agendas',
-            'employmentDetail.unit'
+            'units'
         ])->where('role', '!=', User::ROLE_ADMIN);
 
-        if (is_null($unitId)) {
-            return $query->whereHas('employmentDetail', fn($q) => $q->whereNotNull('unit_kerja_id'))->get();
+        if (!is_null($unitId)) {
+            // filter user yang punya relasi ke unit tersebut lewat pivot
+            $query->whereHas('units', fn($q) => $q->where('unit_kerjas.id', $unitId));
         }
 
-        return $query->whereHas('employmentDetail', fn($q) => $q->where('unit_kerja_id', $unitId))->get();
+        return $query->get();
     }
-}
+    }

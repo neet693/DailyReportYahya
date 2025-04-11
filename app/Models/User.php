@@ -109,4 +109,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Meeting::class, 'meeting_participant', 'participant_id', 'meeting_id');
     }
+
+    // Di User.php
+    public function units()
+    {
+        return $this->belongsToMany(UnitKerja::class, 'unit_user', 'user_id', 'unit_id');
+    }
 }

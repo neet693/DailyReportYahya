@@ -7,7 +7,17 @@
             @if (auth()->user()->role === 'admin')
                 <span class="text-primary">Semua Unit</span>
             @else
-                {{ auth()->user()->employmentDetail->unit->name ?? 'Tidak Ada Unit' }}
+                <form action="{{ route('switchUnit') }}" method="POST" class="d-inline">
+                    @csrf
+                    <select name="unit_id" onchange="this.form.submit()" class="form-select d-inline w-auto">
+                        @foreach (auth()->user()->units as $unit)
+                            <option value="{{ $unit->id }}"
+                                {{ session('active_unit_id') == $unit->id ? 'selected' : '' }}>
+                                {{ $unit->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
             @endif
         </h3>
 
