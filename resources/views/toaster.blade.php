@@ -1,70 +1,64 @@
-<div id="announcements">
+<!-- Toast Container (bisa diatur posisinya) -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
     @foreach ($announcements as $announcement)
-        <div class="alert alert-danger alert-dismissible announcement" style="position: relative;">
-            <button type="button" class="btn-close me-2 m-auto" data-dismiss="alert" aria-label="Close"
-                style="position: absolute; top: 50; right: 0;">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            {{ $announcement->title }} <br> {!! $announcement->message ?? 'Tidak ada Pengumuman' !!}
+        <div class="toast announcement-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true"
+            data-bs-delay="10000">
+            <div class="toast-header bg-danger text-white">
+                <strong class="me-auto">{{ $announcement->title }}</strong>
+                <small class="text-light ms-2">{{ $announcement->created_at->diffForHumans() }}</small>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                {!! $announcement->message ?? 'Tidak ada Pengumuman' !!}
+            </div>
         </div>
     @endforeach
-</div>
-
-
-
-<div id="agenda_executor_announcement" class="alert alert-danger alert-dismissible executor">
-    <button type="button" class="btn-close me-2 m-auto" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
 
     @auth
         @if ($agendas = auth()->user()->agendas)
-            <p>{{ auth()->user()->name }} tergabung dalam agenda:</p>
-            <ul>
-                @foreach ($agendas as $agenda)
-                    <li>
-                        <strong>{{ $agenda->title }}</strong>
-                        – <a href="{{ route('agendas.show', $agenda->id) }}" class="text-decoration-underline">Lihat
-                            progress agenda</a>
-                    </li>
-                @endforeach
-            </ul>
+            <div class="toast agenda-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true"
+                data-bs-delay="10000">
+                <div class="toast-header bg-danger text-white">
+                    <strong class="me-auto">Agenda</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    <p>{{ auth()->user()->name }} tergabung dalam agenda:</p>
+                    <ul>
+                        @foreach ($agendas as $agenda)
+                            <li>
+                                <strong>{{ $agenda->title }}</strong>
+                                – <a href="{{ route('agendas.show', $agenda->id) }}" class="text-decoration-underline">Lihat
+                                    progress agenda</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
         @else
-            <p>{{ auth()->user()->name }} tidak tergabung dalam agenda apapun saat ini.</p>
+            <div class="toast agenda-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true"
+                data-bs-delay="10000">
+                <div class="toast-header bg-danger text-white">
+                    <strong class="me-auto">Agenda</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    <p>{{ auth()->user()->name }} tidak tergabung dalam agenda apapun saat ini.</p>
+                </div>
+            </div>
         @endif
     @endauth
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const agendaExecutorAnnouncement = document.getElementById('agenda_executor_announcement');
-        if (agendaExecutorAnnouncement) {
-            agendaExecutorAnnouncement.style.display = 'block';
-
-            // Sembunyikan setelah 10 detik
-            setTimeout(function() {
-                agendaExecutorAnnouncement.style.display = 'none';
-            }, 600000);
-
-            agendaExecutorAnnouncement.querySelector('.btn-close').addEventListener('click', function() {
-                agendaExecutorAnnouncement.style.display = 'none';
-            });
-        }
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const announcements = document.querySelectorAll('.announcement');
-
-        announcements.forEach(function(announcement) {
-            // Sembunyikan setelah 10 detik
-            setTimeout(function() {
-                announcement.style.display = 'none';
-            }, 600000);
-
-            announcement.querySelector('.btn-close').addEventListener('click', function() {
-                announcement.style.display = 'none';
-            });
+        // Inisialisasi semua toast yang ada
+        const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+        toastElList.forEach(function(toastEl) {
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
         });
     });
 </script>
