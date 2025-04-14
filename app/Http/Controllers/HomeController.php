@@ -39,6 +39,10 @@ class HomeController extends Controller
             $assignments = $this->getAssignmentsWithUsers($month, $unitId);
         }
 
+        // Urutkan user login di posisi pertama
+        $usersWithTasks = $usersWithTasks->sortByDesc(fn($u) => $u->id === auth()->id());
+
+        // Pengumuman
         $announcements = Announcement::where(function ($query) use ($user) {
             $query->where('category', 'umum')
                 ->orWhere(function ($q) use ($user) {
@@ -48,6 +52,7 @@ class HomeController extends Controller
 
         return view('home', compact('usersWithTasks', 'announcements', 'assignments'));
     }
+
 
 
 

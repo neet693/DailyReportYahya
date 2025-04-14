@@ -41,9 +41,17 @@
 
                         {{-- Body: Tugas --}}
                         <div class="card-body">
-                            <h6 class="title-section mb-3">
-                                <i class="bi bi-clipboard-check me-2"></i> Tasks for Today
-                            </h6>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="title-section mb-0">
+                                    <i class="bi bi-clipboard-check me-2"></i> Tasks for Today
+                                </h6>
+
+                                @if ($data->id == auth()->id())
+                                    <a href="{{ route('tasks.create') }}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-plus-circle me-1"></i> Tambah Task
+                                    </a>
+                                @endif
+                            </div>
 
                             <ul class="list-group list-group-flush">
                                 {{-- 2 Tugas Pertama --}}
