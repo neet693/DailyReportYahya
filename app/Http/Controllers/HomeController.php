@@ -22,30 +22,22 @@ class HomeController extends Controller
             return redirect()->route('profile.index')->with('error', 'Lengkapi data unit kerja terlebih dahulu.');
         }
 
-        $activeUnitId = session('active_unit_id');
+        $activeUnitId = session('active_unit_id'); // Unit yang dipilih
 
+        // Kondisi untuk mengambil penugasan sesuai dengan unit yang dipilih
         if ($user->isAdmin()) {
             $usersWithTasks = $this->getUsersWithTasks($today);
+            $assignments = $this->getAssignmentsWithUsers($month);
         } elseif ($activeUnitId) {
+            // Menampilkan tugas dan penugasan hanya untuk unit yang dipilih
             $usersWithTasks = $this->getUsersWithTasks($today, $activeUnitId);
-        } elseif ($user->employmentDetail?->unit_kerja_id) {
-            $usersWithTasks = $this->getUsersWithTasks($today, $user->employmentDetail->unit_kerja_id);
+            $assignments = $this->getAssignmentsWithUsers($month, $activeUnitId);
+        } else {
+            // Default menggunakan unit yang dimiliki user
+            $unitId = $user->employmentDetail?->unit_kerja_id;
+            $usersWithTasks = $this->getUsersWithTasks($today, $unitId);
+            $assignments = $this->getAssignmentsWithUsers($month, $unitId);
         }
-
-
-        $assignments = Assignment::with(['user.employmentDetail.unit', 'assigner'])
-            ->whereMonth('assignment_date', $month)
-            ->orderBy('assignment_date', 'asc')
-            ->when(
-                !$user->isAdmin(),
-                fn($query) =>
-                $query->whereHas(
-                    'user.employmentDetail',
-                    fn($q) =>
-                    $q->where('unit_kerja_id', $user->employmentDetail?->unit_kerja_id)
-                )
-            )
-            ->get();
 
         $announcements = Announcement::where(function ($query) use ($user) {
             $query->where('category', 'umum')
@@ -56,6 +48,8 @@ class HomeController extends Controller
 
         return view('home', compact('usersWithTasks', 'announcements', 'assignments'));
     }
+
+
 
     private function getUsersWithTasks(string $today, ?int $unitId = null)
     {
@@ -78,4 +72,22 @@ class HomeController extends Controller
 
         return $query->get();
     }
+
+    private function getAssignmentsWithUsers(string $month, ?int $unitId = null)
+    {
+        $query = Assignment::with([
+            'user.employmentDetail.unit',
+            'user.units', // include user units dari pivot
+            'assigner'
+        ])
+            ->whereMonth('assignment_date', $month)
+            ->orderBy('assignment_date', 'asc');
+
+        // Filter penugasan berdasarkan unit_id
+        if ($unitId) {
+            $query->where('unit_id', $unitId); // Filter penugasan dengan unit_id
+        }
+
+        return $query->get();
     }
+}

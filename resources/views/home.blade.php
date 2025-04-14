@@ -161,11 +161,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($assignments as $assignment)
+                                @forelse ($assignments as $assignment)
                                     <tr>
                                         <td>
                                             <img src="{{ asset($assignment->user->profile_image ? 'profile_images/' . $assignment->user->profile_image : 'asset/logo-itdept.png') }}"
-                                                class="rounded-circle  border-2" width="40" height="40">
+                                                class="rounded-circle border-2 me-2" width="40" height="40">
                                             {{ $assignment->user->name }}
                                         </td>
                                         <td><strong>{{ $assignment->title }}</strong></td>
@@ -183,27 +183,32 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if (auth()->user()->id === $assignment->user_id)
-                                                @if ($assignment->progres !== 'Selesai')
-                                                    <form method="POST"
-                                                        action="{{ route('assignments.markAsComplete', $assignment) }}"
-                                                        class="d-inline">
-                                                        @csrf
-                                                        <button type="submit" title="Selesai"
-                                                            class="btn btn-sm btn-success">
-                                                            ✅
-                                                        </button>
-                                                    </form>
-                                                @endif
+                                            @if (auth()->user()->id === $assignment->user_id && $assignment->progres !== 'Selesai')
+                                                <form method="POST"
+                                                    action="{{ route('assignments.markAsComplete', $assignment) }}"
+                                                    class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" title="Selesai" class="btn btn-sm btn-success">
+                                                        ✅
+                                                    </button>
+                                                </form>
                                             @endif
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted">Belum ada penugasan untuk unit
+                                            ini.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </div>
         </div>
+
+
     </div>
 @endsection
