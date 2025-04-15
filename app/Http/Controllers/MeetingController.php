@@ -34,16 +34,12 @@ class MeetingController extends Controller
 
     public function create()
     {
-        $currentUser = Auth::user();
-        $unitId = $currentUser->employmentDetail->unit_kerja_id;
-
-        // Hanya ambil user dari unit yang sama
-        $users = User::whereHas('employmentDetail', function ($query) use ($unitId) {
-            $query->where('unit_kerja_id', $unitId);
-        })->get();
+        // Ambil semua pengguna
+        $users = User::all();  // Ambil semua pengguna dari database
 
         return view('meetings.create', compact('users'));
     }
+
 
     public function store(Request $request)
     {
@@ -71,23 +67,13 @@ class MeetingController extends Controller
 
     public function edit($id)
     {
-        $currentUser = Auth::user();
-        $unitId = $currentUser->employmentDetail->unit_kerja_id;
-
-        // Eager load semua yang mungkin digunakan
-        $meeting = Meeting::with([
-            'participants.employmentDetail.unit'
-        ])->findOrFail($id);
-        $users = User::with('employmentDetail.unit') // <- tambahkan eager loading di sini!
-            ->whereHas('employmentDetail', function ($query) use ($unitId) {
-                $query->where('unit_kerja_id', $unitId);
-            })->get();
-
-        // Ini sebenarnya tidak butuh query tambahan karena sudah eager load
-        $selectedUsers = $meeting->participants->pluck('id')->toArray();
+        $meeting = Meeting::with(['participants'])->findOrFail($id);
+        $users = User::all();  // Ambil semua pengguna
+        $selectedUsers = $meeting->participants->pluck('id')->toArray(); // ID peserta yang sudah dipilih
 
         return view('meetings.edit', compact('meeting', 'users', 'selectedUsers'));
     }
+
 
     public function update(Request $request, $id)
     {

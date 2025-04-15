@@ -57,12 +57,13 @@
                         data-placeholder="Pilih peserta rapat">
                         @foreach ($users as $user)
                             <option value="{{ $user->id }}"
-                                {{ in_array($user->id, old('participant_id', $meeting->participants->pluck('id')->toArray())) ? 'selected' : '' }}>
-                                {{ $user->name }} ({{ $user->employmentDetail->unit->name ?? '-' }})
+                                {{ in_array($user->id, old('participant_id', $selectedUsers)) ? 'selected' : '' }}>
+                                {{ $user->name }} ({{ $user->units->pluck('name')->implode(', ') ?: '-' }})
                             </option>
                         @endforeach
                     </select>
                 </div>
+
             </div>
 
             <div class="mb-3">

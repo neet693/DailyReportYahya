@@ -55,7 +55,7 @@
                         data-placeholder="Pilih peserta rapat">
                         @foreach ($users as $user)
                             <option value="{{ $user->id }}">
-                                {{ $user->name }} ({{ $user->employmentDetail->unit->name ?? '-' }})
+                                {{ $user->name }} ({{ $user->units->pluck('name')->implode(', ') ?: '-' }})
                             </option>
                         @endforeach
                     </select>

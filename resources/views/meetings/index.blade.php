@@ -21,7 +21,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($meetings as $meeting)
+                    @foreach ($meetings as $meeting)
                         <tr>
                             <td class="text-start">
                                 <strong>{{ $meeting->title }}</strong><br>
@@ -74,11 +74,7 @@
                                 </div>
                             </td>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3">Belum ada rapat yang tersedia.</td>
-                        </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
         </div>
