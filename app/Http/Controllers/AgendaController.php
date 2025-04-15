@@ -115,15 +115,11 @@ class AgendaController extends Controller
 
     public function updateStatus(Request $request, Agenda $agenda, $id)
     {
-        if ($this->authorize('updateStatus', $agenda)) {
-            $agenda = Agenda::findOrFail($id);
+        $this->authorize('updateStatus', $agenda); // tanpa if
+        $agenda = Agenda::findOrFail($id);
+        $agenda->status = strtolower($request->input('status')); // konsisten lowercase
+        $agenda->save();
 
-            $agenda->status = $request->input('status');
-            $agenda->save();
-
-            return redirect()->route('agendas.index')->with('success', 'Status agenda berhasil diperbarui.');
-        }
-
-        abort(403, 'Unauthorized action.');
+        return redirect()->route('agendas.index')->with('success', 'Status agenda berhasil diperbarui.');
     }
 }
