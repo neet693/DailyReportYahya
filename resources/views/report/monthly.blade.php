@@ -121,7 +121,7 @@
         </thead>
         <tbody>
             @foreach ($data as $item)
-                @if ($item->task_user_id === auth()->user()->id)
+                @if ($item->task_user_id == auth()->user()->id)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->title }}</td>
@@ -158,7 +158,7 @@
         </thead>
         <tbody>
             @foreach ($assignments as $assignment)
-                @if ($assignment->user_id === auth()->user()->id)
+                @if ($assignment->user_id == auth()->user()->id)
                     <tr>
                         <td>{{ $assignment->user->name }}</td>
                         <td>{{ $assignment->title }}</td>
