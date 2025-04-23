@@ -191,7 +191,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if (auth()->user()->id === $assignment->user_id && $assignment->progres !== 'Selesai')
+                                            @if (auth()->user()->id == $assignment->user_id && $assignment->progres !== 'Selesai')
                                                 <div class="btn-group">
                                                     <button type="button" class="btn btn-sm btn-primary dropdown-toggle"
                                                         data-bs-toggle="dropdown" aria-expanded="false">
