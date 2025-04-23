@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Assignment;
+use App\Models\UnitKerja;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -34,19 +35,28 @@ class AssignmentController extends Controller
         $currentUser = auth()->user();
 
         if ($currentUser->isAdmin()) {
-            $users = User::where('id', '!=', $currentUser->id)->get(); // semua user kecuali diri sendiri
+            // Admin bisa pilih semua user dan semua unit
+            $users = User::all();
+            $units = UnitKerja::all();
+        } elseif ($currentUser->isKepalaUnit()) {
+            // Ambil unit_id dari kepala unit (relasi pivot units)
+            $unitIds = $currentUser->units->pluck('id');
+
+            // Cari user yang memiliki employmentDetail dan unit_id-nya sesuai dengan kepala unit
+            $users = User::whereHas('employmentDetail', function ($query) use ($unitIds) {
+                $query->whereIn('unit_kerja_id', $unitIds);
+            })->get();
+
+            // Unit tetap pakai dari relasi kepala unit
+            $units = $currentUser->units;
         } else {
-            // Kepala unit hanya bisa menugaskan user yang satu unit dengannya
-            $users = User::whereHas('units', function ($q) use ($currentUser) {
-                $q->whereIn('unit_id', $currentUser->units->pluck('id'));
-            })
-                ->where('id', '!=', $currentUser->id)
-                ->get();
+            // Pegawai hanya bisa pilih dirinya dan unit yang dimiliki
+            $users = collect([$currentUser]);
+            $units = $currentUser->units;
         }
 
-        return view('assignments.create', compact('users'));
+        return view('assignments.create', compact('users', 'units'));
     }
-
 
     public function store(Request $request)
     {
@@ -120,7 +130,7 @@ class AssignmentController extends Controller
         return redirect()->route('assignments.index')->with('success', 'Penugasan telah ditandai sebagai selesai.');
     }
 
-    public function reportKendala(Assignment $assignment)
+    public function markAsPending(Assignment $assignment)
     {
         $assignment->update([
             'progres' => 'Pending',

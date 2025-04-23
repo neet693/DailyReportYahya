@@ -15,14 +15,12 @@
                                 <select name="user_id" class="form-control" required>
                                     <option value="">-- Pilih Pegawai --</option>
                                     @foreach ($users as $user)
-                                        @if ($user->id != auth()->id())
-                                            <option value="{{ $user->id }}">
-                                                {{ $user->name }}
-                                                @if ($user->employmentDetail && $user->employmentDetail->unit)
-                                                    - {{ $user->employmentDetail->unit->name }}
-                                                @endif
-                                            </option>
-                                        @endif
+                                        <option value="{{ $user->id }}">
+                                            {{ $user->name }}
+                                            @if ($user->employmentDetail && $user->employmentDetail->unit)
+                                                - {{ $user->employmentDetail->unit->name }}
+                                            @endif
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>

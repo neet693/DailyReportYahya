@@ -192,15 +192,38 @@
                                         </td>
                                         <td>
                                             @if (auth()->user()->id === $assignment->user_id && $assignment->progres !== 'Selesai')
-                                                <form method="POST"
-                                                    action="{{ route('assignments.markAsComplete', $assignment) }}"
-                                                    class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" title="Selesai" class="btn btn-sm btn-success">
-                                                        ✅
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        Aksi
                                                     </button>
-                                                </form>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <form method="POST"
+                                                                action="{{ route('assignments.markAsComplete', $assignment) }}">
+                                                                @csrf
+                                                                <button type="submit" class="dropdown-item text-success">
+                                                                    <i class="bi bi-check-circle"></i> Tandai Selesai
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                        <li>
+                                                            <button type="button" class="dropdown-item text-warning"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#penugasanPendingModal{{ $assignment->id }}">
+                                                                <i class="bi bi-clock"></i> Tandai Pending
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                                {{-- Include modal-nya DI LUAR dropdown menu --}}
+                                                @include('components.modal_pending', [
+                                                    'assignment' => $assignment,
+                                                ])
                                             @endif
+
+
                                         </td>
                                     </tr>
                                 @empty

@@ -33,7 +33,7 @@ Route::middleware(['auth'])->group(function () {
     // Assignment Route
     Route::resource('assignments', AssignmentController::class);
     Route::post('assignments/mark-as-complete/{assignment}', [AssignmentController::class, 'markAsComplete'])->name('assignments.markAsComplete');
-    Route::post('/assignments/report-kendala/{assignment}', [AssignmentController::class, 'reportKendala'])->name('assignments.report-kendala');
+    Route::post('assignments/mark-as-pending/{assignment}', [AssignmentController::class, 'markAsPending'])->name('assignments.markAsPending');
     // Permission Request Route
     Route::resource('permissionrequest', PermissionRequestController::class);
     Route::patch('/permissionrequests/{permissionRequest}/approve', [PermissionRequestController::class, 'approve'])->name('permissionrequest.approve');
