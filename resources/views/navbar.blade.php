@@ -82,10 +82,12 @@
 
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="{{ route('profile.index') }}">{{ __('Profile') }}</a>
-                            <a class="dropdown-item"
-                                href="{{ route('employment-detail.show', Auth::user()->employmentDetail) }}">
-                                {{ __('Detail Kepegawaian') }}
-                            </a>
+                            @if (Auth::user()->employmentDetail && Auth::user()->role !== 'admin')
+                                <a class="dropdown-item"
+                                    href="{{ route('employment-detail.show', Auth::user()->employmentDetail) }}">
+                                    {{ __('Detail Kepegawaian') }}
+                                </a>
+                            @endif
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                 onclick="event.preventDefault();
                                              document.getElementById('logout-form').submit();">

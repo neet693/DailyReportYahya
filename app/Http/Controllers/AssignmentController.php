@@ -25,7 +25,7 @@ class AssignmentController extends Controller
             ->with(['user', 'assigner'])
             ->get();
 
-        return redirect()->back();
+        return view('assignments.index', compact(['assignments', 'currentUser']));
     }
 
     public function create()
@@ -127,7 +127,7 @@ class AssignmentController extends Controller
 
         $assignment->update(['progres' => 'Selesai']); // Ubah nilai 'progress' menjadi 'Selesai'
 
-        return redirect()->route('assignments.index')->with('success', 'Penugasan telah ditandai sebagai selesai.');
+        return redirect()->back()->with('success', 'Penugasan telah ditandai sebagai selesai.');
     }
 
     public function markAsPending(Assignment $assignment)
