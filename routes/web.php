@@ -51,7 +51,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('jobdesks', JobDeskController::class);
     Route::resource('meetings', MeetingController::class);
 
-    Route::resource('/employment-detail', EmploymentDetailController::class);
+    //Employment Detail
+    Route::resource('employment-detail', EmploymentDetailController::class)
+        ->parameters(['employment-detail' => 'employment_detail:employee_number']);
+    Route::get('/employment-detail/{employment_detail:employee_number}/cetak', [EmploymentDetailController::class, 'cetak'])->name('employment-detail.cetak');
+
 
     //Education
     Route::resource('education', EducationHistoryController::class);
@@ -71,4 +75,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('Unit', UnitKerjaController::class);
     Route::get('/unit/{unit}/assign-users', [UnitKerjaController::class, 'assignForm'])->name('unit.assign.form');
     Route::post('/unit/{unit}/assign-users', [UnitKerjaController::class, 'assignUsers'])->name('unit.assign.users');
+
+
+    //Pegawai per Unit
+    Route::get('/unit/{unitId}/pegawai', [HomeController::class, 'showPegawaiByUnit'])->name('unit.pegawai');
 });

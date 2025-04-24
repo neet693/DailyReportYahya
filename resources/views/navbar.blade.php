@@ -82,7 +82,8 @@
 
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="{{ route('profile.index') }}">{{ __('Profile') }}</a>
-                            <a class="dropdown-item" href="{{ route('employment-detail.show', Auth::id()) }}">
+                            <a class="dropdown-item"
+                                href="{{ route('employment-detail.show', Auth::user()->employmentDetail) }}">
                                 {{ __('Detail Kepegawaian') }}
                             </a>
                             <a class="dropdown-item" href="{{ route('logout') }}"

@@ -11,6 +11,11 @@ class EmploymentDetail extends Model
 
     protected $guarded = ['id'];
 
+    public function getRouteKeyName()
+    {
+        return 'employee_number';
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

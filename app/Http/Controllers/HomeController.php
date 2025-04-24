@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Agenda;
 use App\Models\Announcement;
 use App\Models\Assignment;
+use App\Models\EmploymentDetail;
+use App\Models\UnitKerja;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -21,6 +24,25 @@ class HomeController extends Controller
         if (!$user->isAdmin() && !$user->employmentDetail) {
             return redirect()->route('profile.index')->with('error', 'Lengkapi data unit kerja terlebih dahulu.');
         }
+
+        if ($user->role === 'hrd' && !request()->has('lihat_home')) {
+            $units = UnitKerja::all();
+
+            $pegawaiCounts = $units->mapWithKeys(function ($unit) {
+                $userIdsFromPrimary = EmploymentDetail::where('unit_kerja_id', $unit->id)->pluck('user_id')->toArray();
+                $userIdsFromPivot = DB::table('unit_user')->where('unit_id', $unit->id)->pluck('user_id')->toArray();
+                $uniqueUserIds = collect(array_merge($userIdsFromPrimary, $userIdsFromPivot))->unique();
+                return [$unit->id => $uniqueUserIds->count()];
+            });
+
+            $lk = User::where('gender', 'Laki-laki')->count();
+            $pr = User::where('gender', 'Perempuan')->count();
+            $total_user = User::count();
+            $total_pegawai = User::count();
+
+            return view('dashboard.hrd', compact('units', 'pegawaiCounts', 'lk', 'pr', 'total_user', 'total_pegawai'));
+        }
+
 
         $activeUnitId = session('active_unit_id'); // Unit yang dipilih
 
@@ -94,5 +116,32 @@ class HomeController extends Controller
         }
 
         return $query->get();
+    }
+
+    public function showPegawaiByUnit($unitId)
+    {
+        $unit = UnitKerja::findOrFail($unitId);
+
+        // Ambil ID user dari employment_detail
+        $primaryUserIds = EmploymentDetail::where('unit_kerja_id', $unitId)
+            ->pluck('user_id')
+            ->toArray();
+
+        // Ambil ID user dari pivot table unit_user
+        $pivotUserIds = DB::table('unit_user')
+            ->where('unit_id', $unitId)
+            ->pluck('user_id')
+            ->toArray();
+
+        // Gabungkan semua user id tanpa duplikat
+        $userIds = collect(array_merge($primaryUserIds, $pivotUserIds))->unique();
+
+        // Ambil user lengkap
+        $pegawai = User::whereIn('id', $userIds)
+            ->whereIn('role', ['pegawai', 'kepala', 'hrd']) // role yang relevan
+            ->with('employmentDetail.unit', 'units') // load relasi
+            ->get();
+
+        return view('dashboard.pegawai-unit', compact('pegawai', 'unit'));
     }
 }

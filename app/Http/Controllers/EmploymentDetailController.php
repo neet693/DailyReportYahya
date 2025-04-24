@@ -7,6 +7,7 @@ use App\Models\UnitKerja;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PDF;
 
 class EmploymentDetailController extends Controller
 {
@@ -61,12 +62,14 @@ class EmploymentDetailController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(EmploymentDetail $employmentDetail)
     {
-        $user = User::with('employmentDetail.unit')->findOrFail($id);
+        $user = $employmentDetail->user()->with(['employmentDetail.unit', 'educationHistories', 'trainings'])->firstOrFail();
 
         return view('employment-detail.show', compact('user'));
     }
+
+
 
 
     /**
@@ -91,5 +94,17 @@ class EmploymentDetailController extends Controller
     public function destroy(EmploymentDetail $employmentDetail)
     {
         //
+    }
+
+    public function cetak(EmploymentDetail $employmentDetail)
+    {
+        $user = $employmentDetail->user()->with(['employmentDetail.unit', 'educationHistories', 'trainings'])->firstOrFail();
+
+        if (!$user) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan.');
+        }
+
+        $pdf = PDF::loadView('cetak', compact('employmentDetail', 'user'));
+        return $pdf->stream("profil_{$user->name}.pdf");
     }
 }
