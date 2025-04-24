@@ -40,6 +40,7 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/permissionrequests/{permissionRequest}/reject', [PermissionRequestController::class, 'reject'])->name('permissionrequests.reject');
 
     // Generate Report Route
+    Route::get('/report/filtered', [ReportController::class, 'filteredReport'])->name('report.filtered');
     Route::get('report/weekly', [ReportController::class, 'generateWeeklyReport'])->name('report.generateWeeklyReport');
     Route::get('report/monthly', [ReportController::class, 'generateMonthlyReport'])->name('report.generateMonthlyReport');
     Route::post('/announcements/mark-all-as-read', 'AnnouncementController@markAllAsRead')->name('announcements.markAllAsRead');

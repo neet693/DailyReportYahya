@@ -25,7 +25,7 @@ class AssignmentController extends Controller
             ->with(['user', 'assigner'])
             ->get();
 
-        return view('assignments.index', compact('assignments', 'currentUser'));
+        return redirect()->back();
     }
 
     public function create()

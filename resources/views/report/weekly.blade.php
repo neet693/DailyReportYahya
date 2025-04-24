@@ -102,8 +102,11 @@
     <header>
         {{-- <img src="{{ public_path('images/logo.png') }}" class="logo"> --}}
         <h1>Laporan Mingguan</h1>
-        <div class="subtitle">Nama: {{ auth()->user()->name }} | Periode: {{ now()->startOfWeek()->format('d M') }} -
-            {{ now()->endOfWeek()->format('d M Y') }}</div>
+        <div class="subtitle">
+            Nama: {{ auth()->user()->name }} |
+            Periode: {{ $startDate->format('d M') }} - {{ $endDate->format('d M Y') }}
+        </div>
+
     </header>
 
     <h3 style="margin-bottom: 10px;">Daftar Task Pribadi</h3>

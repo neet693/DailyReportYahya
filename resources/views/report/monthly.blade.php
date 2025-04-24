@@ -103,7 +103,11 @@
         {{-- Ganti dengan URL logo jika ada --}}
         {{-- <img src="{{ public_path('images/logo.png') }}" class="logo"> --}}
         <h1>Laporan Bulanan</h1>
-        <div class="subtitle">Nama: {{ auth()->user()->name }} | Bulan: {{ now()->translatedFormat('F Y') }}</div>
+        <div class="subtitle">
+            Nama: {{ auth()->user()->name }} |
+            Periode: {{ $startDate->format('d M') }} - {{ $endDate->format('d M Y') }}
+        </div>
+
     </header>
 
     <h3 style="margin-bottom: 10px;">Daftar Task Pribadi</h3>
@@ -120,7 +124,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($data as $item)
+            @foreach ($tasks as $item)
                 @if ($item->task_user_id == auth()->user()->id)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
