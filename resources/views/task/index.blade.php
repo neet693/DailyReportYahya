@@ -63,55 +63,76 @@
                         </thead>
                         <tbody>
                             @foreach ($tasks as $task)
-                                @if ($task->task_user_id == Auth::id())
-                                    <tr>
-                                        <td>{{ $task->title }}</td>
-                                        <td>{{ $task->task_date->format('d M Y') }}</td>
-                                        <td>{{ $task->task_start_time->format('H:i') }} s/d
-                                            {{ $task->task_end_time->format('H:i') }}</td>
-                                        <td>{!! $task->taskExcerpt() !!}</td>
-                                        <td>
-                                            @if ($task->progres == 1)
-                                                <span class="text-success">✔</span>
-                                            @elseif ($task->progres == 0)
-                                                <span class="text-danger">✖</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="bi bi-gear"></i>
-                                                </a>
-                                                <ul class="dropdown-menu">
+                                @continue($task->task_user_id !== Auth::id())
+
+                                <tr>
+                                    <td>{{ $task->title }}</td>
+                                    <td>{{ $task->task_date->format('d M Y') }}</td>
+                                    <td>{{ $task->task_start_time->format('H:i') }} s/d
+                                        {{ $task->task_end_time->format('H:i') }}</td>
+                                    <td>{!! $task->taskExcerpt() !!}</td>
+                                    <td>
+                                        @if ($task->progres == 1)
+                                            <span class="text-success">✔</span>
+                                        @elseif ($task->progres == 0)
+                                            <span class="text-danger">✖</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-gear"></i>
+                                            </a>
+                                            <ul class="dropdown-menu p-2">
+                                                {{-- Edit --}}
+                                                <li>
+                                                    <a href="{{ route('tasks.edit', $task->id) }}"
+                                                        class="btn btn-warning w-100 text-start rounded-pill mb-2 d-flex align-items-center gap-2 text-white">
+                                                        <i class="bi bi-pencil-square"></i> Edit Task
+                                                    </a>
+                                                </li>
+
+                                                {{-- Show --}}
+                                                <li>
+                                                    <a href="{{ route('tasks.show', $task->id) }}"
+                                                        class="btn btn-info w-100 text-start rounded-pill mb-2 d-flex align-items-center gap-2 text-white">
+                                                        <i class="bi bi-eye"></i> Lihat Detail
+                                                    </a>
+                                                </li>
+
+                                                @if ($task->progres == 0)
+                                                    {{-- Complete --}}
                                                     <li>
-                                                        <a href="{{ route('tasks.edit', $task->id) }}"
-                                                            class="dropdown-item text-warning">
-                                                            <i class="bi bi-pencil-square"></i> Edit
-                                                        </a>
+                                                        <button
+                                                            class="btn btn-success w-100 text-start rounded-pill mb-2 d-flex align-items-center gap-2"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#completeModal{{ $task->id }}">
+                                                            <i class="bi bi-check-circle"></i> Selesaikan
+                                                        </button>
                                                     </li>
+
+                                                    {{-- Pending --}}
                                                     <li>
-                                                        <a href="{{ route('tasks.show', $task->id) }}"
-                                                            class="dropdown-item text-info">
-                                                            <i class="bi bi-eye"></i> Show
-                                                        </a>
+                                                        <button
+                                                            class="btn btn-secondary w-100 text-start rounded-pill d-flex align-items-center gap-2"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#pendingModal{{ $task->id }}">
+                                                            <i class="bi bi-hourglass-split"></i> Tunda
+                                                        </button>
                                                     </li>
-                                                    {{-- Uncomment untuk hapus
-                                                    <li>
-                                                        <form action="{{ route('tasks.destroy', $task->id) }}" method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="dropdown-item text-danger">
-                                                                <i class="bi bi-trash"></i> Hapus
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                    --}}
-                                                </ul>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endif
+                                                @endif
+                                            </ul>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                                @include('components.task_modal_complete', [
+                                    'task' => $task,
+                                ])
+                                @include('components.task_modal_pending', [
+                                    'task' => $task,
+                                ])
                             @endforeach
                         </tbody>
                     </table>
