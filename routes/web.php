@@ -79,4 +79,8 @@ Route::middleware(['auth'])->group(function () {
 
     //Pegawai per Unit
     Route::get('/unit/{unitId}/pegawai', [HomeController::class, 'showPegawaiByUnit'])->name('unit.pegawai');
+
+
+    //Import Pegawai
+    Route::post('/import-users', [HomeController::class, 'import'])->name('users.import');
 });

@@ -4,22 +4,28 @@
     <div class="container">
         <h3 class="fw-bold text-center mb-4">
             Unit:
-            @if (auth()->user()->role === 'admin')
-                <span class="text-primary">Semua Unit</span>
-            @else
-                <form action="{{ route('switchUnit') }}" method="POST" class="d-inline">
-                    @csrf
-                    <select name="unit_id" onchange="this.form.submit()" class="form-select d-inline w-auto">
+            <form action="{{ route('switchUnit') }}" method="POST" class="d-inline">
+                @csrf
+                <select name="unit_id" onchange="this.form.submit()" class="form-select d-inline w-auto">
+                    @if (auth()->user()->isAdmin())
+                        @foreach ($units as $unit)
+                            <option value="{{ $unit->id }}"
+                                {{ session('active_unit_id') == $unit->id ? 'selected' : '' }}>
+                                {{ $unit->name }}
+                            </option>
+                        @endforeach
+                    @else
                         @foreach (auth()->user()->units as $unit)
                             <option value="{{ $unit->id }}"
                                 {{ session('active_unit_id') == $unit->id ? 'selected' : '' }}>
                                 {{ $unit->name }}
                             </option>
                         @endforeach
-                    </select>
-                </form>
-            @endif
+                    @endif
+                </select>
+            </form>
         </h3>
+
 
         <div class="row justify-content-center">
             @include('toaster')

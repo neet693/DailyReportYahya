@@ -43,6 +43,54 @@
             🔁 Lihat Task Harian (Home)
         </a>
 
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#importModal">
+            Import Users
+        </button>
+
+        <!-- Import Modal -->
+        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <form action="{{ route('users.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="importModalLabel">Import Data Pengguna</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Pilih file Excel</label>
+                                <input class="form-control" type="file" name="file" id="file" required>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Import</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+            <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert"
+                aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Data pengguna berhasil diimpor!
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+
+
 
         <div class="row g-3">
             @foreach ($units as $unit)
@@ -91,4 +139,21 @@
             </div>
         </div>
     </div>
+
+    @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Tutup modal dulu
+                var modal = bootstrap.Modal.getInstance(document.getElementById('importModal'));
+                if (modal) {
+                    modal.hide();
+                }
+
+                // Lalu tampilkan toast
+                var toastLiveExample = document.getElementById('successToast');
+                var toast = new bootstrap.Toast(toastLiveExample);
+                toast.show();
+            });
+        </script>
+    @endif
 @endsection

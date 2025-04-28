@@ -14,8 +14,11 @@ class SwitchUserController extends Controller
 
         $user = auth()->user();
 
-        if (!$user->units->pluck('id')->contains($request->unit_id)) {
-            abort(403, 'Anda tidak memiliki akses ke unit ini.');
+        // Admin dan HRD bebas ganti unit mana saja
+        if (!($user->isAdmin())) {
+            if (!$user->units->pluck('id')->contains($request->unit_id)) {
+                abort(403, 'Anda tidak memiliki akses ke unit ini.');
+            }
         }
 
         session(['active_unit_id' => $request->unit_id]);
