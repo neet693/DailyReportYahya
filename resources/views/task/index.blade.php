@@ -63,8 +63,6 @@
                         </thead>
                         <tbody>
                             @foreach ($tasks as $task)
-                                @continue($task->task_user_id !== Auth::id())
-
                                 <tr>
                                     <td>{{ $task->title }}</td>
                                     <td>{{ $task->task_date->format('d M Y') }}</td>
