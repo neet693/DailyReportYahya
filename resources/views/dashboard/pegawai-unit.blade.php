@@ -98,6 +98,8 @@
                                 <div class="card-content">
                                     <h2>{{ $p->name }}
                                         <small>Unit {{ $p->employmentDetail?->unit?->name ?? '-' }}</small>
+                                        <small>{{ $p->jobdesk?->title ?? 'Belum ada jobdesk' }}</small>
+
                                     </h2>
                                     <div class="icon-block">
                                         <a href="{{ route('employment-detail.show', $p->employmentDetail) }}">

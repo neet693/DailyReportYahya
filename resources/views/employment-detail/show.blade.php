@@ -29,7 +29,10 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="fw-bold">Informasi Kepegawaian</h5>
-                    <a href="{{ route('employment-detail.create') }}" class="btn btn-primary">Tambah / Edit Detail</a>
+                    @if (Auth::id() == $user->id)
+                        <a href="{{ route('employment-detail.create') }}" class="btn btn-primary">Tambah / Edit Detail</a>
+                    @endif
+
                 </div>
                 <hr>
                 <div class="row">
@@ -64,11 +67,16 @@
                 <div class="tab-content mt-3">
                     <!-- Tab Pendidikan -->
                     <div class="tab-pane fade show active" id="education" role="tabpanel">
-                        <p><strong>Riwayat Pendidikan</strong>
-                            <a href="#" class="text-primary fw-bold" data-bs-toggle="modal"
-                                data-bs-target="#addEducationModal">+</a>
-                        </p>
-                        <ul>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p><strong>Riwayat Pendidikan</strong></p>
+                            @if (Auth::id() == $user->id)
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#addEducationModal">
+                                    Tambah Pendidikan
+                                </button>
+                            @endif
+                        </div>
+                        <ul class="mt-3">
                             @foreach ($user->educationHistories as $edu)
                                 <li>{{ $edu->degree }} - {{ $edu->institution }} (Lulus:
                                     {{ $edu->year_of_graduation ?? 'N/A' }})</li>
@@ -78,18 +86,23 @@
 
                     <!-- Tab Diklat -->
                     <div class="tab-pane fade" id="training" role="tabpanel">
-                        <p><strong>Riwayat Diklat</strong>
-                            <a href="#" class="text-primary fw-bold" data-bs-toggle="modal"
-                                data-bs-target="#addTrainingModal">+</a>
-                        </p>
-                        <ul>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p><strong>Riwayat Diklat</strong></p>
+                            @if (Auth::id() == $user->id)
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#addTrainingModal">
+                                    Tambah Diklat
+                                </button>
+                            @endif
+                        </div>
+                        <ul class="mt-3">
                             @foreach ($user->trainings as $training)
                                 <li>{{ $training->training_name }} - {{ $training->organizer }}
-                                    ({{ $training->training_date ?? 'N/A' }})
-                                </li>
+                                    ({{ $training->training_date ?? 'N/A' }})</li>
                             @endforeach
                         </ul>
                     </div>
+
                 </div>
             </div>
         </div>

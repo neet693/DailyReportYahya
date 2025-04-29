@@ -23,7 +23,6 @@ class HomeController extends Controller
         $month = now()->month;
         $user = Auth::user()->load('employmentDetail.unit');
 
-
         if (!$user->isAdmin() && !$user->employmentDetail) {
             return redirect()->route('profile.index')->with('error', 'Lengkapi data unit kerja terlebih dahulu.');
         }
@@ -31,6 +30,7 @@ class HomeController extends Controller
         if (($user->role === 'hrd' || $user->role === 'admin') && !request()->has('lihat_home')) {
             $units = UnitKerja::all();
 
+            // Total semua pegawai per unit
             $pegawaiCounts = $units->mapWithKeys(function ($unit) {
                 $userIdsFromPrimary = EmploymentDetail::where('unit_kerja_id', $unit->id)->pluck('user_id')->toArray();
                 $userIdsFromPivot = DB::table('unit_user')->where('unit_id', $unit->id)->pluck('user_id')->toArray();
@@ -38,13 +38,38 @@ class HomeController extends Controller
                 return [$unit->id => $uniqueUserIds->count()];
             });
 
+            // Hitung total semua unit (semua laki-laki dan perempuan)
             $lk = User::where('gender', 'Laki-laki')->count();
             $pr = User::where('gender', 'Perempuan')->count();
             $total_user = User::count();
             $total_pegawai = User::count();
 
-            return view('dashboard.hrd', compact('units', 'pegawaiCounts', 'lk', 'pr', 'total_user', 'total_pegawai'));
+            // Tambahan: jumlah laki-laki dan perempuan per unit
+            $lkPerUnit = [];
+            $prPerUnit = [];
+
+            foreach ($units as $unit) {
+                $userIdsFromPrimary = EmploymentDetail::where('unit_kerja_id', $unit->id)->pluck('user_id')->toArray();
+                $userIdsFromPivot = DB::table('unit_user')->where('unit_id', $unit->id)->pluck('user_id')->toArray();
+                $uniqueUserIds = collect(array_merge($userIdsFromPrimary, $userIdsFromPivot))->unique();
+
+                $lkPerUnit[$unit->id] = User::whereIn('id', $uniqueUserIds)->where('gender', 'Laki-laki')->count();
+                $prPerUnit[$unit->id] = User::whereIn('id', $uniqueUserIds)->where('gender', 'Perempuan')->count();
+            }
+
+            return view('dashboard.hrd', compact(
+                'units',
+                'pegawaiCounts',
+                'lk',
+                'pr',
+                'total_user',
+                'total_pegawai',
+                'lkPerUnit',
+                'prPerUnit'
+            ));
         }
+
+        // Untuk pengguna biasa
         $units = UnitKerja::all();
         $activeUnitId = session('active_unit_id'); // Unit yang dipilih
 
@@ -57,11 +82,8 @@ class HomeController extends Controller
             $assignments = $this->getAssignmentsWithUsers($month, $unitId);
         }
 
-
-        // Urutkan user login di posisi pertama
         $usersWithTasks = $usersWithTasks->sortByDesc(fn($u) => $u->id === auth()->id());
 
-        // Pengumuman
         $announcements = Announcement::where(function ($query) use ($user) {
             $query->where('category', 'umum')
                 ->orWhere(function ($q) use ($user) {
@@ -71,6 +93,7 @@ class HomeController extends Controller
 
         return view('home', compact('units', 'usersWithTasks', 'announcements', 'assignments'));
     }
+
 
 
     private function getUsersWithTasks(string $today, ?int $unitId = null)
@@ -137,7 +160,7 @@ class HomeController extends Controller
         // Ambil user lengkap
         $pegawai = User::whereIn('id', $userIds)
             ->whereIn('role', ['pegawai', 'kepala', 'hrd']) // role yang relevan
-            ->with('employmentDetail.unit', 'units') // load relasi
+            ->with('employmentDetail.unit', 'units', 'jobdesk') // load relasi
             ->get();
 
         return view('dashboard.pegawai-unit', compact('pegawai', 'unit'));

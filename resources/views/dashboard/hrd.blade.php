@@ -103,7 +103,9 @@
                             </div>
                             <div>
                                 <h6 class="mb-0 text-dark">{{ $unit->name }}</h6>
-                                <span>{{ $pegawaiCounts[$unit->id] ?? 0 }} Pegawai</span>
+                                <span>{{ $pegawaiCounts[$unit->id] ?? 0 }} Pegawai</span> <br>
+                                <span>Laki-laki: {{ $lkPerUnit[$unit->id] ?? 0 }}</span>
+                                <span>Perempuan: {{ $prPerUnit[$unit->id] ?? 0 }}</span>
                             </div>
                         </div>
                     </a>

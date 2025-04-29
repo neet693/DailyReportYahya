@@ -17,55 +17,143 @@ class JobDeskController extends Controller
 
     public function create()
     {
-        $users = User::all(); // Ambil semua pengguna yang dapat dipilih
+        if (auth()->user()->role === 'admin') {
+            $users = User::all();
+        } elseif (auth()->user()->role === 'kepala') {
+            // Ambil unit_id dari employment_detail user yang login
+            $unitId = auth()->user()->employmentDetail->unit_id ?? null;
+
+            $users = User::whereHas('employmentDetail', function ($query) use ($unitId) {
+                $query->where('unit_kerja_id', $unitId);
+            })->get();
+        } else {
+            abort(403, 'Unauthorized');
+        }
+
         return view('jobdesks.create', compact('users'));
     }
+
 
     public function store(Request $request)
     {
         $request->validate([
             'title' => 'required',
             'description' => 'required',
-            'jobdesk_user_id' => 'required|exists:users,id', // Pastikan jobdesk_user_id ada dalam tabel users
+            'jobdesk_user_id' => 'required|exists:users,id',
         ]);
 
-        $Jobdesk = new JobDesk([
+        // Cek siapa yang login
+        $user = auth()->user();
+
+        if ($user->role === 'admin') {
+            // Admin boleh buat ke siapapun
+            $jobdeskUser = User::findOrFail($request->input('jobdesk_user_id'));
+        } elseif ($user->role === 'kepala') {
+            // Kepala hanya boleh ke anggota unitnya
+
+            $unitId = $user->employmentDetail->unit_id ?? null;
+
+            $jobdeskUser = User::whereHas('employmentDetail', function ($query) use ($unitId) {
+                $query->where('unit_id', $unitId);
+            })
+                ->where('id', $request->input('jobdesk_user_id'))
+                ->first();
+
+            if (!$jobdeskUser) {
+                return back()->withErrors(['jobdesk_user_id' => 'User yang dipilih bukan bagian unit Anda.']);
+            }
+        } else {
+            abort(403, 'Unauthorized');
+        }
+
+        // Jika semua validasi lolos, buat JobDesk
+        $jobdesk = new JobDesk([
             'title' => $request->input('title'),
             'description' => $request->input('description'),
-            'jobdesk_user_id' => $request->input('jobdesk_user_id'),
+            'jobdesk_user_id' => $jobdeskUser->id,
         ]);
 
-        $Jobdesk->save();
+        $jobdesk->save();
 
-        return redirect()->route('jobdesks.index')->with('success', 'Job Desc created successfully');
+        // Kalau Admin dan title ada kata 'kepala', ubah role user yang ditugaskan
+        if ($user->role === 'admin' && str_contains(strtolower($request->input('title')), 'kepala')) {
+            $jobdeskUser->update([
+                'role' => 'kepala', // atau sesuai naming role di database kamu
+            ]);
+        }
+
+        return redirect()->route('jobdesks.index')->with('success', 'Jobdesk berhasil dibuat.');
     }
+
 
     public function show(JobDesk $jobDesc)
     {
         // return view('jobdesks.show', compact('jobDesc'));
     }
 
-    public function edit(JobDesk $Jobdesk)
+    public function edit(JobDesk $jobdesk)
     {
-        $users = User::all(); // Ambil semua pengguna yang dapat dipilih
-        return view('jobdesks.edit', compact('Jobdesk', 'users'));
+        if (auth()->user()->role === 'admin') {
+            $users = User::all();
+        } elseif (auth()->user()->role === 'kepala') {
+            $unitId = auth()->user()->employmentDetail->unit_id ?? null;
+
+            if (!$unitId) {
+                abort(403, 'Anda tidak memiliki data unit kerja.');
+            }
+
+            $users = User::whereHas('employmentDetail', function ($query) use ($unitId) {
+                $query->where('unit_id', $unitId);
+            })->get();
+        } else {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('jobdesks.edit', compact('jobdesk', 'users'));
     }
 
-    public function update(Request $request, JobDesk $Jobdesk)
+
+    public function update(Request $request, JobDesk $jobdesk)
     {
         $request->validate([
             'title' => 'required',
             'description' => 'required',
-            'jobdesk_user_id' => 'required|exists:users,id', // Pastikan jobdesk_user_id ada dalam tabel users
+            'jobdesk_user_id' => 'required|exists:users,id',
         ]);
 
-        $Jobdesk->title = $request->input('title');
-        $Jobdesk->description = $request->input('description');
-        $Jobdesk->jobdesk_user_id = $request->input('jobdesk_user_id');
-        $Jobdesk->save();
+        $user = auth()->user();
 
-        return redirect()->route('jobdesks.index')->with('success', 'Job Desc updated successfully');
+        if ($user->role === 'admin') {
+            $jobdeskUser = User::findOrFail($request->input('jobdesk_user_id'));
+        } elseif ($user->role === 'kepala') {
+            $unitId = $user->employmentDetail->unit_id ?? null;
+
+            if (!$unitId) {
+                abort(403, 'Anda tidak memiliki data unit kerja.');
+            }
+
+            $jobdeskUser = User::whereHas('employmentDetail', function ($query) use ($unitId) {
+                $query->where('unit_id', $unitId);
+            })
+                ->where('id', $request->input('jobdesk_user_id'))
+                ->first();
+
+            if (!$jobdeskUser) {
+                return back()->withErrors(['jobdesk_user_id' => 'User yang dipilih bukan bagian unit Anda.']);
+            }
+        } else {
+            abort(403, 'Unauthorized');
+        }
+
+        $jobdesk->update([
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'jobdesk_user_id' => $jobdeskUser->id,
+        ]);
+
+        return redirect()->route('jobdesks.index')->with('success', 'Jobdesk berhasil diperbarui.');
     }
+
 
     public function destroy(JobDesk $Jobdesk)
     {
