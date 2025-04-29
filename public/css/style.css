@@ -99,7 +99,7 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
     position: absolute;
-    top: -10px;
+    top: 2px;
     right: -10px;
     width: 40px;
     height: 40px;
@@ -142,4 +142,29 @@ body {
 .toggle-tasks .badge {
     font-size: 0.65rem;
     padding: 4px 6px;
+}
+
+.scroll-container {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    gap: 1rem;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.card-wrapper {
+    flex: 0 0 auto;
+    width: 320px;
+    scroll-snap-align: start;
+}
+
+.scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background-color: var(--darkgrey);
+    border-radius: 10px;
 }

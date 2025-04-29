@@ -21,6 +21,7 @@ class HomeController extends Controller
     {
         $today = now()->toDateString();
         $month = now()->month;
+        $search = request('search');
         $user = Auth::user()->load('employmentDetail.unit');
 
         if (!$user->isAdmin() && !$user->employmentDetail) {
@@ -74,11 +75,11 @@ class HomeController extends Controller
         $activeUnitId = session('active_unit_id'); // Unit yang dipilih
 
         if ($user->isAdmin() || $activeUnitId) {
-            $usersWithTasks = $this->getUsersWithTasks($today, $activeUnitId);
+            $usersWithTasks = $this->getUsersWithTasks($today, $activeUnitId, $search);
             $assignments = $this->getAssignmentsWithUsers($month, $activeUnitId);
         } else {
             $unitId = $user->employmentDetail?->unit_kerja_id;
-            $usersWithTasks = $this->getUsersWithTasks($today, $unitId);
+            $usersWithTasks = $this->getUsersWithTasks($today, $unitId, $search);
             $assignments = $this->getAssignmentsWithUsers($month, $unitId);
         }
 
@@ -95,8 +96,7 @@ class HomeController extends Controller
     }
 
 
-
-    private function getUsersWithTasks(string $today, ?int $unitId = null)
+    private function getUsersWithTasks(string $today, ?int $unitId = null, ?string $search = null)
     {
         $query = User::with([
             'jobdesk',
@@ -110,15 +110,16 @@ class HomeController extends Controller
             'units'
         ])->where('role', '!=', User::ROLE_ADMIN);
 
-        if (!is_null($unitId)) {
+        if ($unitId) {
             $query->whereHas('units', fn($q) => $q->where('unit_kerjas.id', $unitId));
+        }
+
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%');
         }
 
         return $query->get();
     }
-
-
-
 
 
     private function getAssignmentsWithUsers(string $month, ?int $unitId = null)

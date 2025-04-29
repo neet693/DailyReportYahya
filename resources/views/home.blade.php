@@ -2,11 +2,12 @@
 
 @section('content')
     <div class="container">
-        <h3 class="fw-bold text-center mb-4">
-            Unit:
-            <form action="{{ route('switchUnit') }}" method="POST" class="d-inline">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+            <!-- Kiri: Dropdown Unit -->
+            <form action="{{ route('switchUnit') }}" method="POST" class="d-flex align-items-center">
                 @csrf
-                <select name="unit_id" onchange="this.form.submit()" class="form-select d-inline w-auto">
+                <label for="unit_id" class="fw-bold me-2 mb-0">Unit:</label>
+                <select name="unit_id" onchange="this.form.submit()" class="form-select w-auto">
                     @if (auth()->user()->isAdmin())
                         @foreach ($units as $unit)
                             <option value="{{ $unit->id }}"
@@ -24,14 +25,34 @@
                     @endif
                 </select>
             </form>
-        </h3>
 
+            <!-- Kanan: Tombol + Form Search -->
+            <div class="d-flex flex-column align-items-end gap-2">
+                <!-- Tombol -->
+                <div class="d-flex flex-wrap gap-2 justify-content-end w-100">
+                    @if (!auth()->user()->isAdmin())
+                        @foreach (auth()->user()->units as $unit)
+                            <a href="{{ route('unit.pegawai', $unit->id) }}" class="btn btn-primary">
+                                List Pegawai - {{ $unit->name }}
+                            </a>
+                        @endforeach
+                    @endif
+                </div>
 
-        <div class="row justify-content-center">
+                <!-- Form Search dengan lebar disamakan -->
+                <form method="GET" action="{{ route('home') }}" class="d-flex align-items-center w-100" role="search">
+                    <input type="text" name="search" class="form-control me-2" style="min-width: 300px;"
+                        placeholder="Cari nama pegawai..." value="{{ request('search') }}">
+                    <button type="submit" class="btn btn-outline-primary">Cari</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="scroll-container">
             @include('toaster')
 
             @foreach ($usersWithTasks as $data)
-                <div class="col-md-4 mb-3">
+                <div class="card-wrapper">
                     <div class="card-custom">
                         {{-- Header: Foto & Nama --}}
                         <div class="d-flex align-items-center p-4">
@@ -60,7 +81,7 @@
                             </div>
 
                             <ul class="list-group list-group-flush">
-                                {{-- 2 Tugas Pertama --}}
+                                {{-- 1 Tugas Pertama --}}
                                 @forelse ($data->tasks->take(1) as $task)
                                     <li class="list-group-item">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
@@ -99,6 +120,7 @@
                                         {{ $data->name }} Belum membuat Task hari ini.</li>
                                 @endforelse
                             </ul>
+
                             @if ($data->tasks->count() > 1)
                                 <button class="btn btn-light w-100 text-start position-relative toggle-tasks mt-2">
                                     <i class="bi bi-chevron-down me-1 toggle-icon"></i>
@@ -153,6 +175,7 @@
                 </div>
             @endforeach
         </div>
+
 
         <!-- Bagian Penugasan -->
         <div class="container mt-4">

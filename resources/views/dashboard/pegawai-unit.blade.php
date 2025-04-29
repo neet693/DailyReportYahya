@@ -105,10 +105,13 @@
                                         <a href="{{ route('employment-detail.show', $p->employmentDetail) }}">
                                             <i class="fa-solid fa-address-card"></i>
                                         </a>
-                                        <a href="{{ route('employment-detail.cetak', $p->employmentDetail) }}"
-                                            title="Cetak">
-                                            <i class="fa-solid fa-print"></i>
-                                        </a>
+                                        @if (auth()->user()->role !== 'pegawai')
+                                            <a href="{{ route('employment-detail.cetak', $p->employmentDetail) }}"
+                                                title="Cetak">
+                                                <i class="fa-solid fa-print"></i>
+                                            </a>
+                                        @endif
+
 
                                     </div>
                                 </div>
