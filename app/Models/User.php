@@ -115,4 +115,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(UnitKerja::class, 'unit_user', 'user_id', 'unit_id');
     }
+
+    //Message
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
 }

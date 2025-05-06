@@ -269,6 +269,8 @@
             </div>
         </div>
 
+        @include('chats.modal')
+
 
     </div>
 @endsection

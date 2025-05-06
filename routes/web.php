@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\MessageSent;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AssignmentController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobDeskController;
 use App\Http\Controllers\LogAgendaController;
 use App\Http\Controllers\MeetingController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PermissionRequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
@@ -83,4 +85,10 @@ Route::middleware(['auth'])->group(function () {
 
     //Import Pegawai
     Route::post('/import-users', [HomeController::class, 'import'])->name('users.import');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/chat', [MessageController::class, 'index']);
+    Route::post('/chat/messages', [MessageController::class, 'fetchMessages']);
+    Route::post('/chat/send', [MessageController::class, 'sendMessage']);
 });

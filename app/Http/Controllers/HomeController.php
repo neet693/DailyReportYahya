@@ -23,6 +23,16 @@ class HomeController extends Controller
         $month = now()->month;
         $search = request('search');
         $user = Auth::user()->load('employmentDetail.unit');
+        $authId = $user->id;
+        $chatUsers = User::where('id', '!=', $authId)
+            ->withCount([
+                'sentMessages as unread_count' => function ($query) use ($authId) {
+                    $query->where('receiver_id', $authId)
+                        ->where('is_read', false);
+                }
+            ])
+            ->get();
+
 
         if (!$user->isAdmin() && !$user->employmentDetail) {
             return redirect()->route('profile.index')->with('error', 'Lengkapi data unit kerja terlebih dahulu.');
@@ -92,7 +102,7 @@ class HomeController extends Controller
                 });
         })->get();
 
-        return view('home', compact('units', 'usersWithTasks', 'announcements', 'assignments'));
+        return view('home', compact('units', 'usersWithTasks', 'announcements', 'assignments', 'chatUsers'));
     }
 
 
