@@ -1,5 +1,5 @@
 <!-- Toast Container (bisa diatur posisinya) -->
-<div class="toast-container position-fixed bottom-0 start-0 p-3" style="z-index: 9999;">
+<div class="toast-container position-fixed start-0 p-3" style="z-index: 9999; bottom:90px;">
     @foreach ($announcements as $announcement)
         <div class="toast announcement-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true"
             data-bs-delay="10000">

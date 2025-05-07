@@ -1,7 +1,7 @@
     <style>
         #chat-bubble-btn {
             position: fixed;
-            bottom: 20px;
+            bottom: 90px;
             right: 20px;
             background-color: #0d6efd;
             color: white;

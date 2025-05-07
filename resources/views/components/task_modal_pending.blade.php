@@ -1,6 +1,7 @@
                             <!-- Modal -->
                             <div class="modal fade" id="pendingModal{{ $task->id }}" tabindex="-1"
-                                aria-labelledby="pendingModalLabel{{ $task->id }}" aria-hidden="true">
+                                aria-labelledby="pendingModalLabel{{ $task->id }}" aria-hidden="true"
+                                data-bs-backdrop="false">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">

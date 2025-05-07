@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Aplikasi untuk memonitoring Daily Routine para Staff IT Sekolah Kristen Yahya">
+    <meta name="description" content="Sistem Informasi Kepegawaian Sekolah Kristen Yahya">
     <link rel="icon" href="{{ asset('asset/logo-itdept.ico') }}" type="image/x-icon" />
 
     <!-- CSRF Token -->
@@ -43,8 +43,8 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 
-<body>
-    <div id="app">
+<body style="margin: 0; min-height: 100vh; display: flex; flex-direction: column;">
+    <div style="flex: 1;">
         @include('navbar')
 
         <main class="py-4">
@@ -52,7 +52,10 @@
         </main>
     </div>
 
+    @include('footer')
+
     @include('scripts')
 </body>
+
 
 </html>
