@@ -256,10 +256,6 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center text-muted py-4">Belum ada penugasan untuk
-                                            unit ini.</td>
-                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
