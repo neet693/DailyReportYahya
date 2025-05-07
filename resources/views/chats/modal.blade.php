@@ -165,8 +165,8 @@
                         <div class="chat-list">
                             @foreach ($chatUsers as $user)
                                 <div class="chat-item" onclick="selectUser({{ $user->id }}, '{{ $user->name }}')">
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}"
-                                        alt="{{ $user->name }}">
+                                    <img src="{{ $user->profile_image ? asset('profile_images/' . $user->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) }}"
+                                        class="rounded-circle profile-img" alt="Foto Profil {{ $user->name }}">
                                     <div class="info">
                                         <div>{{ $user->name }}</div>
                                         <small class="text-muted">Klik untuk chat</small>
