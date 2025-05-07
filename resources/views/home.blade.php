@@ -179,51 +179,55 @@
 
         <!-- Bagian Penugasan -->
         <div class="container mt-4">
-            <div class="row justify-content-center">
-                <div class="card shadow-sm border-0 rounded">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">📌 Penugasan</h5>
-                    </div>
-                    <div class="card-body table-responsive p-2">
-                        <table class="table table-hover table-striped align-middle">
-                            <thead class="table-primary">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">📌 Penugasan</h5>
+                </div>
+                <div class="card-body p-0 mt-3">
+                    <div class="table-responsive">
+                        <table id="myTable" class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-center">
                                 <tr>
-                                    <th>Yang Bertugas</th>
+                                    <th>Petugas</th>
                                     <th>Tugas</th>
-                                    <th>Tanggal</th>
-                                    <th>Jam</th>
-                                    <th>Ditugaskan Oleh</th>
                                     <th>Progres</th>
-                                    <th>Action</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($assignments as $assignment)
                                     <tr>
-                                        <td>
-                                            <img src="{{ asset($assignment->user->profile_image ? 'profile_images/' . $assignment->user->profile_image : 'asset/logo-itdept.png') }}"
-                                                class="rounded-circle border-2 me-2" width="40" height="40">
-                                            {{ $assignment->user->name }}
+                                        <td class="text-nowrap">
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{ asset($assignment->user->profile_image ? 'profile_images/' . $assignment->user->profile_image : 'asset/logo-itdept.png') }}"
+                                                    class="rounded-circle me-2" width="40" height="40"
+                                                    style="object-fit: cover;">
+                                                <div class="fw-semibold">{{ $assignment->user->name }}</div>
+                                            </div>
                                         </td>
-                                        <td><strong>{{ $assignment->title }}</strong></td>
-                                        <td>{{ $assignment->assignment_date->format('d M Y') }}</td>
-                                        <td>{{ $assignment->start_assignment_time->format('H:i') }} -
-                                            {{ $assignment->end_assignment_time->format('H:i') }}</td>
-                                        <td>{{ $assignment->assigner->name }}</td>
                                         <td>
+                                            <div class="fw-semibold">{{ $assignment->title }}</div>
+                                            <div class="small text-muted">
+                                                Oleh: {{ $assignment->assigner->name }} <br>
+                                                {{ $assignment->assignment_date->format('d M Y') }},
+                                                {{ $assignment->start_assignment_time->format('H:i') }} -
+                                                {{ $assignment->end_assignment_time->format('H:i') }}
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
                                             @if ($assignment->progres === 'Selesai')
                                                 <span class="badge bg-success">✔ Selesai</span>
                                             @elseif ($assignment->progres === 'Pending')
-                                                <span class="badge bg-warning text-dark">⚠️ Pending</span>
+                                                <span class="badge bg-warning text-dark">⚠ Pending</span>
                                             @else
-                                                <span class="badge bg-danger">❌ Belum Selesai</span>
+                                                <span class="badge bg-dark text-white">❌ Belum</span>
                                             @endif
                                         </td>
-                                        <td>
+                                        <td class="text-end text-nowrap">
                                             @if (auth()->user()->id == $assignment->user_id && $assignment->progres !== 'Selesai')
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle"
-                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                                        type="button" data-bs-toggle="dropdown">
                                                         Aksi
                                                     </button>
                                                     <ul class="dropdown-menu">
@@ -237,7 +241,7 @@
                                                             </form>
                                                         </li>
                                                         <li>
-                                                            <button type="button" class="dropdown-item text-warning"
+                                                            <button class="dropdown-item text-warning"
                                                                 data-bs-toggle="modal"
                                                                 data-bs-target="#penugasanPendingModal{{ $assignment->id }}">
                                                                 <i class="bi bi-clock"></i> Tandai Pending
@@ -245,26 +249,21 @@
                                                         </li>
                                                     </ul>
                                                 </div>
-
-                                                {{-- Include modal-nya DI LUAR dropdown menu --}}
                                                 @include('components.modal_pending', [
                                                     'assignment' => $assignment,
                                                 ])
                                             @endif
-
-
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="text-center text-muted">Belum ada penugasan untuk unit
-                                            ini.</td>
+                                        <td colspan="4" class="text-center text-muted py-4">Belum ada penugasan untuk
+                                            unit ini.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
         </div>
