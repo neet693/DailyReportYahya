@@ -1,9 +1,9 @@
 <!-- Toast Container (bisa diatur posisinya) -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+<div class="toast-container position-fixed bottom-0 start-0 p-3" style="z-index: 9999;">
     @foreach ($announcements as $announcement)
         <div class="toast announcement-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true"
             data-bs-delay="10000">
-            <div class="toast-header bg-danger text-white">
+            <div class="toast-header bg-info text-white">
                 <strong class="me-auto">{{ $announcement->title }}</strong>
                 <small class="text-light ms-2">{{ $announcement->created_at->diffForHumans() }}</small>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
@@ -19,7 +19,7 @@
         @if ($agendas = auth()->user()->agendas)
             <div class="toast agenda-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true"
                 data-bs-delay="10000">
-                <div class="toast-header bg-danger text-white">
+                <div class="toast-header bg-warning text-dark">
                     <strong class="me-auto">Agenda</strong>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
                         aria-label="Close"></button>
