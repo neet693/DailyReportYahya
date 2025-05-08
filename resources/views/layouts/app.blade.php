@@ -47,7 +47,7 @@
     <div style="flex: 1;">
         @include('navbar')
 
-        <main class="py-4">
+        <main class="py-4 bg-body">
             @yield('content')
         </main>
     </div>

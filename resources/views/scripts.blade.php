@@ -63,3 +63,26 @@
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
 </script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        const themeIcon = document.getElementById('theme-icon');
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('bsTheme') || 'light';
+        htmlElement.setAttribute('data-bs-theme', savedTheme);
+        themeIcon.className = savedTheme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+
+        themeToggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // biar tidak reload
+            const currentTheme = htmlElement.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            htmlElement.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('bsTheme', newTheme);
+            themeIcon.className = newTheme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+        });
+    });
+</script>

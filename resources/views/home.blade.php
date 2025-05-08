@@ -60,8 +60,8 @@
                                 <img src="{{ $data->profile_image ? asset('profile_images/' . $data->profile_image) : asset('asset/default_profile.jpg') }}"
                                     class="rounded-circle profile-img" alt="Foto Profil">
                                 <div class="ms-3">
-                                    <h5 class="mb-0">{{ $data->name }}</h5>
-                                    <p class="text-muted small mb-0">
+                                    <h5 class="mb-0 text-dark">{{ $data->name }}</h5>
+                                    <p class="text-dark small mb-0">
                                         {{ $data->jobdesk->title ?? 'Belum ada Job Desc' }}
                                     </p>
                                 </div>
@@ -85,14 +85,14 @@
                                     {{-- 1 Tugas Pertama --}}
                                     @forelse ($data->tasks->take(1) as $task)
                                         <li class="list-group-item">
-                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <div class="d-flex justify-content-between align-items-center mb-1 text-dark">
                                                 <strong>{{ $task->title }}</strong>
                                                 <span
                                                     class="badge rounded-pill {{ $task->progres ? 'bg-success' : 'bg-danger' }}">
                                                     {{ $task->progres ? 'Selesai' : 'Belum Selesai' }}
                                                 </span>
                                             </div>
-                                            <div class="text-muted small mb-2 fs-6">
+                                            <div class="text-dark small mb-2 fs-6">
                                                 <i class="bi bi-geo-alt me-1"></i>{{ $task->place }} |
                                                 <i class="bi bi-clock me-1"></i>{{ $task->task_start_time->format('H:i') }}
                                                 -
@@ -113,8 +113,9 @@
                                             @endif
                                         </li>
                                     @empty
-                                        <li class="list-group-item text-muted">
-                                            {{ $data->name }} Belum membuat Tugas hari ini.</li>
+                                        <li class="list-group-item text-dark">
+                                            {{ $data->name }} Belum membuat Tugas hari ini.
+                                        </li>
                                     @endforelse
                                 </ul>
 
@@ -129,7 +130,7 @@
                                         </span>
                                     </button>
 
-                                    <ul class="more-tasks list-unstyled mt-2 d-none small">
+                                    <ul class="more-tasks list-unstyled mt-2 d-none small text-dark">
                                         @foreach ($data->tasks->slice(1) as $task)
                                             <li class="list-group-item">
                                                 <div class="d-flex justify-content-between align-items-center mb-1">
@@ -139,7 +140,7 @@
                                                         {{ $task->progres ? 'Selesai' : 'Belum Selesai' }}
                                                     </span>
                                                 </div>
-                                                <div class="text-muted small mb-2 fs-6">
+                                                <div class="text-dark small mb-2 fs-6">
                                                     <i class="bi bi-geo-alt me-1"></i>{{ $task->place }} |
                                                     <i
                                                         class="bi bi-clock me-1"></i>{{ $task->task_start_time->format('H:i') }}
