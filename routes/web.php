@@ -69,6 +69,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('logAgendas', LogAgendaController::class);
     Route::get('agendas/{id}/generate', [AgendaController::class, 'generateAgenda'])->name('agendas.print');
     Route::patch('agendas/{id}/update-status', [AgendaController::class, 'updateStatus'])->name('agendas.updateStatus');
+    Route::get('/agenda/unit', [AgendaController::class, 'agendaByUnit'])->name('agenda.byUnit')->middleware('auth');
 
     //Switch Unit User
     Route::post('/switch-unit', [SwitchUserController::class, 'switchUnit'])->name('switchUnit');

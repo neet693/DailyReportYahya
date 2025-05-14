@@ -21,11 +21,12 @@
                 </select>
             </div>
 
-            @if (auth()->user()->role === 'admin' || auth()->user()->role === 'kepala')
+            @if (Auth::user()->isAdmin() || Auth::user()->isKepalaUnit() || Auth::user()->isHRD())
                 <div class="form-group mb-3">
                     <label for="recipient_id" class="form-label">Penerima <span style="color: red;">(hanya jika
                             personal):</span></label>
                     <select name="recipient_id" id="recipient_id" class="form-select">
+                        <option></option> {{-- Untuk allowClear --}}
                         @foreach ($users as $user)
                             <option value="{{ $user->id }}">{{ $user->name }}</option>
                         @endforeach

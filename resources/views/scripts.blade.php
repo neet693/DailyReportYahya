@@ -29,6 +29,36 @@
 </script>
 
 <script>
+    $(document).ready(function() {
+        $('#recipient_id').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Pilih penerima',
+            allowClear: true
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#unit_id').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Pilih Unit',
+            allowClear: true
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#executors').select2({
+            theme: 'bootstrap-5',
+            placeholder: "Pilih executor",
+            allowClear: true
+        });
+    });
+</script>
+
+<script>
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll('.toggle-tasks').forEach(function(btn) {
             btn.addEventListener('click', function() {

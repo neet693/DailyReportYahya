@@ -17,6 +17,7 @@ class User extends Authenticatable
     public const ROLE_ADMIN = 'admin';
     public const ROLE_KEPALA_UNIT = 'kepala';
     public const ROLE_PEGAWAI = 'pegawai';
+    public const ROLE_HRD = 'hrd';
 
     public function isAdmin()
     {
@@ -26,6 +27,11 @@ class User extends Authenticatable
     public function isKepalaUnit()
     {
         return $this->role === self::ROLE_KEPALA_UNIT;
+    }
+
+    public function isHRD()
+    {
+        return $this->role === self::ROLE_HRD;
     }
 
     public function isPegawai()

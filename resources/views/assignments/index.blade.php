@@ -59,7 +59,7 @@
                                         </span>
                                     </td>
                                     <td class="text-end text-nowrap">
-                                        @if (auth()->user()->role === 'admin' || auth()->user()->role === 'kepala')
+                                        @if (Auth::user()->isAdmin() || Auth::user()->isKepalaUnit() || Auth::user()->isHRD())
                                             <div class="dropdown">
                                                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
                                                     type="button" data-bs-toggle="dropdown">

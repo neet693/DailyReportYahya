@@ -7,7 +7,17 @@
             <h2 class="d-flex align-items-center">
                 <i class="bi bi-calendar2-check text-primary me-2"></i> Agenda List
             </h2>
-            <a href="{{ route('agendas.create') }}" class="btn btn-primary">+ Buat Agenda</a>
+            @if (Auth::user()->isHRD() || Auth::user()->isAdmin())
+                <a class="btn btn-outline-primary" href="{{ route('agenda.byUnit') }}">
+                    <i class="bi bi-filter-circle"></i> Agenda Semua Unit
+                </a>
+            @endif
+        </div>
+
+        <div class="col">
+            @if (Auth::user()->isAdmin() || Auth::user()->isKepalaUnit() || Auth::user()->isHRD())
+                <a href="{{ route('agendas.create') }}" class="btn btn-primary">+ Buat Agenda</a>
+            @endif
         </div>
 
         <div class="row row-cols-1 row-cols-md-2 g-4">
