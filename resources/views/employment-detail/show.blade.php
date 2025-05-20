@@ -29,8 +29,12 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="fw-bold">Informasi Kepegawaian</h5>
-                    @if (Auth::id() == $user->id)
-                        <a href="{{ route('employment-detail.create') }}" class="btn btn-primary">Tambah / Edit Detail</a>
+                    @if (Auth::id() == $user->id || Auth::user()->role === 'admin' || Auth::user()->role === 'hrd')
+                        {{-- <a href="{{ route('employment-detail.create') }}" class="btn btn-primary">Tambah / Edit Detail</a> --}}
+                        <a href="{{ route('employment-detail.create', ['employment_detail' => $user->employmentDetail->employee_number]) }}"
+                            class="btn btn-primary">
+                            Tambah / Edit Detail
+                        </a>
                     @endif
 
                 </div>
@@ -38,11 +42,13 @@
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Tahun Masuk:</strong> {{ $user->employmentDetail->tahun_masuk ?? 'N/A' }}</p>
-                        <p><strong>Tahun Sertifikasi:</strong> {{ $user->employmentDetail->tahun_sertifikasi ?? 'N/A' }}</p>
+                        <p><strong>Tahun Sertifikasi:</strong>
+                            {{ $user->employmentDetail->tahun_sertifikasi ?? 'N/A' }}</p>
                     </div>
                     <div class="col-md-6">
                         <p><strong>Unit:</strong> {{ $user->employmentDetail->unit->name ?? 'N/A' }}</p>
-                        <p><strong>Status Kepegawaian:</strong>{{ $user->employmentDetail->status_kepegawaian ?? 'N/A' }}
+                        <p><strong>Status
+                                Kepegawaian:</strong>{{ $user->employmentDetail->status_kepegawaian ?? 'N/A' }}
                         </p>
                     </div>
                 </div>
@@ -69,7 +75,7 @@
                     <div class="tab-pane fade show active" id="education" role="tabpanel">
                         <div class="d-flex justify-content-between align-items-center">
                             <p><strong>Riwayat Pendidikan</strong></p>
-                            @if (Auth::id() == $user->id)
+                            @if (Auth::id() == $user->id || Auth::user()->role === 'admin' || Auth::user()->role === 'hrd')
                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#addEducationModal">
                                     Tambah Pendidikan
@@ -98,7 +104,8 @@
                         <ul class="mt-3">
                             @foreach ($user->trainings as $training)
                                 <li>{{ $training->training_name }} - {{ $training->organizer }}
-                                    ({{ $training->training_date ?? 'N/A' }})</li>
+                                    ({{ $training->training_date ?? 'N/A' }})
+                                </li>
                             @endforeach
                         </ul>
                     </div>

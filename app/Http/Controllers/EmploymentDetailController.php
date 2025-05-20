@@ -22,12 +22,28 @@ class EmploymentDetailController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(EmploymentDetail $employment_detail)
     {
-        $units = UnitKerja::all(); // Ambil semua unit
-        $user = Auth::user(); // Ambil user yang login
-        return view('employment-detail.form', compact('units', 'user'));
+        if (!$employment_detail) {
+            abort(404, 'Employment detail tidak ditemukan.');
+        }
+
+        $units = UnitKerja::all();
+        $authUser = Auth::user();
+        $user = $employment_detail->user;
+
+        if (
+            $authUser->id !== $user->id &&
+            $authUser->role !== 'admin' &&
+            $authUser->role !== 'hrd'
+        ) {
+            return redirect()->back()->with('error', 'Kamu tidak punya akses untuk mengubah data ini.');
+        }
+
+        return view('employment-detail.form', compact('units', 'user', 'employment_detail'));
     }
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -35,6 +51,7 @@ class EmploymentDetailController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'user_id' => 'required|exists:users,id',
             'employee_number' => 'required',
             'unit_kerja_id' => 'required|exists:unit_kerjas,id',
             'tahun_masuk' => 'required',
@@ -42,11 +59,19 @@ class EmploymentDetailController extends Controller
             'status_kepegawaian' => 'required|in:Tetap,Tidak Tetap',
         ]);
 
-        $user = Auth::user();
+        $authUser = Auth::user();
+        $targetUserId = (int) $request->user_id;
 
-        // Jika employment detail sudah ada, update; jika belum, buat baru
+        if (
+            $authUser->id !== $targetUserId &&
+            $authUser->role !== 'admin' &&
+            $authUser->role !== 'hrd'
+        ) {
+            return redirect()->back()->with('error', 'Kamu tidak punya akses untuk mengubah data ini.');
+        }
+
         EmploymentDetail::updateOrCreate(
-            ['user_id' => $user->id],
+            ['user_id' => $targetUserId],
             [
                 'employee_number' => $request->employee_number,
                 'unit_kerja_id' => $request->unit_kerja_id,
@@ -56,8 +81,11 @@ class EmploymentDetailController extends Controller
             ]
         );
 
-        return redirect()->back();
+        return redirect()->route('employment-detail.show', $request->employee_number)
+            ->with('success', 'Data berhasil disimpan.');
     }
+
+
 
     /**
      * Display the specified resource.

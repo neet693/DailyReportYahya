@@ -9,7 +9,7 @@
             <div class="card-body">
                 <form action="{{ route('employment-detail.store') }}" method="POST">
                     @csrf
-
+                    <input type="hidden" name="user_id" value="{{ $user->id }}">
                     <div class="mb-3">
                         <label class="form-label">Nomor Pegawai</label>
                         <input type="text" name="employee_number" class="form-control"

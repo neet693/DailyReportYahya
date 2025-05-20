@@ -187,4 +187,19 @@ class HomeController extends Controller
 
         return redirect()->back()->with('success', 'Data pengguna berhasil diimpor.');
     }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+
+        if (auth()->id() === $user->id) {
+            return redirect()->back()->with('error', 'Kamu tidak bisa menghapus akunmu sendiri.');
+        }
+
+        // Hapus relasi yang ada, kalau null gak masalah karena akan di-skip
+        $user->employmentDetail()->delete();
+        $user->delete();
+
+        return redirect()->back()->with('success', 'User berhasil dihapus.');
+    }
 }

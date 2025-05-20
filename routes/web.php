@@ -57,6 +57,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('employment-detail', EmploymentDetailController::class)
         ->parameters(['employment-detail' => 'employment_detail:employee_number']);
     Route::get('/employment-detail/{employment_detail:employee_number}/cetak', [EmploymentDetailController::class, 'cetak'])->name('employment-detail.cetak');
+    Route::get('/employment-detail/create/{employment_detail:employee_number}', [EmploymentDetailController::class, 'create'])
+        ->name('employment-detail.create');
+    Route::post('/employment-detail', [EmploymentDetailController::class, 'store'])
+        ->name('employment-detail.store');
+
 
 
     //Education
@@ -86,6 +91,10 @@ Route::middleware(['auth'])->group(function () {
 
     //Import Pegawai
     Route::post('/import-users', [HomeController::class, 'import'])->name('users.import');
+
+
+    //Delete Pegawai
+    Route::delete('/pegawai/{id}', [HomeController::class, 'destroy'])->name('users.destroy');
 });
 
 Route::middleware('auth')->group(function () {

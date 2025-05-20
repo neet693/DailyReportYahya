@@ -101,7 +101,7 @@
                                         <small>{{ $p->jobdesk?->title ?? 'Belum ada jobdesk' }}</small>
 
                                     </h2>
-                                    <div class="icon-block">
+                                    <div class="icon-block d-flex justify-content-center">
                                         <a href="{{ route('employment-detail.show', $p->employmentDetail) }}">
                                             <i class="fa-solid fa-address-card"></i>
                                         </a>
@@ -110,6 +110,17 @@
                                                 title="Cetak">
                                                 <i class="fa-solid fa-print"></i>
                                             </a>
+
+                                            <form action="{{ route('users.destroy', $p->id) }}" method="POST"
+                                                onsubmit="return confirm('Yakin ingin menghapus user ini?')"
+                                                style="display: inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" title="Hapus Pengguna"
+                                                    style="background: none; border: none; padding: 0; cursor: pointer;">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </form>
                                         @endif
 
 
