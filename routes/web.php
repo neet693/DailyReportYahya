@@ -8,6 +8,7 @@ use App\Http\Controllers\EducationHistoryController;
 use App\Http\Controllers\EmploymentDetailController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobDeskController;
+use App\Http\Controllers\LateNotesController;
 use App\Http\Controllers\LogAgendaController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\MessageController;
@@ -62,7 +63,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/employment-detail', [EmploymentDetailController::class, 'store'])
         ->name('employment-detail.store');
 
-
+    //Keterlambatan
+    Route::resource('keterlambatan', LateNotesController::class);
 
     //Education
     Route::resource('education', EducationHistoryController::class);

@@ -1,7 +1,4 @@
 <nav class="navbar navbar-expand-md shadow-sm main-navbar text-body">
-    {{-- <div class="container main-navbar">
-
-    </div> --}}
     <a class="navbar-brand" href="{{ route('home') }}">
         {{ config('app.name', 'Routine Report') }}
     </a>
@@ -35,7 +32,8 @@
                             href="{{ route('jobdesks.index') }}">Job Desk</a>
                         <a class="nav-link {{ request()->is('unit*') ? 'active' : '' }}"
                             href="{{ route('Unit.index') }}">Unit</a>
-
+                        <a class="nav-link {{ request()->is('keterlambatan*') ? 'active' : '' }}"
+                            href="{{ route('keterlambatan.index') }}">Notes Terlambat</a>
                     </div>
                 </li>
                 <li class="nav-item">
