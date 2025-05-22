@@ -15,6 +15,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PermissionRequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SuratPeringatanController;
 use App\Http\Controllers\SwitchUserController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TrainingController;
@@ -65,6 +66,9 @@ Route::middleware(['auth'])->group(function () {
 
     //Keterlambatan
     Route::resource('keterlambatan', LateNotesController::class);
+
+    //Surat Peringantan
+    Route::resource('surat-peringatan', SuratPeringatanController::class);
 
     //Education
     Route::resource('education', EducationHistoryController::class);

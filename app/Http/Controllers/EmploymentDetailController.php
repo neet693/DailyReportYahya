@@ -85,19 +85,24 @@ class EmploymentDetailController extends Controller
             ->with('success', 'Data berhasil disimpan.');
     }
 
-
-
-    /**
-     * Display the specified resource.
-     */
     public function show(EmploymentDetail $employmentDetail)
     {
-        $user = $employmentDetail->user()->with(['employmentDetail.unit', 'educationHistories', 'trainings'])->firstOrFail();
+        $user = $employmentDetail->user()
+            ->with(['employmentDetail.unit', 'educationHistories', 'trainings', 'statusPeringatanAktif'])
+            ->firstOrFail();
 
-        return view('employment-detail.show', compact('user'));
+        $currentUser = Auth::user();
+
+        $canManageSP = false;
+
+        if (in_array($currentUser->role, ['admin', 'hrd'])) {
+            $canManageSP = true;
+        } elseif ($currentUser->role === 'kepala') {
+            $canManageSP = $currentUser->units->pluck('id')->contains($user->employmentDetail->unit_id ?? null);
+        }
+
+        return view('employment-detail.show', compact('user', 'canManageSP'));
     }
-
-
 
 
     /**

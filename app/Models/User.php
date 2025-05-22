@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -127,5 +129,38 @@ class User extends Authenticatable
     public function sentMessages()
     {
         return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    // Status SP
+    public function statusPeringatan()
+    {
+        return $this->hasMany(SuratPeringatan::class);
+    }
+
+    // Can view SP
+    public function canViewSP(User $targetUser)
+    {
+        // Admin atau HRD boleh lihat semua
+        if (in_array($this->role, ['admin', 'hrd'])) {
+            return true;
+        }
+
+        // Kepala unit yang satu unit dengan target user
+        if ($this->role === 'kepala' && $this->units->pluck('id')->contains($targetUser->employmentDetail->unit_id)) {
+            return true;
+        }
+
+        // Dirinya sendiri
+        if ($this->id === $targetUser->id) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function statusPeringatanAktif()
+    {
+        return $this->hasMany(SuratPeringatan::class)
+            ->where('berakhir_berlaku', '>=', Carbon::today());
     }
 }
