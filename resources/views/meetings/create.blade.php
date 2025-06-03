@@ -14,12 +14,13 @@
             </div>
         @endif
 
-        <form action="{{ route('meetings.store') }}" method="POST">
+        <form action="{{ route('meetings.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="mb-3">
                 <label for="title" class="form-label">Judul Rapat</label>
-                <input type="text" name="title" id="title" class="form-control" value="{{ old('title') }}" required>
+                <input type="text" name="title" id="title" class="form-control" value="{{ old('title') }}"
+                    required>
             </div>
 
             <div class="row">
@@ -72,5 +73,4 @@
             <a href="{{ route('meetings.index') }}" class="btn btn-secondary">Batal</a>
         </form>
     </div>
-
 @endsection

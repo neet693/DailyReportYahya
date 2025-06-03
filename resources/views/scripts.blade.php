@@ -116,3 +116,44 @@
         });
     });
 </script>
+
+{{-- Script untuk upload file rapat trix --}}
+<script>
+    document.addEventListener("trix-attachment-add", function(event) {
+        const attachment = event.attachment;
+
+        if (attachment.file) {
+            uploadAttachment(attachment);
+        }
+    });
+
+    function uploadAttachment(attachment) {
+        const file = attachment.file;
+        const formData = new FormData();
+        formData.append("attachment", file);
+
+        fetch("{{ route('meetings.uploadAttachment') }}", {
+                method: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.url) {
+                    attachment.setAttributes({
+                        url: result.url,
+                        href: result.url
+                    });
+                } else {
+                    alert("Upload gagal!");
+                }
+            })
+            .catch(error => {
+                console.error("Upload error:", error);
+                alert("Terjadi kesalahan saat mengunggah file.");
+            });
+    }
+</script>
+{{-- End Script --}}

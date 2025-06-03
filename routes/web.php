@@ -53,7 +53,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('announcements', AnnouncementController::class);
     Route::resource('profile', ProfileController::class);
     Route::resource('jobdesks', JobDeskController::class);
+
+    //MeetingController
     Route::resource('meetings', MeetingController::class);
+    Route::post('/meetings/upload-attachment', [MeetingController::class, 'uploadAttachment'])->name('meetings.uploadAttachment');
+
 
     //Employment Detail
     Route::resource('employment-detail', EmploymentDetailController::class)

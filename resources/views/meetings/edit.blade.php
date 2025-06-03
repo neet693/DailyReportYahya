@@ -14,7 +14,7 @@
             </div>
         @endif
 
-        <form action="{{ route('meetings.update', $meeting->id) }}" method="POST">
+        <form action="{{ route('meetings.update', $meeting->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -77,4 +77,7 @@
             <a href="{{ route('meetings.index') }}" class="btn btn-secondary">Batal</a>
         </form>
     </div>
+
+
+
 @endsection

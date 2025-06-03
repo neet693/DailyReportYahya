@@ -101,4 +101,18 @@ class MeetingController extends Controller
 
         return redirect()->route('meetings.index')->with('success', 'Rapat berhasil dihapus.');
     }
+
+    public function uploadAttachment(Request $request)
+    {
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('attachments'), $filename);
+
+            return response()->json([
+                'url' => asset('attachments/' . $filename),
+            ]);
+        }
+        return response()->json(['error' => 'No file uploaded'], 400);
+    }
 }
