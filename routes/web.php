@@ -12,6 +12,7 @@ use App\Http\Controllers\LateNotesController;
 use App\Http\Controllers\LogAgendaController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PermissionRequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
@@ -111,4 +112,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat', [MessageController::class, 'index']);
     Route::post('/chat/messages', [MessageController::class, 'fetchMessages']);
     Route::post('/chat/send', [MessageController::class, 'sendMessage']);
+});
+
+
+// Route untuk HRD daftar pegawai
+Route::middleware(['auth'])->group(function () {
+    Route::get('pegawai/create', [PegawaiController::class, 'create'])->name('pegawai.create');
+    Route::post('pegawai', [PegawaiController::class, 'store'])->name('pegawai.store');
 });

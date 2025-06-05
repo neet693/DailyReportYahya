@@ -43,6 +43,10 @@
             🔁 Lihat Task Harian (Home)
         </a>
 
+        <a href="{{ route('pegawai.create') }}" class="btn btn-outline-primary mb-3">
+            ➕ Tambah Pegawai Manual
+        </a>
+
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#importModal">
             Import Users
