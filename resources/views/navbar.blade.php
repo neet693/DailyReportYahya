@@ -93,6 +93,14 @@
                                 {{ __('Detail Kepegawaian') }}
                             </a>
                         @endif
+                        @if (Auth::user()->role == 'hrd')
+                            <a href="{{ asset('attachments/Panduan-HRD.pdf') }}" target="_blank"
+                                class="dropdown-item">Panduan
+                                HRD</a>
+                        @else
+                            <a href="{{ asset('attachments/Panduan-Pegawai.pdf') }}" target="_blank"
+                                class="dropdown-item">Panduan Pegawai</a>
+                        @endif
                         <a class="dropdown-item" href="{{ route('logout') }}"
                             onclick="event.preventDefault();
                                              document.getElementById('logout-form').submit();">
