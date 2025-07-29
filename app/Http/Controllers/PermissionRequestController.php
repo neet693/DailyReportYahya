@@ -15,6 +15,11 @@ class PermissionRequestController extends Controller
     {
         $user = Auth::user();
 
+        // 🔁 Redirect jika bukan admin, kepala, atau hrd
+        if (!in_array($user->role, ['admin', 'kepala', 'hrd'])) {
+            return redirect()->route('permissionrequest.create');
+        }
+
         // Ambil semua izin, dengan relasi: user, unit kerja saat input izin, dan yang menyetujui
         $permissionRequestsQuery = PermissionRequest::with([
             'approver',
@@ -38,6 +43,7 @@ class PermissionRequestController extends Controller
 
         return view('permission-requests.index', compact('permissionRequests', 'durations'));
     }
+
 
 
     /**

@@ -2,176 +2,125 @@
 
 @section('content')
     <div class="container">
-        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
-            <form action="{{ route('switchUnit') }}" method="POST" class="d-flex align-items-center">
-                @csrf
-                <label for="unit_id" class="fw-bold me-2 mb-0">Unit:</label>
-                <select name="unit_id" onchange="this.form.submit()" class="form-select w-auto">
-                    @if (auth()->user()->isAdmin())
-                        @foreach ($units as $unit)
-                            <option value="{{ $unit->id }}"
-                                {{ session('active_unit_id') == $unit->id ? 'selected' : '' }}>
-                                {{ $unit->name }}
-                            </option>
-                        @endforeach
-                    @else
-                        @foreach (auth()->user()->units as $unit)
-                            <option value="{{ $unit->id }}"
-                                {{ session('active_unit_id') == $unit->id ? 'selected' : '' }}>
-                                {{ $unit->name }}
-                            </option>
-                        @endforeach
-                    @endif
-                </select>
-            </form>
-
-            <div class="d-flex flex-column align-items-end gap-2">
-                <div class="d-flex flex-wrap gap-2 justify-content-end w-100">
-                    @if (!auth()->user()->isAdmin())
-                        @foreach (auth()->user()->units as $unit)
-                            <a href="{{ route('unit.pegawai', $unit->id) }}" class="btn btn-primary">
-                                List Pegawai - {{ $unit->name }}
-                            </a>
-                        @endforeach
-                    @endif
-                </div>
-
-                <form method="GET" action="{{ route('home') }}" class="d-flex align-items-center w-100" role="search">
-                    <input type="text" name="search" class="form-control me-2" style="min-width: 300px;"
+        <div class="container">
+            @include('toaster')
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h5 class="fw-bold mb-0">Tugas Hari Ini</h5>
+                <form method="GET" action="{{ route('home') }}" class="d-flex align-items-center" role="search">
+                    <input type="text" name="search" class="form-control me-2" style="min-width: 250px;"
                         placeholder="Cari nama pegawai..." value="{{ request('search') }}">
                     <button type="submit" class="btn btn-outline-primary">Cari</button>
                 </form>
             </div>
-        </div>
 
-        <div class="scroll-container">
-            @include('toaster')
 
             @if ($usersWithTasks->isEmpty())
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle-fill me-2"></i> Belum ada data tugas untuk ditampilkan.
+                <div class="alert alert-info py-2 px-3 small">
+                    <i class="bi bi-info-circle-fill me-2"></i> Belum ada data tugas.
                 </div>
             @else
-                @foreach ($usersWithTasks as $data)
-                    <div class="card-wrapper">
-                        <div class="card-custom">
-                            {{-- Header: Foto & Nama --}}
-                            <div class="d-flex align-items-center p-4">
-                                <img src="{{ $data->profile_image ? asset('profile_images/' . $data->profile_image) : asset('asset/default_profile.jpg') }}"
-                                    class="rounded-circle profile-img" alt="Foto Profil">
-                                <div class="ms-3">
-                                    <h5 class="mb-0 text-dark">{{ $data->name }}</h5>
-                                    <p class="text-dark small mb-0">
-                                        {{ $data->jobdesk->title ?? 'Belum ada Job Desc' }}
-                                    </p>
-                                </div>
-                            </div>
+                <div class="row g-3">
+                    @foreach ($usersWithTasks as $data)
+                        <div class="col-12 col-sm-6 col-lg-4">
+                            <div class="p-3 rounded shadow-sm" style="background-color: #f4f8e1;">
+                                {{-- Header: Profil & tombol --}}
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <img src="{{ $data->profile_image ? asset('profile_images/' . $data->profile_image) : asset('asset/default_profile.jpg') }}"
+                                            class="rounded-circle" width="36" height="36" alt="Foto">
+                                        <div class="ms-2">
+                                            <a href="{{ route('employment-detail.show', $data->employmentDetail) }}"
+                                                class="text-decoration-none text-dark">
+                                                <div class="fw-semibold small mb-0">{{ $data->name }}</div>
+                                            </a>
+                                            <small
+                                                class="text-muted d-block mb-1">{{ $data->jobdesk->title ?? '-' }}</small>
 
-                            {{-- Body: Tugas --}}
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h6 class="title-section mb-0">
-                                        <i class="bi bi-clipboard-check me-2"></i> Tugas Hari Ini
-                                    </h6>
+                                            @if ($data->id === auth()->id())
+                                                <form action="{{ route('switchUnit') }}" method="POST">
+                                                    @csrf
+                                                    <select name="unit_id" onchange="this.form.submit()"
+                                                        class="form-select form-select-sm border-0"
+                                                        style="background-color: rgba(244, 248, 225, 0.9); font-size: 0.75rem; width: 140px; padding: 2px 6px; border-radius: 0.3rem; box-shadow: none;">
+                                                        @foreach (auth()->user()->units as $unit)
+                                                            <option value="{{ $unit->id }}"
+                                                                {{ session('active_unit_id') == $unit->id ? 'selected' : '' }}>
+                                                                {{ $unit->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </div>
 
+
+                                    {{-- Tombol tambah tugas untuk user yang sedang login --}}
                                     @if ($data->id == auth()->id())
-                                        <a href="{{ route('tasks.create') }}" class="btn btn-sm btn-primary">
-                                            <i class="bi bi-plus-circle me-1"></i> Tambah Tugas
+                                        <a href="{{ route('tasks.create') }}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-plus-circle me-1"></i>
                                         </a>
                                     @endif
                                 </div>
 
-                                <ul class="list-group list-group-flush">
-                                    {{-- 1 Tugas Pertama --}}
-                                    @forelse ($data->tasks->take(1) as $task)
-                                        <li class="list-group-item">
-                                            <div class="d-flex justify-content-between align-items-center mb-1 text-dark">
-                                                <strong>{{ $task->title }}</strong>
-                                                <span
-                                                    class="badge rounded-pill {{ $task->progres ? 'bg-success' : 'bg-danger' }}">
-                                                    {{ $task->progres ? 'Selesai' : 'Belum Selesai' }}
-                                                </span>
-                                            </div>
-                                            <div class="text-dark small mb-2 fs-6">
-                                                <i class="bi bi-geo-alt me-1"></i>{{ $task->place }} |
-                                                <i class="bi bi-clock me-1"></i>{{ $task->task_start_time->format('H:i') }}
-                                                -
-                                                {{ $task->task_end_time->format('H:i') }}
-                                            </div>
-                                            @if (auth()->user()->id == $data->id && $task->progres == 0)
-                                                <div class="d-flex">
-                                                    <button class="btn btn-sm btn-success me-2" data-bs-toggle="modal"
-                                                        data-bs-target="#completeModal{{ $task->id }}">
-                                                        <i class="bi bi-check-lg"></i> Selesai
-                                                    </button>
-
-                                                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                                        data-bs-target="#pendingModal{{ $task->id }}">
-                                                        <i class="bi bi-hourglass-split text-white"></i> Pending
-                                                    </button>
-                                                </div>
-                                            @endif
-                                        </li>
-                                    @empty
-                                        <li class="list-group-item text-dark">
-                                            {{ $data->name }} Belum membuat Tugas hari ini.
-                                        </li>
-                                    @endforelse
-                                </ul>
-
-                                @if ($data->tasks->count() > 1)
-                                    <button class="btn btn-light w-100 text-start position-relative toggle-tasks mt-2">
-                                        <i class="bi bi-chevron-down me-1 toggle-icon"></i>
-                                        Lihat tugas lainnya
-                                        <span
-                                            class="position-absolute top-50 end-0 translate-middle badge rounded-pill bg-danger me-3">
-                                            {{ $data->tasks->count() - 1 }}
-                                            <span class="visually-hidden">tugas lainnya</span>
-                                        </span>
+                                {{-- Konten tugas --}}
+                                @if ($data->tasks->isNotEmpty())
+                                    {{-- Tombol collapse --}}
+                                    <button class="btn btn-sm btn-outline-dark w-100 fw-semibold mt-2" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseTugas{{ $data->id }}"
+                                        aria-expanded="false" aria-controls="collapseTugas{{ $data->id }}">
+                                        Lihat Semua Tugas ({{ $data->tasks->count() }})
                                     </button>
 
-                                    <ul class="more-tasks list-unstyled mt-2 d-none small text-dark">
-                                        @foreach ($data->tasks->slice(1) as $task)
-                                            <li class="list-group-item">
-                                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                                    <strong>{{ $task->title }}</strong>
-                                                    <span
-                                                        class="badge rounded-pill {{ $task->progres ? 'bg-success' : 'bg-danger' }}">
-                                                        {{ $task->progres ? 'Selesai' : 'Belum Selesai' }}
-                                                    </span>
-                                                </div>
-                                                <div class="text-dark small mb-2 fs-6">
-                                                    <i class="bi bi-geo-alt me-1"></i>{{ $task->place }} |
-                                                    <i
-                                                        class="bi bi-clock me-1"></i>{{ $task->task_start_time->format('H:i') }}
+                                    {{-- Isi tugas --}}
+                                    <div class="collapse mt-2" id="collapseTugas{{ $data->id }}">
+                                        @foreach ($data->tasks as $task)
+                                            <div class="mb-3 small">
+                                                <div class="fw-semibold">{{ $task->title }}</div>
+                                                <div class="text-muted">
+                                                    <i class="bi bi-geo-alt"></i> {{ $task->place }}<br>
+                                                    <i class="bi bi-clock"></i> {{ $task->task_start_time->format('H:i') }}
                                                     -
                                                     {{ $task->task_end_time->format('H:i') }}
                                                 </div>
-                                                @if (auth()->user()->id == $data->id && $task->progres == 0)
-                                                    <div class="d-flex">
-                                                        <button class="btn btn-sm btn-success me-2" data-bs-toggle="modal"
-                                                            data-bs-target="#completeModal{{ $task->id }}">
-                                                            <i class="bi bi-check-lg"></i> Selesai
-                                                        </button>
-                                                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                                            data-bs-target="#pendingModal{{ $task->id }}">
-                                                            <i class="bi bi-hourglass-split text-white"></i> Pending
-                                                        </button>
-                                                    </div>
+                                                <div class="d-flex justify-content-between align-items-center mt-1">
+                                                    <span
+                                                        class="badge rounded-pill {{ $task->progres ? 'bg-success' : 'bg-danger' }}">
+                                                        {{ $task->progres ? 'Selesai' : 'Belum' }}
+                                                    </span>
+                                                    @if ($data->id == auth()->id() && $task->progres == 0)
+                                                        <div class="d-flex gap-1">
+                                                            <button class="btn btn-sm btn-success" data-bs-toggle="modal"
+                                                                data-bs-target="#completeModal{{ $task->id }}">
+                                                                <i class="bi bi-check"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                                                data-bs-target="#pendingModal{{ $task->id }}">
+                                                                <i class="bi bi-hourglass-split"></i>
+                                                            </button>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                @if (!$loop->last)
+                                                    <hr class="my-2">
                                                 @endif
-                                            </li>
+                                            </div>
                                         @endforeach
-                                    </ul>
+                                    </div>
+                                @else
+                                    <small class="text-muted">Belum membuat tugas hari ini.</small>
                                 @endif
                             </div>
                         </div>
-                    </div>
-                    {{-- Modal Task --}}
-                    @foreach ($data->tasks as $task)
-                        @include('components.task_modal_complete', ['task' => $task])
-                        @include('components.task_modal_pending', ['task' => $task])
+
+                        {{-- Modal untuk tiap task --}}
+                        @foreach ($data->tasks as $task)
+                            @include('components.task_modal_complete', ['task' => $task])
+                            @include('components.task_modal_pending', ['task' => $task])
+                        @endforeach
                     @endforeach
-                @endforeach
+
+                </div>
             @endif
         </div>
 
