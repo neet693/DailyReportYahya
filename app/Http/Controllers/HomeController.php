@@ -19,10 +19,12 @@ class HomeController extends Controller
 {
     public function index()
     {
+
         $today = now()->toDateString();
         $month = now()->month;
         $search = request('search');
         $user = Auth::user()->load('employmentDetail.unit');
+        $agendas = $user->agendas->where('status', '!=', 'selesai');
         $authId = $user->id;
         $chatUsers = User::where('id', '!=', $authId)
             ->withCount([
@@ -69,6 +71,7 @@ class HomeController extends Controller
             }
 
             return view('dashboard.hrd', compact(
+                'agendas',
                 'units',
                 'pegawaiCounts',
                 'lk',
@@ -102,7 +105,7 @@ class HomeController extends Controller
                 });
         })->get();
 
-        return view('home', compact('units', 'usersWithTasks', 'announcements', 'assignments', 'chatUsers'));
+        return view('home', compact('units', 'usersWithTasks', 'announcements', 'assignments', 'chatUsers', 'agendas'));
     }
 
 

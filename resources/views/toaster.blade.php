@@ -16,7 +16,19 @@
     @endforeach
 
     @auth
-        @if ($agendas = auth()->user()->agendas)
+        @if ($agendas->isEmpty())
+            <div class="toast agenda-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true"
+                data-bs-delay="10000">
+                <div class="toast-header bg-danger text-white">
+                    <strong class="me-auto">Agenda</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    <p>{{ auth()->user()->name }} tidak tergabung dalam agenda apapun saat ini.</p>
+                </div>
+            </div>
+        @else
             <div class="toast agenda-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true"
                 data-bs-delay="10000">
                 <div class="toast-header bg-warning text-dark">
@@ -37,28 +49,21 @@
                     </ul>
                 </div>
             </div>
-        @else
-            <div class="toast agenda-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true"
-                data-bs-delay="10000">
-                <div class="toast-header bg-danger text-white">
-                    <strong class="me-auto">Agenda</strong>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-                </div>
-                <div class="toast-body">
-                    <p>{{ auth()->user()->name }} tidak tergabung dalam agenda apapun saat ini.</p>
-                </div>
-            </div>
         @endif
     @endauth
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Inisialisasi semua toast yang ada
-        const toastElList = [].slice.call(document.querySelectorAll('.toast'));
-        toastElList.forEach(function(toastEl) {
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-        });
+        // Cek apakah toast sudah ditampilkan sebelumnya dalam sesi browser ini
+        if (!sessionStorage.getItem('toastsShown')) {
+            const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            toastElList.forEach(function(toastEl) {
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            });
+
+            // Tandai bahwa toast sudah ditampilkan agar tidak tampil lagi saat refresh
+            sessionStorage.setItem('toastsShown', 'true');
+        }
     });
 </script>

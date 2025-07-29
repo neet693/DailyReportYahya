@@ -156,4 +156,11 @@
             });
     }
 </script>
+
+<script>
+    function handleLogout() {
+        sessionStorage.removeItem('toastsShown'); // Hapus flag
+        document.getElementById('logout-form').submit(); // Submit form logout
+    }
+</script>
 {{-- End Script --}}
