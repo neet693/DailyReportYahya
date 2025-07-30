@@ -42,6 +42,12 @@ class User extends Authenticatable
         return $this->role === self::ROLE_PEGAWAI;
     }
 
+
+    public function isAdminOrHRD()
+    {
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_HRD]);
+    }
+
     protected $fillable = [
         'name',
         'email',

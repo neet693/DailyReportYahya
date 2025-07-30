@@ -13,17 +13,19 @@ class MeetingController extends Controller
     {
         $user = auth()->user();
 
-        // Ambil rapat sesuai role user
-        $meetings = Meeting::with('participants.employmentDetail.unit') // eager load untuk efisiensi
-            ->when(!$user->isAdmin(), function ($query) use ($user) {
-                $query->whereHas('participants.employmentDetail', function ($q) use ($user) {
-                    $q->where('unit_kerja_id', $user->employmentDetail->unit_kerja_id);
+        // Ambil rapat:
+        // - Semua jika admin/hrd
+        // - Hanya yang diikuti user jika bukan admin/hrd
+        $meetings = Meeting::with('participants') // eager load peserta
+            ->when(!$user->isAdminOrHRD(), function ($query) use ($user) {
+                $query->whereHas('participants', function ($q) use ($user) {
+                    $q->where('participant_id', $user->id);
                 });
             })
-            ->orderByDesc('meeting_date') // urutan terbaru duluan (opsional)
+            ->orderByDesc('meeting_date')
             ->get();
 
-        // Ambil peserta untuk tiap meeting
+        // Ambil peserta per rapat
         $participants = [];
         foreach ($meetings as $meeting) {
             $participants[$meeting->id] = $meeting->participants;
@@ -31,6 +33,8 @@ class MeetingController extends Controller
 
         return view('meetings.index', compact('meetings', 'participants'));
     }
+
+
 
     public function create()
     {
@@ -53,8 +57,15 @@ class MeetingController extends Controller
             'participant_id' => 'required|array',
         ]);
 
+        $participantIds = $request->input('participant_id', []);
+
+        // Tambahkan user login jika belum termasuk
+        if (!in_array(Auth::id(), $participantIds)) {
+            $participantIds[] = Auth::id();
+        }
+
         $meeting = Meeting::create($request->all());
-        $meeting->participants()->attach($request->input('participant_id'));
+        $meeting->participants()->attach($participantIds);;
 
         return redirect()->route('meetings.index')->with('success', 'Rapat berhasil ditambahkan.');
     }

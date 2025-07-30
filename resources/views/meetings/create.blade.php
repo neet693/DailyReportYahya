@@ -54,12 +54,15 @@
                     <label for="participant_id" class="form-label">Peserta Rapat</label>
                     <select name="participant_id[]" id="participant_id" class="form-select select2" multiple required
                         data-placeholder="Pilih peserta rapat">
+                        <option disabled>Nama Anda otomatis terpilih. Pilih peserta lainnya…</option>
                         @foreach ($users as $user)
-                            <option value="{{ $user->id }}">
+                            <option value="{{ $user->id }}"
+                                {{ collect(old('participant_id'))->contains($user->id) || $user->id === auth()->id() ? 'selected' : '' }}>
                                 {{ $user->name }} ({{ $user->units->pluck('name')->implode(', ') ?: '-' }})
                             </option>
                         @endforeach
                     </select>
+                    <small class="text-red-500">pilih peserta rapat lainnya</small>
                 </div>
             </div>
 

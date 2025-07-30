@@ -57,6 +57,8 @@ class EmploymentDetailController extends Controller
             'tahun_masuk' => 'required',
             'tahun_sertifikasi' => 'nullable',
             'status_kepegawaian' => 'required|in:Tetap,Tidak Tetap',
+            'is_active' => 'required|boolean',
+            'tahun_keluar' => 'nullable|string|max:100',
         ]);
 
         $authUser = Auth::user();
@@ -78,6 +80,8 @@ class EmploymentDetailController extends Controller
                 'tahun_masuk' => $request->tahun_masuk,
                 'tahun_sertifikasi' => $request->tahun_sertifikasi,
                 'status_kepegawaian' => $request->status_kepegawaian,
+                'is_active' => $request->is_active,
+                'tahun_keluar' => $request->tahun_keluar,
             ]
         );
 

@@ -30,13 +30,11 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="fw-bold">Informasi Kepegawaian</h5>
                     @if (Auth::id() == $user->id || Auth::user()->role === 'admin' || Auth::user()->role === 'hrd')
-                        {{-- <a href="{{ route('employment-detail.create') }}" class="btn btn-primary">Tambah / Edit Detail</a> --}}
                         <a href="{{ route('employment-detail.create', ['employment_detail' => $user->employmentDetail->employee_number]) }}"
                             class="btn btn-primary">
                             Tambah / Edit Detail
                         </a>
                     @endif
-
                 </div>
                 <hr>
                 <div class="row">
@@ -44,16 +42,28 @@
                         <p><strong>Tahun Masuk:</strong> {{ $user->employmentDetail->tahun_masuk ?? 'N/A' }}</p>
                         <p><strong>Tahun Sertifikasi:</strong>
                             {{ $user->employmentDetail->tahun_sertifikasi ?? 'N/A' }}</p>
+                        {{-- Tambahan jika tidak aktif --}}
+                        @if (!($user->employmentDetail->is_active ?? true))
+                            <p><strong>Tahun Keluar:</strong> {{ $user->employmentDetail->tahun_keluar ?? 'N/A' }}</p>
+                        @endif
                     </div>
                     <div class="col-md-6">
                         <p><strong>Unit:</strong> {{ $user->employmentDetail->unit->name ?? 'N/A' }}</p>
-                        <p><strong>Status
-                                Kepegawaian:</strong>{{ $user->employmentDetail->status_kepegawaian ?? 'N/A' }}
+                        <p><strong>Status Kepegawaian:</strong> {{ $user->employmentDetail->status_kepegawaian ?? 'N/A' }}
+                        </p>
+                        {{-- Tambahan status aktif --}}
+                        <p><strong>Status Aktif:</strong>
+                            @if ($user->employmentDetail->is_active ?? true)
+                                <span class="badge bg-success">Aktif</span>
+                            @else
+                                <span class="badge bg-danger">Tidak Aktif</span>
+                            @endif
                         </p>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <!-- Surat Peringatan -->
         @if (auth()->user()->canViewSP($user))
