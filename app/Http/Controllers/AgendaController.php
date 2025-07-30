@@ -150,4 +150,13 @@ class AgendaController extends Controller
 
         return view('agendas.by-unit', compact('agendas', 'units', 'selectedUnitId'));
     }
+
+    public function json()
+    {
+        $agendas = Agenda::select('id', 'title', 'start_date as start', 'end_date as end')
+            ->where('status', '!=', 'planned') // opsional filter
+            ->get();
+
+        return response()->json($agendas);
+    }
 }

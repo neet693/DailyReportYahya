@@ -86,6 +86,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('agendas/{id}/generate', [AgendaController::class, 'generateAgenda'])->name('agendas.print');
     Route::patch('agendas/{id}/update-status', [AgendaController::class, 'updateStatus'])->name('agendas.updateStatus');
     Route::get('/agenda/unit', [AgendaController::class, 'agendaByUnit'])->name('agenda.byUnit')->middleware('auth');
+    Route::get('/agendas/json', [AgendaController::class, 'json']);
+
+
 
     //Switch Unit User
     Route::post('/switch-unit', [SwitchUserController::class, 'switchUnit'])->name('switchUnit');

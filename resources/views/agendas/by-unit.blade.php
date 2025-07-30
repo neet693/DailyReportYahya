@@ -27,6 +27,8 @@
             </div>
         </form>
 
+        <div id='calendar'></div>
+
         <div class="row row-cols-1 row-cols-md-2 g-4">
             @forelse ($agendas as $agenda)
                 <div class="card shadow-lg border-0 rounded-3 h-100">
@@ -145,4 +147,29 @@
             @endforelse
         </div>
     </div>
+
+    {{-- Script Calender --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: [
+                    @foreach ($agendas as $agenda)
+                        {
+                            title: '{{ $agenda->title }}',
+                            start: '{{ $agenda->start_date }}',
+                            end: '{{ $agenda->end_date }}',
+                            url: '{{ route('agendas.show', $agenda->id) }}' // opsional
+                        },
+                    @endforeach
+                ]
+            });
+
+            calendar.render();
+        });
+    </script>
+
+    {{-- End Script Calender --}}
 @endsection
