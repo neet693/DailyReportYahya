@@ -6,6 +6,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\EducationHistoryController;
 use App\Http\Controllers\EmploymentDetailController;
+use App\Http\Controllers\FixedScheduleController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobDeskController;
 use App\Http\Controllers\LateNotesController;
@@ -123,3 +124,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('pegawai/create', [PegawaiController::class, 'create'])->name('pegawai.create');
     Route::post('pegawai', [PegawaiController::class, 'store'])->name('pegawai.store');
 });
+
+//Route Fixed Schedule
+Route::get('/fixed-schedule/create', [FixedScheduleController::class, 'create'])->name('fixed-schedule.create');
+Route::post('/fixed-schedule', [FixedScheduleController::class, 'store'])->name('fixed-schedule.store');

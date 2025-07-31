@@ -169,4 +169,9 @@ class User extends Authenticatable
         return $this->hasMany(SuratPeringatan::class)
             ->where('berakhir_berlaku', '>=', Carbon::today());
     }
+
+    public function fixedSchedules()
+    {
+        return $this->hasMany(FixedTask::class);
+    }
 }

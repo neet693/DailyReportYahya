@@ -33,7 +33,7 @@
                     @foreach ($usersWithTasks as $data)
                         <div class="col-12 col-sm-6 col-lg-4">
                             <div class="p-3 rounded shadow-sm" style="background-color: #f4f8e1;">
-                                {{-- Header: Profil & tombol --}}
+                                {{-- Header: Profil & unit --}}
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <div class="d-flex align-items-center">
                                         <img src="{{ $data->profile_image ? asset('profile_images/' . $data->profile_image) : asset('asset/default_profile.jpg') }}"
@@ -46,6 +46,7 @@
                                             <small
                                                 class="text-muted d-block mb-1">{{ $data->jobdesk->title ?? '-' }}</small>
 
+                                            {{-- Dropdown ganti unit jika user sedang login --}}
                                             @if ($data->id === auth()->id())
                                                 <form action="{{ route('switchUnit') }}" method="POST">
                                                     @csrf
@@ -63,27 +64,43 @@
                                             @endif
                                         </div>
                                     </div>
-
-
-                                    {{-- Tombol tambah tugas untuk user yang sedang login --}}
-                                    @if ($data->id == auth()->id())
-                                        <a href="{{ route('tasks.create') }}" class="btn btn-sm btn-success">
-                                            <i class="bi bi-plus-circle me-1"></i>
-                                        </a>
-                                    @endif
                                 </div>
 
+                                {{-- Tombol tambah tugas & jadwal tetap --}}
+                                @if ($data->id == auth()->id())
+                                    <div class="d-grid gap-2 my-2">
+                                        <a href="{{ route('tasks.create') }}" class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-plus-circle"></i> Tambah Tugas Harian
+                                        </a>
+                                        <a href="{{ route('fixed-schedule.create') }}"
+                                            class="btn btn-outline-success btn-sm">
+                                            <i class="bi bi-calendar-plus"></i> Tambah Jadwal Tetap
+                                        </a>
+                                    </div>
+                                @elseif (Auth::user()->isKepalaUnit() || Auth::user()->isAdmin())
+                                    <div class="d-grid gap-2 my-2">
+                                        <a href="{{ route('fixed-schedule.create', ['user_id' => $data->id]) }}"
+                                            class="btn btn-outline-success btn-sm">
+                                            <i class="bi bi-calendar-plus"></i> Tambah Jadwal Tetap untuk
+                                            {{ $data->name }}
+                                        </a>
+                                    </div>
+                                @endif
+
                                 {{-- Konten tugas --}}
-                                @if ($data->tasks->isNotEmpty())
+                                @if ($data->tasks->isNotEmpty() || $data->fixedSchedules->isNotEmpty())
                                     {{-- Tombol collapse --}}
                                     <button class="btn btn-sm btn-outline-dark w-100 fw-semibold mt-2" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#collapseTugas{{ $data->id }}"
                                         aria-expanded="false" aria-controls="collapseTugas{{ $data->id }}">
-                                        Lihat Semua Tugas ({{ $data->tasks->count() }})
+                                        Lihat Semua Tugas
+                                        ({{ $data->tasks->count() + $data->fixedSchedules->where('day_of_week', strtolower(now()->format('l')))->count() }})
                                     </button>
 
-                                    {{-- Isi tugas --}}
+
+                                    {{-- Daftar tugas --}}
                                     <div class="collapse mt-2" id="collapseTugas{{ $data->id }}">
+                                        {{-- Tugas Harian --}}
                                         @foreach ($data->tasks as $task)
                                             <div class="mb-3 small">
                                                 <div class="fw-semibold">{{ $task->title }}</div>
@@ -111,11 +128,45 @@
                                                         </div>
                                                     @endif
                                                 </div>
+                                                <hr class="my-2">
+                                            </div>
+                                        @endforeach
+
+                                        {{-- Jadwal Tetap Hari Ini --}}
+                                        @foreach ($data->fixedSchedules->where('day_of_week', strtolower(now()->format('l'))) as $fixed)
+                                            <div class="mb-2 small">
+                                                <div class="fw-semibold">{{ $fixed->subject ?? ucfirst($fixed->type) }}
+                                                </div>
+                                                <div class="text-muted">
+                                                    @php
+                                                        $daysIndo = [
+                                                            'monday' => 'Senin',
+                                                            'tuesday' => 'Selasa',
+                                                            'wednesday' => 'Rabu',
+                                                            'thursday' => 'Kamis',
+                                                            'friday' => 'Jumat',
+                                                            'saturday' => 'Sabtu',
+                                                            'sunday' => 'Minggu',
+                                                        ];
+                                                    @endphp
+                                                    <i class="bi bi-calendar-event"></i>
+                                                    {{ $daysIndo[strtolower($fixed->day_of_week)] ?? ucfirst($fixed->day_of_week) }}<br>
+                                                    <i class="bi bi-clock"></i>
+                                                    {{ \Carbon\Carbon::parse($fixed->start_time)->format('H:i') }} -
+                                                    {{ \Carbon\Carbon::parse($fixed->end_time)->format('H:i') }}<br>
+                                                    <i class="bi bi-geo-alt"></i> {{ $fixed->classroom ?? '-' }}<br>
+                                                    @if ($fixed->description)
+                                                        <i class="bi bi-info-circle"></i>
+                                                        {{ \Illuminate\Support\Str::limit($fixed->description, 60) }}
+                                                    @endif
+                                                </div>
+                                                <span class="badge bg-info rounded-pill">{{ ucfirst($fixed->type) }}</span>
                                                 @if (!$loop->last)
                                                     <hr class="my-2">
                                                 @endif
                                             </div>
                                         @endforeach
+
                                     </div>
                                 @else
                                     <small class="text-muted">Belum membuat tugas hari ini.</small>
@@ -129,6 +180,7 @@
                             @include('components.task_modal_pending', ['task' => $task])
                         @endforeach
                     @endforeach
+
 
                 </div>
             @endif
