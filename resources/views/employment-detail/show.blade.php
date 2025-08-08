@@ -29,7 +29,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="fw-bold">Informasi Kepegawaian</h5>
-                    @if (Auth::id() == $user->id || Auth::user()->role === 'admin' || Auth::user()->role === 'hrd')
+                    @if (Auth::user()->isAdmin() || Auth::user()->isHRD() || Auth::user()->isKepalaUnit())
                         <a href="{{ route('employment-detail.create', ['employment_detail' => $user->employmentDetail->employee_number]) }}"
                             class="btn btn-primary">
                             Tambah / Edit Detail

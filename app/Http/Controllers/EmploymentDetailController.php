@@ -97,16 +97,11 @@ class EmploymentDetailController extends Controller
 
         $currentUser = Auth::user();
 
-        $canManageSP = false;
-
-        if (in_array($currentUser->role, ['admin', 'hrd'])) {
-            $canManageSP = true;
-        } elseif ($currentUser->role === 'kepala') {
-            $canManageSP = $currentUser->units->pluck('id')->contains($user->employmentDetail->unit_id ?? null);
-        }
+        $canManageSP = $currentUser->canManageSP($user);
 
         return view('employment-detail.show', compact('user', 'canManageSP'));
     }
+
 
 
     /**

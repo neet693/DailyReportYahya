@@ -11,17 +11,36 @@ class JobDeskController extends Controller
 
     public function index()
     {
-        $Jobdesks = JobDesk::all();
+        $user = auth()->user();
+
+        // Admin dan HRD melihat semua jobdesk
+        if ($user->isAdmin() || $user->isHRD()) {
+            $Jobdesks = JobDesk::with('user')->latest()->get();
+        }
+        // Kepala Unit & Pegawai melihat jobdesk dari unit kerja yang sama
+        else {
+            $unitId = $user->employmentDetail->unit_kerja_id ?? null;
+
+            $Jobdesks = JobDesk::whereHas('user.employmentDetail', function ($query) use ($unitId) {
+                $query->where('unit_kerja_id', $unitId);
+            })
+                ->with('user')
+                ->latest()
+                ->get();
+        }
+
         return view('jobdesks.index', compact('Jobdesks'));
     }
+
+
 
     public function create()
     {
         if (auth()->user()->role === 'admin') {
             $users = User::all();
         } elseif (auth()->user()->role === 'kepala') {
-            // Ambil unit_id dari employment_detail user yang login
-            $unitId = auth()->user()->employmentDetail->unit_id ?? null;
+            // Ambil unit_kerja_id dari employment_detail user yang login
+            $unitId = auth()->user()->employmentDetail->unit_kerja_id ?? null;
 
             $users = User::whereHas('employmentDetail', function ($query) use ($unitId) {
                 $query->where('unit_kerja_id', $unitId);
@@ -51,10 +70,10 @@ class JobDeskController extends Controller
         } elseif ($user->role === 'kepala') {
             // Kepala hanya boleh ke anggota unitnya
 
-            $unitId = $user->employmentDetail->unit_id ?? null;
+            $unitId = $user->employmentDetail->unit_kerja_id ?? null;
 
             $jobdeskUser = User::whereHas('employmentDetail', function ($query) use ($unitId) {
-                $query->where('unit_id', $unitId);
+                $query->where('unit_kerja_id', $unitId);
             })
                 ->where('id', $request->input('jobdesk_user_id'))
                 ->first();
@@ -96,14 +115,14 @@ class JobDeskController extends Controller
         if (auth()->user()->role === 'admin') {
             $users = User::all();
         } elseif (auth()->user()->role === 'kepala') {
-            $unitId = auth()->user()->employmentDetail->unit_id ?? null;
+            $unitId = auth()->user()->employmentDetail->unit_kerja_id ?? null;
 
             if (!$unitId) {
                 abort(403, 'Anda tidak memiliki data unit kerja.');
             }
 
             $users = User::whereHas('employmentDetail', function ($query) use ($unitId) {
-                $query->where('unit_id', $unitId);
+                $query->where('unit_kerja_id', $unitId);
             })->get();
         } else {
             abort(403, 'Unauthorized');
@@ -126,14 +145,14 @@ class JobDeskController extends Controller
         if ($user->role === 'admin') {
             $jobdeskUser = User::findOrFail($request->input('jobdesk_user_id'));
         } elseif ($user->role === 'kepala') {
-            $unitId = $user->employmentDetail->unit_id ?? null;
+            $unitId = $user->employmentDetail->unit_kerja_id ?? null;
 
             if (!$unitId) {
                 abort(403, 'Anda tidak memiliki data unit kerja.');
             }
 
             $jobdeskUser = User::whereHas('employmentDetail', function ($query) use ($unitId) {
-                $query->where('unit_id', $unitId);
+                $query->where('unit_kerja_id', $unitId);
             })
                 ->where('id', $request->input('jobdesk_user_id'))
                 ->first();

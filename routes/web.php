@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\MessageSent;
+use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AssignmentController;
@@ -128,3 +129,7 @@ Route::middleware(['auth'])->group(function () {
 //Route Fixed Schedule
 Route::get('/fixed-schedule/create', [FixedScheduleController::class, 'create'])->name('fixed-schedule.create');
 Route::post('/fixed-schedule', [FixedScheduleController::class, 'store'])->name('fixed-schedule.store');
+
+//Route Absensi
+Route::post('/absensi/import', [AbsensiController::class, 'import'])->name('absensi.import');
+Route::resource('absensi', AbsensiController::class);

@@ -5,6 +5,7 @@
                 <h5 class="modal-title">Tambah Pendidikan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
             <form action="{{ route('education.store') }}" method="POST">
                 @csrf
                 <div class="modal-body">
@@ -20,7 +21,10 @@
                         <label class="form-label">Tahun Lulus</label>
                         <input type="number" name="year_of_graduation" class="form-control">
                     </div>
+
+                    <input type="hidden" name="user_id" value="{{ $user->id }}">
                 </div>
+
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>

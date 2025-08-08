@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EducationHistory;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,11 +34,26 @@ class EducationHistoryController extends Controller
             'degree' => 'required|string',
             'institution' => 'required|string',
             'year_of_graduation' => 'nullable|digits:4',
+            'user_id' => 'required|exists:users,id',
         ]);
 
-        Auth::user()->educationHistories()->create($request->all());
+        $currentUser = Auth::user();
+        $targetUser = User::findOrFail($request->user_id);
 
-        return redirect()->back()->with('success', 'Pendidikan berhasil ditambahkan.');
+        if (
+            $currentUser->id === $targetUser->id ||
+            $currentUser->isHRD() || $currentUser->isAdmin()
+        ) {
+            $targetUser->educationHistories()->create([
+                'degree' => $request->degree,
+                'institution' => $request->institution,
+                'year_of_graduation' => $request->year_of_graduation,
+            ]);
+
+            return redirect()->back()->with('success', 'Riwayat pendidikan berhasil ditambahkan.');
+        }
+
+        abort(403, 'Tidak memiliki izin untuk menambahkan data.');
     }
 
     /**
@@ -69,6 +85,16 @@ class EducationHistoryController extends Controller
      */
     public function destroy(EducationHistory $educationHistory)
     {
-        //
+        $currentUser = Auth::user();
+
+        if (
+            $currentUser->id === $educationHistory->user_id ||
+            $currentUser->isHRD() || $currentUser->isAdmin()
+        ) {
+            $educationHistory->delete();
+            return redirect()->back()->with('success', 'Riwayat pendidikan berhasil dihapus.');
+        }
+
+        abort(403, 'Tidak memiliki izin untuk menghapus data.');
     }
 }

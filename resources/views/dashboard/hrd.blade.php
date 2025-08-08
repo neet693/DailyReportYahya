@@ -87,6 +87,51 @@
             </div>
         </div>
 
+        <!-- Tombol untuk membuka modal -->
+        <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#importAbsensiModal">
+            Import Absensi
+        </button>
+
+        <!-- Modal Import Absensi -->
+        <div class="modal fade" id="importAbsensiModal" tabindex="-1" aria-labelledby="importAbsensiModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <form action="{{ route('absensi.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="importAbsensiModalLabel">Import Data Absensi</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                {{-- <a class="btn btn-outline-primary" href="{{ asset('attachments/template-absensi.xlsx') }}"
+                                    download="template-absensi.xlsx" target="_blank">
+                                    <i class="bi bi-download"></i> Unduh Template Absensi
+                                </a> --}}
+                                Untuk dapat mengupload, silahkan unduh dari mesin terlebih dahulu. Setelah itu Copy dan
+                                Pastekan Data kedalam Workbook Excel Baru (Pastikan format Excelnya
+                                adalah .xlsx)
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Pilih file Excel</label>
+                                <input class="form-control" type="file" name="file" id="file" accept=".xls,.xlsx"
+                                    required>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-success">Import</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
         <!-- Toast Notification -->
         <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
             <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert"
@@ -139,7 +184,8 @@
             </div>
 
             <div class="col-xl-3 col-md-4 col-sm-6">
-                <a href="#!" class="card card-border-danger rounded-3 card-mini card-hover h-100 text-decoration-none">
+                <a href="#!"
+                    class="card card-border-danger rounded-3 card-mini card-hover h-100 text-decoration-none">
                     <div class="card-body d-flex align-items-center gap-3">
                         <div class="icon-shape bg-light-danger rounded-circle">
                             <i class="fas fa-venus text-danger"></i>

@@ -17,7 +17,6 @@ class UsersImport implements ToModel, WithHeadingRow, WithMapping, WithCalculate
 
     public function map($row): array
     {
-        // Paksa semua kolom menjadi string (atau kosong)
         foreach ($row as $key => $value) {
             $row[$key] = is_null($value) ? null : trim((string) $value);
         }
@@ -30,30 +29,35 @@ class UsersImport implements ToModel, WithHeadingRow, WithMapping, WithCalculate
     {
         $get = fn($key, $default = null) => $this->rowData[$key] ?? $default;
 
-        $user = User::create([
-            'name'            => $get('name'),
-            'email'           => $get('email'),
-            'password'        => Hash::make($get('password', 'default123')),
-            'role'            => 'pegawai',
-            'birth_date'      => $get('birth_date'),
-            'marital_status'  => $get('marital_status'),
-            'address'         => $get('address'),
-            'gender'          => $get('gender'),
-            'profile_image'   => $this->convertGoogleDriveLink($get('profile_image')),
-        ]);
+        // Update or create user based on email
+        $user = User::updateOrCreate(
+            ['email' => $get('email')],
+            [
+                'name'           => $get('name'),
+                'password'       => Hash::make($get('password', 'default123')),
+                'role'           => 'pegawai',
+                'birth_date'     => $get('birth_date'),
+                'marital_status' => $get('marital_status'),
+                'address'        => $get('address'),
+                'gender'         => $get('gender'),
+                'profile_image'  => $this->convertGoogleDriveLink($get('profile_image')),
+            ]
+        );
 
         $unitKerja = UnitKerja::where('name', $get('unit_kerja'))->first()
             ?? UnitKerja::where('name', 'Uncategorized Unit')->first();
 
         if ($unitKerja) {
-            EmploymentDetail::create([
-                'user_id'            => $user->id,
-                'unit_kerja_id'      => $unitKerja->id,
-                'employee_number'    => 'EMP-' . str_pad($user->id, 3, '0', STR_PAD_LEFT),
-                'tahun_masuk'        => $get('tahun_masuk', now()->year),
-                'tahun_sertifikasi'  => $get('tahun_sertifikasi', now()->year),
-                'status_kepegawaian' => $get('status_kepegawaian', 'Kontrak'),
-            ]);
+            EmploymentDetail::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'unit_kerja_id'      => $unitKerja->id,
+                    'employee_number'    => 'EMP-' . str_pad($user->id, 3, '0', STR_PAD_LEFT),
+                    'tahun_masuk'        => $get('tahun_masuk', now()->year),
+                    'tahun_sertifikasi'  => $get('tahun_sertifikasi', now()->year),
+                    'status_kepegawaian' => $get('status_kepegawaian', 'Kontrak'),
+                ]
+            );
         }
 
         return $user;

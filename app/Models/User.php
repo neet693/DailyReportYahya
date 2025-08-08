@@ -143,24 +143,39 @@ class User extends Authenticatable
         return $this->hasMany(SuratPeringatan::class);
     }
 
-    // Can view SP
-    public function canViewSP(User $targetUser)
+    // Boleh melihat SP
+    public function canViewSP(User $targetUser): bool
     {
-        // Admin atau HRD boleh lihat semua
-        if (in_array($this->role, ['admin', 'hrd'])) {
-            return true;
+        if ($this->isAdminOrHRD()) return true;
+
+        if ($this->isKepalaUnit()) {
+            $targetUnitId = $targetUser->employmentDetail?->unit_kerja_id;
+
+            return $targetUnitId && (
+                $this->employmentDetail?->unit_kerja_id === $targetUnitId ||
+                $this->units->pluck('id')->contains($targetUnitId)
+            );
         }
 
-        // Kepala unit yang satu unit dengan target user
-        if ($this->role === 'kepala' && $this->units->pluck('id')->contains($targetUser->employmentDetail->unit_id)) {
-            return true;
+        // Pegawai boleh melihat SP dirinya sendiri
+        return $this->id === $targetUser->id;
+    }
+
+    // Boleh menambahkan/mengelola SP
+    public function canManageSP(User $targetUser): bool
+    {
+        if ($this->isAdminOrHRD()) return true;
+
+        if ($this->isKepalaUnit()) {
+            $targetUnitId = $targetUser->employmentDetail?->unit_kerja_id;
+
+            return $targetUnitId && (
+                $this->employmentDetail?->unit_kerja_id === $targetUnitId ||
+                $this->units->pluck('id')->contains($targetUnitId)
+            );
         }
 
-        // Dirinya sendiri
-        if ($this->id === $targetUser->id) {
-            return true;
-        }
-
+        // Pegawai biasa tidak boleh mengelola SP
         return false;
     }
 
