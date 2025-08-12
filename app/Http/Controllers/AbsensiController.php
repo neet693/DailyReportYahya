@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Imports\AbsensiImport;
 use App\Models\Absensi;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -11,23 +12,37 @@ class AbsensiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Absensi::with('user');
+        $users = User::all();
+
+        $query = Absensi::with(['user', 'latenote']);
+
 
         if ($request->filled('bulan')) {
-            $tanggal = \Carbon\Carbon::createFromFormat('Y-m', $request->bulan);
-            $query->whereMonth('tanggal', $tanggal->month)
-                ->whereYear('tanggal', $tanggal->year);
+            $bulan = \Carbon\Carbon::parse($request->bulan);
+            $query->whereMonth('tanggal', $bulan->month)
+                ->whereYear('tanggal', $bulan->year);
         }
 
         if ($request->filled('pegawai')) {
             $query->where('user_id', $request->pegawai);
         }
 
-        $absensis = $query->orderBy('tanggal', 'desc')->get();
-        $users = \App\Models\User::orderBy('name')->get();
+        $absensis = $query->get();
 
-        return view('absensis.index', compact('absensis', 'users'));
+        // Kirim selectedUser biar Blade tidak error
+        $selectedUser = null;
+        if ($request->filled('pegawai')) {
+            $selectedUser = User::find($request->pegawai);
+        }
+
+        // Hitung akumulasi keterlambatan
+        $totalMenit = $absensis->sum('terlambat');
+        $totalHari  = $absensis->where('terlambat', '>', 0)->count();
+
+        return view('absensis.index', compact('users', 'absensis', 'selectedUser', 'totalMenit', 'totalHari'));
     }
+
+
 
 
     /**

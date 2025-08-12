@@ -31,7 +31,7 @@
                                         <td>
                                             <strong>{{ $item->user->name ?? 'User tidak ditemukan' }}</strong> <br>
                                             <small
-                                                class="text-muted">{{ \Carbon\Carbon::parse($item->waktu_terlambat)->format('d M Y H:i') }}</small>
+                                                class="text-muted">{{ \Carbon\Carbon::parse($item->tanggal_terlambat)->format('d M Y') }}</small>
                                             <br>
                                             <p class="mb-0">{{ $item->alasan }}</p>
                                         </td>

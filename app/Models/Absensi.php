@@ -15,4 +15,9 @@ class Absensi extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function latenote()
+    {
+        return $this->hasOne(LateNotes::class, 'absensi_id');
+    }
 }

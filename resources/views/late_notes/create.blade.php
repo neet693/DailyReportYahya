@@ -13,11 +13,11 @@
 
                             {{-- Waktu Keterlambatan --}}
                             <div class="mb-3">
-                                <label for="waktu_terlambat" class="form-label">Waktu Keterlambatan</label>
-                                <input type="datetime-local"
-                                    class="form-control @error('waktu_terlambat') is-invalid @enderror" id="waktu_terlambat"
-                                    name="waktu_terlambat" value="{{ old('waktu_terlambat') }}" required>
-                                @error('waktu_terlambat')
+                                <label for="tanggal_terlambat" class="form-label">Waktu Keterlambatan</label>
+                                <input type="date" class="form-control @error('tanggal_terlambat') is-invalid @enderror"
+                                    id="tanggal_terlambat" name="tanggal_terlambat" value="{{ old('tanggal_terlambat') }}"
+                                    required>
+                                @error('tanggal_terlambat')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>

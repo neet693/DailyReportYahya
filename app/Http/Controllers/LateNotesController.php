@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Absensi;
 use App\Models\LateNotes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -32,9 +33,9 @@ class LateNotesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'waktu_terlambat' => 'required|date',
+            'tanggal_terlambat' => 'required|date',
             'alasan' => 'required|string',
-            'foto' => 'required|string', // base64 string dari kamera wajib ada
+            'foto' => 'required|string',
         ]);
 
         $imagePath = null;
@@ -42,7 +43,7 @@ class LateNotesController extends Controller
 
         if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
             $data = substr($data, strpos($data, ',') + 1);
-            $type = strtolower($type[1]); // jpg, png, etc.
+            $type = strtolower($type[1]);
 
             if (!in_array($type, ['jpg', 'jpeg', 'png'])) {
                 return back()->withErrors(['foto' => 'Format gambar tidak valid.'])->withInput();
@@ -66,15 +67,23 @@ class LateNotesController extends Controller
             return back()->withErrors(['foto' => 'Data foto tidak valid.'])->withInput();
         }
 
+        // Cari absensi yang sesuai dengan user & tanggal
+        $absensi = Absensi::where('user_id', auth()->id())
+            ->whereDate('tanggal', $request->tanggal_terlambat)
+            ->first();
+
         LateNotes::create([
             'user_id' => auth()->id(),
             'slug' => Str::slug(auth()->user()->name . '-' . now()->timestamp),
-            'waktu_terlambat' => $request->waktu_terlambat,
+            'tanggal_terlambat' => $request->tanggal_terlambat,
             'alasan' => $request->alasan,
             'foto' => $imagePath,
+            'absensi_id' => $absensi ? $absensi->id : null, // otomatis isi
         ]);
 
-        return redirect()->view('late_notes.index')->with('success', 'Catatan keterlambatan berhasil dikirim.');
+        return redirect()
+            ->route('late_notes.index')
+            ->with('success', 'Catatan keterlambatan berhasil dikirim.');
     }
 
     public function show($slug)
@@ -97,5 +106,25 @@ class LateNotesController extends Controller
     public function destroy(LateNotes $lateNotes)
     {
         //
+    }
+
+    public function acc($slug)
+    {
+        $late = LateNotes::where('slug', $slug)->first();
+
+        if (!$late) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        }
+
+        $late->izin = true;
+        $late->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Izin berhasil di-ACC'
+        ]);
     }
 }

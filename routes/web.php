@@ -72,6 +72,9 @@ Route::middleware(['auth'])->group(function () {
         ->name('employment-detail.store');
 
     //Keterlambatan
+    // routes/web.php
+    Route::post('/keterlambatan/{slug}/acc', [LateNotesController::class, 'acc'])
+        ->name('keterlambatan.acc');
     Route::resource('keterlambatan', LateNotesController::class);
 
     //Surat Peringantan

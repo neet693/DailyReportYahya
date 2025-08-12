@@ -7,7 +7,7 @@
                 <h4 class="mb-4">Detail Keterlambatan</h4>
 
                 <p><strong>Waktu Keterlambatan:</strong>
-                    {{ \Carbon\Carbon::parse($keterlambatan->waktu_terlambat)->format('d M Y H:i') }}</p>
+                    {{ \Carbon\Carbon::parse($keterlambatan->tanggal_terlambat)->format('d M Y') }}</p>
                 <p><strong>Alasan:</strong> {{ $keterlambatan->alasan }}</p>
 
                 @if ($keterlambatan->foto)

@@ -20,4 +20,9 @@ class LateNotes extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function absensi()
+    {
+        return $this->belongsTo(Absensi::class);
+    }
 }

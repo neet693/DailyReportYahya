@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->string('slug')->unique();
-            $table->dateTime('waktu_terlambat')->nullable();
+            $table->date('tanggal_terlambat')->nullable();
             $table->text('alasan');
             $table->string('foto')->nullable();
             $table->softDeletes();
