@@ -15,7 +15,9 @@ class SuratPeringatan extends Model
     protected $casts = [
         'mulai_berlaku' => 'date',
         'berakhir_berlaku' => 'date',
+        'is_active' => 'boolean',
     ];
+
 
 
     public function getDurasiAttribute()
@@ -26,5 +28,29 @@ class SuratPeringatan extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected static function booted()
+    {
+        static::retrieved(function ($sp) {
+            if ($sp->is_active && $sp->berakhir_berlaku->isPast()) {
+                $sp->update(['is_active' => false]);
+            }
+        });
+    }
+
+    public function getSisaDurasiAttribute()
+    {
+        if ($this->berakhir_berlaku->isPast()) {
+            return 'Kadaluarsa';
+        }
+
+        $diff = now()->diff($this->berakhir_berlaku);
+        $parts = [];
+
+        if ($diff->m > 0) $parts[] = $diff->m . ' bulan';
+        if ($diff->d > 0) $parts[] = $diff->d . ' hari';
+
+        return implode(' ', $parts);
     }
 }

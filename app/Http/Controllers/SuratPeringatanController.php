@@ -39,7 +39,9 @@ class SuratPeringatanController extends Controller
             'mulai_berlaku' => $request->mulai_berlaku,
             'berakhir_berlaku' => $request->berakhir_berlaku,
             'alasan' => $request->alasan,
+            'is_active' => now()->lte($request->berakhir_berlaku), // aktif kalau belum lewat
         ]);
+
 
         return back()->with('success', 'Surat Peringatan berhasil ditambahkan.');
     }
@@ -58,12 +60,14 @@ class SuratPeringatanController extends Controller
 
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
-            'tanggal_mulai' => 'required|date',
-            'tanggal_berakhir' => 'required|date|after_or_equal:tanggal_mulai',
+            'mulai_berlaku' => 'required|date',
+            'berakhir_berlaku' => 'required|date|after_or_equal:tanggal_mulai',
             'alasan' => 'required|string',
         ]);
 
+        $validated['is_active'] = now()->lte($validated['berakhir_berlaku']);
         $suratPeringatan->update($validated);
+
 
         return redirect()->route('employment-detail.show', $user->employmentDetail->employee_number)->with('success', 'Surat Peringatan berhasil diperbarui.');
     }

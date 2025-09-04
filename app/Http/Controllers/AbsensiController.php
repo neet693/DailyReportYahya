@@ -13,38 +13,39 @@ class AbsensiController extends Controller
     public function index(Request $request)
     {
         $users = User::all();
-
         $query = Absensi::with(['user', 'latenote']);
 
-
-        if ($request->filled('bulan')) {
+        // Prioritaskan filter tanggal range
+        if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
+            $query->whereBetween('tanggal', [
+                $request->tanggal_awal,
+                $request->tanggal_akhir
+            ]);
+        }
+        // Kalau tidak ada range tanggal, pakai filter bulan
+        elseif ($request->filled('bulan')) {
             $bulan = \Carbon\Carbon::parse($request->bulan);
             $query->whereMonth('tanggal', $bulan->month)
                 ->whereYear('tanggal', $bulan->year);
         }
 
+        // Filter pegawai
         if ($request->filled('pegawai')) {
             $query->where('user_id', $request->pegawai);
         }
 
         $absensis = $query->get();
 
-        // Kirim selectedUser biar Blade tidak error
         $selectedUser = null;
         if ($request->filled('pegawai')) {
             $selectedUser = User::find($request->pegawai);
         }
 
-        // Hitung akumulasi keterlambatan
         $totalMenit = $absensis->sum('terlambat');
         $totalHari  = $absensis->where('terlambat', '>', 0)->count();
 
         return view('absensis.index', compact('users', 'absensis', 'selectedUser', 'totalMenit', 'totalHari'));
     }
-
-
-
-
     /**
      * Show the form for creating a new resource.
      */

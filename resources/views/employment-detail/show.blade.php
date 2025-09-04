@@ -88,11 +88,26 @@
                         @else
                             <ul>
                                 @foreach ($user->statusPeringatan as $sp)
-                                    <li>
-                                        <a href="#" data-bs-toggle="modal"
-                                            data-bs-target="#spDetailModal{{ $sp->id }}">
-                                            {{ $sp->judul }} - {{ $sp->durasi }}
-                                        </a>
+                                    <li class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <a href="#" data-bs-toggle="modal"
+                                                data-bs-target="#spDetailModal{{ $sp->id }}">
+                                                {{ $sp->judul }} - {{ $sp->sisa_durasi }}
+                                                @if ($sp->is_active)
+                                                    <span class="badge bg-success">Aktif</span>
+                                                @else
+                                                    <span class="badge bg-secondary">Non Aktif</span>
+                                                @endif  
+                                            </a>
+                                        </div>
+
+                                        @if ($canManageSP)
+                                            <!-- Tombol Edit SP -->
+                                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                                data-bs-target="#modalEditSP{{ $sp->id }}">
+                                                ✏ Edit
+                                            </button>
+                                        @endif
                                     </li>
 
                                     <!-- Modal SP Detail -->
@@ -101,22 +116,68 @@
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="spDetailModalLabel">Detail Surat Peringatan
-                                                    </h5>
+                                                    <h5 class="modal-title">Detail Surat Peringatan</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Tutup"></button>
                                                 </div>
                                                 <div class="modal-body">
                                                     <h5>{{ $sp->judul }}</h5>
-                                                    <p><strong>Tanggal:</strong>
-                                                        {{ $sp->mulai_berlaku->format('d M Y') }} -
-                                                        {{ $sp->berakhir_berlaku->format('d M Y') }}
-                                                    </p>
+                                                    <p><strong>Tanggal:</strong> {{ $sp->mulai_berlaku->format('d M Y') }}
+                                                        - {{ $sp->berakhir_berlaku->format('d M Y') }}</p>
                                                     <p><strong>Durasi:</strong> {{ $sp->durasi }}</p>
                                                     <p><strong>Alasan SP:</strong></p>
                                                     <div>{!! $sp->alasan !!}</div>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal Edit SP -->
+                                    <div class="modal fade" id="modalEditSP{{ $sp->id }}" tabindex="-1"
+                                        aria-labelledby="modalEditSPLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <form action="{{ route('surat-peringatan.update', $sp->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Edit Surat Peringatan</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Tutup"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="employee_number"
+                                                            value="{{ $user->employmentDetail->employee_number }}">
+
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Judul</label>
+                                                            <input type="text" class="form-control" name="judul"
+                                                                value="{{ $sp->judul }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Tanggal Mulai</label>
+                                                            <input type="date" class="form-control" name="mulai_berlaku"
+                                                                value="{{ $sp->mulai_berlaku->format('Y-m-d') }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Tanggal Berakhir</label>
+                                                            <input type="date" class="form-control"
+                                                                name="berakhir_berlaku"
+                                                                value="{{ $sp->berakhir_berlaku->format('Y-m-d') }}"
+                                                                required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Alasan</label>
+                                                            <textarea class="form-control" name="alasan" rows="3" required>{{ $sp->alasan }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Batal</button>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 @endforeach
@@ -133,8 +194,8 @@
                 <h5 class="fw-bold">Riwayat Pendidikan dan Diklat</h5>
                 <ul class="nav nav-tabs" id="educationTrainingTab" role="tablist">
                     <li class="nav-item">
-                        <button class="nav-link active" id="education-tab" data-bs-toggle="tab" data-bs-target="#education"
-                            type="button" role="tab">Pendidikan</button>
+                        <button class="nav-link active" id="education-tab" data-bs-toggle="tab"
+                            data-bs-target="#education" type="button" role="tab">Pendidikan</button>
                     </li>
                     <li class="nav-item">
                         <button class="nav-link" id="training-tab" data-bs-toggle="tab" data-bs-target="#training"
