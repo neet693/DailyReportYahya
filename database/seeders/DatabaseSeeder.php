@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         // Buat User Aloy
         $aloy = User::create([
             'name' => 'Aloy',
-            'email' => 'aloy@dailyreportyahya.com',
+            'email' => 'aloy@skysimpeg.com',
             'password' => bcrypt('rusakdeh'), // Ganti dengan kata sandi yang aman
             'role' => 'kepala',
             'address' => 'Alamat',

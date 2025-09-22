@@ -32,11 +32,11 @@ Route::get('/', function () {
 
 Auth::routes();
 Route::middleware(['auth'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
     // Task Route
     Route::resource('tasks', TaskController::class);
     Route::post('tasks/mark-as-complete/{task}', [TaskController::class, 'markAsComplete'])->name('tasks.markAsComplete');
     Route::post('tasks/mark-as-pending/{task}', [TaskController::class, 'markAsPending'])->name('tasks.markAsPending');
-
     // Assignment Route
     Route::resource('assignments', AssignmentController::class);
     Route::post('assignments/mark-as-complete/{assignment}', [AssignmentController::class, 'markAsComplete'])->name('assignments.markAsComplete');
@@ -51,7 +51,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('report/weekly', [ReportController::class, 'generateWeeklyReport'])->name('report.generateWeeklyReport');
     Route::get('report/monthly', [ReportController::class, 'generateMonthlyReport'])->name('report.generateMonthlyReport');
     Route::post('/announcements/mark-all-as-read', 'AnnouncementController@markAllAsRead')->name('announcements.markAllAsRead');
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+
 
     Route::resource('announcements', AnnouncementController::class);
     Route::resource('profile', ProfileController::class);
@@ -61,21 +61,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('meetings', MeetingController::class);
     Route::post('/meetings/upload-attachment', [MeetingController::class, 'uploadAttachment'])->name('meetings.uploadAttachment');
 
-
     //Employment Detail
     Route::resource('employment-detail', EmploymentDetailController::class)
         ->parameters(['employment-detail' => 'employment_detail:employee_number']);
     Route::get('/employment-detail/{employment_detail:employee_number}/cetak', [EmploymentDetailController::class, 'cetak'])->name('employment-detail.cetak');
-    Route::get('/employment-detail/create/{employment_detail:employee_number}', [EmploymentDetailController::class, 'create'])
-        ->name('employment-detail.create');
-    Route::post('/employment-detail', [EmploymentDetailController::class, 'store'])
-        ->name('employment-detail.store');
 
-    //Keterlambatan
-    // routes/web.php
-    Route::post('/keterlambatan/{slug}/acc', [LateNotesController::class, 'acc'])
-        ->name('keterlambatan.acc');
-    Route::resource('keterlambatan', LateNotesController::class);
 
     //Surat Peringantan
     Route::resource('surat-peringatan', SuratPeringatanController::class);
@@ -100,39 +90,48 @@ Route::middleware(['auth'])->group(function () {
 
     //ROute Assign User
     Route::resource('Unit', UnitKerjaController::class);
-    Route::get('/unit/{unit}/assign-users', [UnitKerjaController::class, 'assignForm'])->name('unit.assign.form');
-    Route::post('/unit/{unit}/assign-users', [UnitKerjaController::class, 'assignUsers'])->name('unit.assign.users');
+
 
 
     //Pegawai per Unit
     Route::get('/unit/{unitId}/pegawai', [HomeController::class, 'showPegawaiByUnit'])->name('unit.pegawai');
 
-
-    //Import Pegawai
-    Route::post('/import-users', [HomeController::class, 'import'])->name('users.import');
-
-
-    //Delete Pegawai
-    Route::delete('/pegawai/{id}', [HomeController::class, 'destroy'])->name('users.destroy');
-});
-
-Route::middleware('auth')->group(function () {
     Route::get('/chat', [MessageController::class, 'index']);
     Route::post('/chat/messages', [MessageController::class, 'fetchMessages']);
     Route::post('/chat/send', [MessageController::class, 'sendMessage']);
+    //Route Keterlambatan
+    Route::resource('keterlambatan', LateNotesController::class);
 });
 
-
 // Route untuk HRD daftar pegawai
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:hrd'])->group(function () {
+    Route::post('/absensi/import', [AbsensiController::class, 'import'])->name('absensi.import');
     Route::get('pegawai/create', [PegawaiController::class, 'create'])->name('pegawai.create');
     Route::post('pegawai', [PegawaiController::class, 'store'])->name('pegawai.store');
+    //Delete Pegawai
+    Route::delete('/pegawai/{id}', [HomeController::class, 'destroy'])->name('users.destroy');
+    //Import Pegawai
+    Route::post('/import-users', [HomeController::class, 'import'])->name('users.import');
 });
 
 //Route Fixed Schedule
-Route::get('/fixed-schedule/create', [FixedScheduleController::class, 'create'])->name('fixed-schedule.create');
-Route::post('/fixed-schedule', [FixedScheduleController::class, 'store'])->name('fixed-schedule.store');
+Route::middleware(['auth', 'role:kepala,pegawai'])->group(function () {
+    Route::get('/fixed-schedule/create', [FixedScheduleController::class, 'create'])->name('fixed-schedule.create');
+    Route::post('/fixed-schedule', [FixedScheduleController::class, 'store'])->name('fixed-schedule.store');
+});
 
-//Route Absensi
-Route::post('/absensi/import', [AbsensiController::class, 'import'])->name('absensi.import');
-Route::resource('absensi', AbsensiController::class);
+Route::middleware(['auth', 'role:admin,kepala,hrd'])->group(function () {
+    Route::get('/employment-detail/create/{employment_detail:employee_number}', [EmploymentDetailController::class, 'create'])
+        ->name('employment-detail.create');
+    Route::post('/employment-detail', [EmploymentDetailController::class, 'store'])
+        ->name('employment-detail.store');
+    Route::resource('absensi', AbsensiController::class)->only(['index']);
+    //Keterlambatan
+    Route::post('/keterlambatan/{slug}/acc', [LateNotesController::class, 'acc'])
+        ->name('keterlambatan.acc');
+});
+
+Route::middleware(['auth', 'role:admin,kepala'])->group(function () {
+    Route::get('/unit/{unit}/assign-users', [UnitKerjaController::class, 'assignForm'])->name('unit.assign.form');
+    Route::post('/unit/{unit}/assign-users', [UnitKerjaController::class, 'assignUsers'])->name('unit.assign.users');
+});

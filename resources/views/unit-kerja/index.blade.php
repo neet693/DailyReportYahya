@@ -8,9 +8,16 @@
             @foreach ($units as $unit)
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     {{ $unit->name }}
-                    @if (auth()->user()->isAdmin() || auth()->user()->isKepalaUnit() || auth()->user()->units->contains($unit))
+
+                    @if (auth()->user()->isAdmin() || auth()->user()->isKepalaUnit())
+                        {{-- Admin & Kepala bisa assign --}}
                         <a href="{{ route('unit.assign.form', $unit->id) }}" class="btn btn-sm btn-outline-primary">Assign
                             User</a>
+                    @elseif (auth()->user()->units->contains($unit))
+                        {{-- Pegawai sudah join --}}
+                        <button class="btn btn-sm btn-outline-success" disabled>
+                            ✅ Anda sudah bergabung
+                        </button>
                     @endif
                 </li>
             @endforeach

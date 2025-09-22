@@ -34,7 +34,7 @@ class UsersImport implements ToModel, WithHeadingRow, WithMapping, WithCalculate
             ['email' => $get('email')],
             [
                 'name'           => $get('name'),
-                'password'       => Hash::make($get('password', 'default123')),
+                'password' => Hash::make($get('password', env('DEFAULT_USER_PASSWORD'))),
                 'role'           => 'pegawai',
                 'birth_date'     => $get('birth_date'),
                 'marital_status' => $get('marital_status'),
