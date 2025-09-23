@@ -33,6 +33,9 @@ Route::get('/', function () {
 Auth::routes();
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    Route::post('/employment-detail/{employee_number}/verify', [EmploymentDetailController::class, 'verify'])
+        ->name('employment-detail.verify');
     // Task Route
     Route::resource('tasks', TaskController::class);
     Route::post('tasks/mark-as-complete/{task}', [TaskController::class, 'markAsComplete'])->name('tasks.markAsComplete');

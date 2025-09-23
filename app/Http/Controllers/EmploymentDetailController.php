@@ -7,6 +7,7 @@ use App\Models\UnitKerja;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use PDF;
 
 class EmploymentDetailController extends Controller
@@ -96,10 +97,29 @@ class EmploymentDetailController extends Controller
             ->firstOrFail();
 
         $currentUser = Auth::user();
-
         $canManageSP = $currentUser->canManageSP($user);
 
-        return view('employment-detail.show', compact('user', 'canManageSP'));
+        // cek session berdasarkan employee_number
+        $verified = session()->get("employment_verified_{$employmentDetail->employee_number}", false);
+
+        return view('employment-detail.show', compact('user', 'canManageSP', 'verified'));
+    }
+
+    public function verify(Request $request, $employeeNumber)
+    {
+        $request->validate([
+            'password' => 'required',
+        ]);
+
+        if (!Hash::check($request->password, Auth::user()->password)) {
+            return back()->with('error', 'Password salah, coba lagi.');
+        }
+
+        // Simpan session khusus untuk employee ini
+        session()->put("employment_verified_{$employeeNumber}", true);
+
+        return redirect()->route('employment-detail.show', $employeeNumber)
+            ->with('success', 'Verifikasi berhasil.');
     }
 
 

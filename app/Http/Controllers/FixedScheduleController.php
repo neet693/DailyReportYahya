@@ -46,6 +46,6 @@ class FixedScheduleController extends Controller
 
         FixedTask::create($request->all());
 
-        return redirect()->route('fixed-schedule.create')->with('success', 'Jadwal tetap berhasil ditambahkan.');
+        return redirect()->route('home')->with('success', 'Jadwal tetap berhasil ditambahkan.');
     }
 }

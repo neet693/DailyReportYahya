@@ -34,110 +34,161 @@
                         <div class="col-12 col-sm-6 col-lg-4">
                             <div class="p-3 rounded shadow-sm" style="background-color: #f4f8e1;">
                                 {{-- Header: Profil & unit --}}
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div class="d-flex align-items-center">
+                                <div class="hstack gap-2">
+                                    <div class="p-2">
                                         <img src="{{ $data->profile_image ? asset('profile_images/' . $data->profile_image) : asset('asset/default_profile.jpg') }}"
-                                            class="rounded-circle" width="36" height="36" alt="Foto">
-                                        <div class="ms-2">
-                                            <a href="{{ route('employment-detail.show', $data->employmentDetail) }}"
-                                                class="text-decoration-none text-dark">
-                                                <div class="fw-semibold small mb-0">{{ $data->name }}</div>
-                                            </a>
-                                            <small
-                                                class="text-muted d-block mb-1">{{ $data->jobdesk->title ?? '-' }}</small>
-
-                                            {{-- Dropdown ganti unit jika user sedang login --}}
-                                            @if ($data->id === auth()->id())
-                                                <form action="{{ route('switchUnit') }}" method="POST">
-                                                    @csrf
-                                                    <select name="unit_id" onchange="this.form.submit()"
-                                                        class="form-select form-select-sm border-0"
-                                                        style="background-color: rgba(244, 248, 225, 0.9); font-size: 0.75rem; width: 140px; padding: 2px 6px; border-radius: 0.3rem; box-shadow: none;">
-                                                        @foreach (auth()->user()->units as $unit)
-                                                            <option value="{{ $unit->id }}"
-                                                                {{ session('active_unit_id') == $unit->id ? 'selected' : '' }}>
-                                                                {{ $unit->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </form>
-                                            @endif
-                                        </div>
+                                            class="rounded-circle" width="100" height="100" alt="Foto">
+                                    </div>
+                                    <div class="p-2">
+                                        <a href="{{ route('employment-detail.show', $data->employmentDetail) }}"
+                                            class="text-decoration-none text-dark">
+                                            <div class="fw-semibold small mb-0">{{ $data->name }}</div>
+                                        </a>
+                                        <small class="text-muted d-block mb-1">{{ $data->jobdesk->title ?? '-' }}
+                                        </small>
+                                        {{-- Dropdown ganti unit jika user sedang login --}}
+                                        @if ($data->id === auth()->id())
+                                            <form action="{{ route('switchUnit') }}" method="POST">
+                                                @csrf
+                                                <select name="unit_id" onchange="this.form.submit()"
+                                                    class="form-select form-select-sm border-0"
+                                                    style="background-color: rgba(244, 248, 225, 0.9); font-size: 0.75rem; width: 140px; padding: 2px 6px; border-radius: 0.3rem; box-shadow: none;">
+                                                    @foreach (auth()->user()->units as $unit)
+                                                        <option value="{{ $unit->id }}"
+                                                            {{ session('active_unit_id') == $unit->id ? 'selected' : '' }}>
+                                                            {{ $unit->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </form>
+                                        @endif
                                     </div>
                                 </div>
 
                                 {{-- Tombol tambah tugas & jadwal tetap --}}
-                                @if ($data->id == auth()->id())
-                                    <div class="d-grid gap-2 my-2">
-                                        <a href="{{ route('tasks.create') }}" class="btn btn-outline-primary btn-sm">
-                                            <i class="bi bi-plus-circle"></i> Tambah Tugas Harian
+                                <div class="hstack gap-2">
+                                    @if ($data->id == auth()->id())
+                                        <a href="{{ route('tasks.create') }}"
+                                            class="btn btn-outline-primary btn-sm flex-fill">
+                                            <i class="bi bi-plus-circle"></i> Tugas Harian
                                         </a>
                                         <a href="{{ route('fixed-schedule.create') }}"
-                                            class="btn btn-outline-success btn-sm">
-                                            <i class="bi bi-calendar-plus"></i> Tambah Jadwal Tetap
+                                            class="btn btn-outline-success btn-sm flex-fill">
+                                            <i class="bi bi-calendar-plus"></i> Jadwal Tetap
                                         </a>
-                                    </div>
-                                @elseif (Auth::user()->isKepalaUnit() || Auth::user()->isAdmin())
-                                    <div class="d-grid gap-2 my-2">
+                                    @elseif (Auth::user()->isKepalaUnit() || Auth::user()->isAdmin())
                                         <a href="{{ route('fixed-schedule.create', ['user_id' => $data->id]) }}"
-                                            class="btn btn-outline-success btn-sm">
-                                            <i class="bi bi-calendar-plus"></i> Tambah Jadwal Tetap untuk
-                                            {{ $data->name }}
+                                            class="btn btn-outline-success btn-sm flex-fill">
+                                            <i class="bi bi-calendar-plus"></i> Jadwal Tetap
                                         </a>
-                                    </div>
-                                @endif
+                                    @endif
+                                </div>
+
 
                                 {{-- Konten tugas --}}
                                 @if ($data->tasks->isNotEmpty() || $data->fixedSchedules->isNotEmpty())
-                                    {{-- Tombol collapse --}}
-                                    <button class="btn btn-sm btn-outline-dark w-100 fw-semibold mt-2" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#collapseTugas{{ $data->id }}"
-                                        aria-expanded="false" aria-controls="collapseTugas{{ $data->id }}">
-                                        Lihat Semua Tugas
-                                        ({{ $data->tasks->count() + $data->fixedSchedules->where('day_of_week', strtolower(now()->format('l')))->count() }})
-                                    </button>
+                                    {{-- Tombol Pemicu --}}
+                                    <div class="hstack gap-3">
+                                        <button class="btn btn-sm btn-outline-dark flex-fill fw-semibold mt-2"
+                                            type="button"
+                                            onclick="document.getElementById('taskPopup{{ $data->id }}').style.display='flex'">
+                                            📋 Lihat Semua Tugas
+                                            ({{ $data->tasks->count() + $data->fixedSchedules->count() }})
+                                        </button>
+                                    </div>
+                                    {{-- Popup Card --}}
+                                    <div id="taskPopup{{ $data->id }}"
+                                        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;background:rgba(0,0,0,0.5); z-index:1050; justify-content:center; align-items:center;">
 
+                                        <div
+                                            style="background:#fff; width:90%; max-width:800px; border-radius:1rem;box-shadow:0 5px 25px rgba(0,0,0,0.2); display:flex; flex-direction:column;max-height:90vh;">
 
-                                    {{-- Daftar tugas --}}
-                                    <div class="collapse mt-2" id="collapseTugas{{ $data->id }}">
-                                        {{-- Tugas Harian --}}
-                                        @foreach ($data->tasks as $task)
-                                            <div class="mb-3 small">
-                                                <div class="fw-semibold">{{ $task->title }}</div>
-                                                <div class="text-muted">
-                                                    <i class="bi bi-geo-alt"></i> {{ $task->place }}<br>
-                                                    <i class="bi bi-clock"></i> {{ $task->task_start_time->format('H:i') }}
-                                                    -
-                                                    {{ $task->task_end_time->format('H:i') }}
-                                                </div>
-                                                <div class="d-flex justify-content-between align-items-center mt-1">
-                                                    <span
-                                                        class="badge rounded-pill {{ $task->progres ? 'bg-success' : 'bg-danger' }}">
-                                                        {{ $task->progres ? 'Selesai' : 'Belum' }}
-                                                    </span>
-                                                    @if ($data->id == auth()->id() && $task->progres == 0)
-                                                        <div class="d-flex gap-1">
-                                                            <button class="btn btn-sm btn-success" data-bs-toggle="modal"
-                                                                data-bs-target="#completeModal{{ $task->id }}">
-                                                                <i class="bi bi-check"></i>
-                                                            </button>
-                                                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                                                data-bs-target="#pendingModal{{ $task->id }}">
-                                                                <i class="bi bi-hourglass-split"></i>
-                                                            </button>
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                                <hr class="my-2">
+                                            {{-- HEADER --}}
+                                            <div
+                                                style="background:#0d6efd; color:#fff; border-top-left-radius:1rem; border-top-right-radius:1rem;padding:1rem; display:flex; justify-content:space-between; align-items:center;">
+                                                <h5 style="margin:0; font-weight:bold;">📋 Daftar Tugas -
+                                                    {{ $data->name }}</h5>
+                                                <button type="button" class="btn-close btn-close-white"
+                                                    onclick="document.getElementById('taskPopup{{ $data->id }}').style.display='none'"></button>
                                             </div>
-                                        @endforeach
 
-                                        {{-- Jadwal Tetap Hari Ini --}}
-                                        @foreach ($data->fixedSchedules->where('day_of_week', strtolower(now()->format('l'))) as $fixed)
-                                            <div class="mb-2 small">
-                                                <div class="fw-semibold">{{ $fixed->subject ?? ucfirst($fixed->type) }}
-                                                </div>
-                                                <div class="text-muted">
+                                            {{-- BODY --}}
+                                            <div style="padding:1.5rem; overflow-y:auto; flex:1;">
+                                                {{-- Tugas Harian --}}
+                                                @if ($data->tasks->isNotEmpty())
+                                                    <h6 class="fw-bold text-dark mb-3">
+                                                        <i class="bi bi-list-task text-primary"></i> Tugas Harian
+                                                    </h6>
+
+                                                    @foreach ($data->tasks as $task)
+                                                        <div class="card mb-3 border-0 shadow-sm rounded-3">
+                                                            <div class="card-body p-3">
+                                                                <div
+                                                                    class="d-flex justify-content-between align-items-start">
+                                                                    <div>
+                                                                        <h6 class="fw-semibold mb-1">{{ $task->title }}
+                                                                        </h6>
+                                                                        <i class="bi bi-geo-alt"></i>
+                                                                        {{ $task->place ?? '-' }} |
+                                                                        {{ $task->task_start_time->format('H:i') }} -
+                                                                        {{ $task->task_end_time->format('H:i') }}
+                                                                        </small>
+                                                                        @if ($task->description)
+                                                                            {!! $task->description !!}
+                                                                        @endif
+                                                                        @if ($task->progres == 0 && !empty($task->pending_note))
+                                                                            <small class="text-warning d-block mt-1">
+                                                                                <i class="bi bi-exclamation-triangle"></i>
+                                                                                <strong>Pending:</strong>
+                                                                                {{ $task->pending_note }}
+                                                                            </small>
+                                                                        @endif
+                                                                    </div>
+                                                                    <span
+                                                                        class="badge rounded-pill {{ $task->progres ? 'bg-success' : 'bg-danger' }}">
+                                                                        {{ $task->progres ? 'Selesai' : 'Belum' }}
+                                                                    </span>
+                                                                </div>
+
+                                                                @if ($task->progres == 0 && $data->id == auth()->id())
+                                                                    <div class="d-flex justify-content-end gap-2 mt-3">
+                                                                        <button class="btn btn-sm btn-success"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#completeModal{{ $task->id }}">
+                                                                            <i class="bi bi-check"></i> Selesai
+                                                                        </button>
+                                                                        <button class="btn btn-sm btn-warning"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#pendingModal{{ $task->id }}">
+                                                                            <i class="bi bi-hourglass-split"></i> Tunda
+                                                                        </button>
+                                                                    </div>
+
+                                                                    {{-- Modal kecil bawaan --}}
+                                                                    @include(
+                                                                        'components.task_modal_complete',
+                                                                        ['task' => $task]
+                                                                    )
+                                                                    @include(
+                                                                        'components.task_modal_pending',
+                                                                        ['task' => $task]
+                                                                    )
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    <div class="alert alert-light text-muted small">
+                                                        <i class="bi bi-info-circle"></i> Belum ada tugas harian.
+                                                    </div>
+                                                @endif
+
+                                                {{-- Jadwal Tetap --}}
+                                                @if ($data->fixedSchedules->isNotEmpty())
+                                                    <h6 class="fw-bold text-dark mt-4 mb-3">
+                                                        <i class="bi bi-calendar-event text-success"></i> Jadwal Tetap
+                                                    </h6>
+
                                                     @php
                                                         $daysIndo = [
                                                             'monday' => 'Senin',
@@ -149,24 +200,56 @@
                                                             'sunday' => 'Minggu',
                                                         ];
                                                     @endphp
-                                                    <i class="bi bi-calendar-event"></i>
-                                                    {{ $daysIndo[strtolower($fixed->day_of_week)] ?? ucfirst($fixed->day_of_week) }}<br>
-                                                    <i class="bi bi-clock"></i>
-                                                    {{ \Carbon\Carbon::parse($fixed->start_time)->format('H:i') }} -
-                                                    {{ \Carbon\Carbon::parse($fixed->end_time)->format('H:i') }}<br>
-                                                    <i class="bi bi-geo-alt"></i> {{ $fixed->classroom ?? '-' }}<br>
-                                                    @if ($fixed->description)
-                                                        <i class="bi bi-info-circle"></i>
-                                                        {{ \Illuminate\Support\Str::limit($fixed->description, 60) }}
-                                                    @endif
-                                                </div>
-                                                <span class="badge bg-info rounded-pill">{{ ucfirst($fixed->type) }}</span>
-                                                @if (!$loop->last)
-                                                    <hr class="my-2">
-                                                @endif
-                                            </div>
-                                        @endforeach
 
+                                                    <div class="d-flex flex-wrap gap-3"
+                                                        style="max-height: 350px; overflow-y: auto;">
+                                                        @foreach ($data->fixedSchedules as $fixed)
+                                                            <div class="card border-0 shadow-sm rounded-3"
+                                                                style="flex: 0 0 48%;">
+                                                                <div class="card-body p-3">
+                                                                    <h6 class="fw-semibold mb-1">
+                                                                        {{ $fixed->subject ?? ucfirst($fixed->type) }}
+                                                                    </h6>
+
+                                                                    {{-- Hari + Jam --}}
+                                                                    <small class="text-muted d-block">
+                                                                        <i class="bi bi-calendar-event"></i>
+                                                                        {{ $daysIndo[strtolower($fixed->day_of_week)] ?? ucfirst($fixed->day_of_week) }}
+                                                                        |
+                                                                        {{ \Carbon\Carbon::parse($fixed->start_time)->format('H:i') }}
+                                                                        -
+                                                                        {{ \Carbon\Carbon::parse($fixed->end_time)->format('H:i') }}
+                                                                    </small>
+
+                                                                    {{-- Lokasi --}}
+                                                                    <small class="text-muted d-block">
+                                                                        <i class="bi bi-geo-alt"></i>
+                                                                        {{ $fixed->classroom ?? '-' }}
+                                                                    </small>
+
+                                                                    {{-- Deskripsi --}}
+                                                                    @if ($fixed->description)
+                                                                        <small class="text-muted d-block">
+                                                                            <i class="bi bi-info-circle"></i>
+                                                                            {{ \Illuminate\Support\Str::limit($fixed->description, 60) }}
+                                                                        </small>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+
+                                            </div>
+
+                                            {{-- FOOTER --}}
+                                            <div style="padding:1rem; border-top:1px solid #eee; text-align:right;">
+                                                <button type="button" class="btn btn-secondary rounded-pill px-4"
+                                                    onclick="document.getElementById('taskPopup{{ $data->id }}').style.display='none'">
+                                                    Tutup
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 @else
                                     <small class="text-muted">Belum membuat tugas hari ini.</small>
