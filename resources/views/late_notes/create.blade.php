@@ -8,13 +8,14 @@
                     <div class="card-body">
                         <h4 class="mb-4 text-center">Form Keterlambatan</h4>
 
-                        <form action="{{ route('keterlambatan.store') }}" method="POST">
+                        <form action="{{ route('keterlambatan.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
                             {{-- Waktu Keterlambatan --}}
                             <div class="mb-3">
                                 <label for="tanggal_terlambat" class="form-label">Waktu Keterlambatan</label>
-                                <input type="date" class="form-control @error('tanggal_terlambat') is-invalid @enderror"
+                                <input type="datetime-local"
+                                    class="form-control @error('tanggal_terlambat') is-invalid @enderror"
                                     id="tanggal_terlambat" name="tanggal_terlambat" value="{{ old('tanggal_terlambat') }}"
                                     required>
                                 @error('tanggal_terlambat')
@@ -35,16 +36,23 @@
                             {{-- Kamera + Preview Foto --}}
                             <div class="mb-3 text-center">
                                 <label class="form-label d-block">Ambil Foto dari Kamera</label>
-                                <video id="video" class="rounded shadow-sm mb-2" width="100%" autoplay
-                                    playsinline></video>
+
+                                {{-- Live Camera --}}
+                                <video id="video" class="rounded shadow-sm mb-2" width="100%" autoplay playsinline
+                                    muted></video>
                                 <button type="button" id="switchCamera" class="btn btn-sm btn-secondary mb-3">Ganti
                                     Kamera</button>
-
                                 <button type="button" id="capture" class="btn btn-outline-primary btn-sm mb-3">Ambil
                                     Foto</button>
 
+                                {{-- Canvas untuk capture --}}
                                 <canvas id="canvas" class="d-none"></canvas>
-                                <input type="hidden" name="foto" id="fotoInput" required>
+                                <input type="hidden" name="foto" id="fotoInput">
+
+                                {{-- Fallback Input File (untuk iOS jika kamera gagal) --}}
+                                {{-- <input type="file" accept="image/*" capture="environment" id="fallbackInput" --}}
+                                <input type="file" accept="image/*" id="fallbackInput" name="foto_fallback"
+                                    class="form-control d-none mt-2">
 
                                 <div>
                                     <strong class="d-block mb-2">Preview Foto</strong>
@@ -71,6 +79,7 @@
         const fotoInput = document.getElementById('fotoInput');
         const preview = document.getElementById('preview');
         const switchCamera = document.getElementById('switchCamera');
+        const fallbackInput = document.getElementById('fallbackInput');
 
         let useFrontCamera = false;
         let currentStream = null;
@@ -82,17 +91,23 @@
 
             const constraints = {
                 video: {
-                    facingMode: useFrontCamera ? 'user' : {
-                        exact: 'environment'
+                    facingMode: useFrontCamera ? "user" : {
+                        ideal: "environment"
                     }
-                }
+                },
+                audio: false
             };
 
             try {
                 currentStream = await navigator.mediaDevices.getUserMedia(constraints);
                 video.srcObject = currentStream;
             } catch (err) {
-                alert("Tidak bisa mengakses kamera: " + err.message);
+                console.warn("Kamera gagal, fallback ke input file:", err.message);
+                // Matikan video, tampilkan fallback input
+                video.style.display = 'none';
+                switchCamera.style.display = 'none';
+                capture.style.display = 'none';
+                fallbackInput.classList.remove('d-none');
             }
         }
 
@@ -102,7 +117,7 @@
             startCamera();
         });
 
-        // Ambil foto
+        // Ambil foto dari kamera
         capture.addEventListener('click', () => {
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
@@ -112,6 +127,19 @@
             fotoInput.value = dataURL;
             preview.src = dataURL;
             preview.style.display = 'block';
+        });
+
+        // Preview fallback input file
+        fallbackInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    preview.src = ev.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
         });
 
         // Jalankan kamera pertama kali

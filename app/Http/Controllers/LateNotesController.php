@@ -35,36 +35,51 @@ class LateNotesController extends Controller
         $request->validate([
             'tanggal_terlambat' => 'required|date',
             'alasan' => 'required|string',
-            'foto' => 'required|string',
+            // salah satu wajib: foto (base64) atau foto_fallback (file upload)
         ]);
 
         $imagePath = null;
-        $data = $request->foto;
 
-        if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
-            $data = substr($data, strpos($data, ',') + 1);
-            $type = strtolower($type[1]);
+        // --- 1. Jika foto dari kamera (base64)
+        if ($request->filled('foto')) {
+            $data = $request->foto;
 
-            if (!in_array($type, ['jpg', 'jpeg', 'png'])) {
-                return back()->withErrors(['foto' => 'Format gambar tidak valid.'])->withInput();
+            if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+                $data = substr($data, strpos($data, ',') + 1);
+                $type = strtolower($type[1]);
+
+                if (!in_array($type, ['jpg', 'jpeg', 'png'])) {
+                    return back()->withErrors(['foto' => 'Format gambar tidak valid.'])->withInput();
+                }
+
+                $data = base64_decode($data);
+                if ($data === false) {
+                    return back()->withErrors(['foto' => 'Gagal decoding foto.'])->withInput();
+                }
+
+                $imageName = time() . '.' . $type;
+                $path = public_path('bukti_keterlambatan');
+
+                if (!file_exists($path)) {
+                    mkdir($path, 0755, true);
+                }
+
+                file_put_contents($path . '/' . $imageName, $data);
+                $imagePath = 'bukti_keterlambatan/' . $imageName;
             }
 
-            $data = base64_decode($data);
-            if ($data === false) {
-                return back()->withErrors(['foto' => 'Gagal decoding foto.'])->withInput();
-            }
+            // --- 2. Jika foto dari galeri / fallback input
+        } elseif ($request->hasFile('foto_fallback')) {
+            $file = $request->file('foto_fallback');
+            $request->validate([
+                'foto_fallback' => 'image|mimes:jpg,jpeg,png|max:2048'
+            ]);
 
-            $imageName = time() . '.' . $type;
-            $path = public_path('bukti_keterlambatan');
-
-            if (!file_exists($path)) {
-                mkdir($path, 0755, true);
-            }
-
-            file_put_contents($path . '/' . $imageName, $data);
+            $imageName = time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->move(public_path('bukti_keterlambatan'), $imageName);
             $imagePath = 'bukti_keterlambatan/' . $imageName;
         } else {
-            return back()->withErrors(['foto' => 'Data foto tidak valid.'])->withInput();
+            return back()->withErrors(['foto' => 'Foto wajib diisi (kamera atau upload).'])->withInput();
         }
 
         // Cari absensi yang sesuai dengan user & tanggal
@@ -78,13 +93,14 @@ class LateNotesController extends Controller
             'tanggal_terlambat' => $request->tanggal_terlambat,
             'alasan' => $request->alasan,
             'foto' => $imagePath,
-            'absensi_id' => $absensi ? $absensi->id : null, // otomatis isi
+            'absensi_id' => $absensi?->id,
         ]);
 
         return redirect()
             ->route('late_notes.index')
             ->with('success', 'Catatan keterlambatan berhasil dikirim.');
     }
+
 
     public function show($slug)
     {
