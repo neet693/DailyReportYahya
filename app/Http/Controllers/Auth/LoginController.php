@@ -44,7 +44,7 @@ class LoginController extends Controller
         $credentials = $this->credentials($request);
 
 
-        if (!str_ends_with($credentials['email'], '@skysimpeg.com')) {
+        if (!str_ends_with($credentials['email'], '@skysimpeg.sch.id')) {
             // domain salah → gagal login, error default
             return false;
         }

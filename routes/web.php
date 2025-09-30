@@ -17,6 +17,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PermissionRequestController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RenunganAbsensiController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SuratPeringatanController;
 use App\Http\Controllers\SwitchUserController;
@@ -137,4 +138,6 @@ Route::middleware(['auth', 'role:admin,kepala,hrd'])->group(function () {
 Route::middleware(['auth', 'role:admin,kepala'])->group(function () {
     Route::get('/unit/{unit}/assign-users', [UnitKerjaController::class, 'assignForm'])->name('unit.assign.form');
     Route::post('/unit/{unit}/assign-users', [UnitKerjaController::class, 'assignUsers'])->name('unit.assign.users');
+    //Renungan Absensi
+    Route::resource('renungan-absensi', RenunganAbsensiController::class);
 });

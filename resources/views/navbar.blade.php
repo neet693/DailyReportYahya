@@ -37,6 +37,8 @@
                         @if (Auth::user()->isKepalaUnit() || Auth::user()->isHRD())
                             <a class="nav-link {{ request()->is('absensi*') ? 'active' : '' }}"
                                 href="{{ route('absensi.index') }}">Absensi</a>
+                            <a class="nav-link {{ request()->is('renungan-absensi*') ? 'active' : '' }}"
+                                href="{{ route('renungan-absensi.index') }}">Absensi Renungan</a>
                         @endif
                     </div>
                 </li>

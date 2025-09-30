@@ -65,8 +65,7 @@
                         <div class="modal-body">
 
                             <div class="mb-3">
-                                <a class="btn btn-primary"
-                                    href="{{ asset('attachments/1748918910_Akun Pegawai Yahya.xlsx') }}"
+                                <a class="btn btn-primary" href="{{ asset('attachments/template-akun-pegawai.xlsx') }}"
                                     download="template-import.xlsx" target="_blank"><i
                                         class="bi bi-file-earmark-x-fill"></i> Unduh Template
                                 </a>
