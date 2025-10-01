@@ -12,15 +12,25 @@ class LateNotesController extends Controller
 {
     public function index()
     {
-        // Redirect khusus jika role-nya 'pegawai'
-        if (auth()->user()->role === 'pegawai') {
+        $user = auth()->user();
+
+        // Redirect khusus untuk pegawai
+        if ($user->role === 'pegawai') {
             return redirect()->route('keterlambatan.create');
         }
 
-        $keterlambatan = LateNotes::latest()->get();
+        $keterlambatan = LateNotes::query()
+            ->when($user->role === 'kepala', function ($query) use ($user) {
+                $query->whereHas('user.employmentDetail', function ($q) use ($user) {
+                    $q->where('unit_kerja_id', $user->employmentDetail->unit_kerja_id);
+                });
+            })
+            ->latest()
+            ->get();
 
         return view('late_notes.index', compact('keterlambatan'));
     }
+
 
     /**
      * Show the form for creating a new resource.
