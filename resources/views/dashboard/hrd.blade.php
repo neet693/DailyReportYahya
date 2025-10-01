@@ -105,12 +105,12 @@
                         <div class="modal-body">
 
                             <div class="mb-3">
-                                {{-- <a class="btn btn-outline-primary" href="{{ asset('attachments/template-absensi.xlsx') }}"
+                                <a class="btn btn-outline-primary" href="{{ asset('attachments/template-absensi.xlsx') }}"
                                     download="template-absensi.xlsx" target="_blank">
                                     <i class="bi bi-download"></i> Unduh Template Absensi
-                                </a> --}}
-                                Untuk dapat mengupload, silahkan unduh dari mesin terlebih dahulu. Setelah itu Copy dan
-                                Pastekan Data kedalam Workbook Excel Baru (Pastikan format Excelnya
+                                </a>
+                                <br> Untuk dapat mengupload, silahkan unduh dari mesin terlebih dahulu. Setelah itu
+                                Sesuaikan dengan Template Excel Yang di download (Pastikan format Excelnya
                                 adalah .xlsx)
                             </div>
 

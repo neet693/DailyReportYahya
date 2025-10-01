@@ -16,7 +16,7 @@ class AbsensiImport implements OnEachRow
         $data = $row->toArray();
 
         // Ambil nama dari kolom ke-3 (index 3 = kolom ke-4 di Excel)
-        $namaExcel = trim($data[3] ?? '');
+        $namaExcel = trim($data[0] ?? '');
         if (!$namaExcel) return;
 
         // Cari user berdasarkan nama yang mirip (menggunakan LIKE)
@@ -24,7 +24,7 @@ class AbsensiImport implements OnEachRow
         if (!$user) return; // skip jika user tidak ditemukan
 
         // Ambil dan parse tanggal dari kolom ke-5 (index 5 = "Tanggal")
-        $tanggalRaw = trim($data[5] ?? '');
+        $tanggalRaw = trim($data[1] ?? '');
         try {
             $tanggal = Carbon::createFromFormat('d/m/Y', $tanggalRaw);
         } catch (\Exception $e) {
@@ -37,10 +37,10 @@ class AbsensiImport implements OnEachRow
             'user_id' => $user->id,
             'tanggal' => $tanggal->format('Y-m-d'),
         ], [
-            'jam_masuk' => $this->parseTime($data[9] ?? null),     // Scan Masuk
-            'jam_keluar' => $this->parseTime($data[8] ?? null),    // Scan Pulang
-            'terlambat' => $this->durasiKeMenit($data[13] ?? '00.00'), // Terlambat
-            'izin' => Str::lower(trim($data[16] ?? '')) === 'true',    // Absent
+            'jam_masuk' => $this->parseTime($data[2] ?? null),     // Scan Masuk
+            'jam_keluar' => $this->parseTime($data[3] ?? null),    // Scan Pulang
+            'terlambat' => $this->durasiKeMenit($data[4] ?? '00.00'), // Terlambat
+            'izin' => Str::lower(trim($data[5] ?? '')) === 'true',    // Absent
         ]);
     }
 
