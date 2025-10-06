@@ -122,6 +122,8 @@ Route::middleware(['auth', 'role:hrd'])->group(function () {
 Route::middleware(['auth', 'role:kepala,pegawai'])->group(function () {
     Route::get('/fixed-schedule/create', [FixedScheduleController::class, 'create'])->name('fixed-schedule.create');
     Route::post('/fixed-schedule', [FixedScheduleController::class, 'store'])->name('fixed-schedule.store');
+    Route::get('/fixed-schedule/{fixedTask}/edit', [FixedScheduleController::class, 'edit'])->name('fixed-schedule.edit');
+    Route::put('/fixed-schedule/{fixedTask}', [FixedScheduleController::class, 'update'])->name('fixed-schedule.update');
 });
 
 Route::middleware(['auth', 'role:admin,kepala,hrd'])->group(function () {

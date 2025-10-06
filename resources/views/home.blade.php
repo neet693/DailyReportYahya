@@ -207,9 +207,18 @@
                                                             <div class="card border-0 shadow-sm rounded-3"
                                                                 style="flex: 0 0 48%;">
                                                                 <div class="card-body p-3">
+                                                                    {{-- Tombol Edit hanya muncul untuk kepala unit atau pemilik jadwal --}}
+                                                                    @if (Auth::user()->isKepalaUnit() || Auth::id() === $fixed->user_id)
+                                                                        <a href="{{ route('fixed-schedule.edit', $fixed->id) }}"
+                                                                            class="btn btn-sm btn-outline-primary position-absolute top-0 end-0 m-2"
+                                                                            title="Edit Jadwal">
+                                                                            <i class="bi bi-pencil-square"></i>
+                                                                        </a>
+                                                                    @endif
                                                                     <h6 class="fw-semibold mb-1">
                                                                         {{ $fixed->subject ?? ucfirst($fixed->type) }}
                                                                     </h6>
+
 
                                                                     {{-- Hari + Jam --}}
                                                                     <small class="text-muted d-block">
