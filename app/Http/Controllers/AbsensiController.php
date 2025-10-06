@@ -10,42 +10,78 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class AbsensiController extends Controller
 {
+
     public function index(Request $request)
     {
-        $users = User::all();
-        $query = Absensi::with(['user', 'latenote']);
+        $auth = auth()->user();
 
-        // Prioritaskan filter tanggal range
-        if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
-            $query->whereBetween('tanggal', [
-                $request->tanggal_awal,
-                $request->tanggal_akhir
-            ]);
+        // === Ambil unit sesuai role ===
+        if ($auth->role === 'kepala' && $auth->employmentDetail) {
+            $unitId = $auth->employmentDetail->unit_kerja_id;
+
+            // Unit terbatas hanya unit dia
+            $units = \App\Models\UnitKerja::where('id', $unitId)->get();
+
+            // Pegawai terbatas ke unit dia
+            $users = User::whereHas('employmentDetail', function ($q) use ($unitId) {
+                $q->where('unit_kerja_id', $unitId);
+            })->with('employmentDetail.unit')->get();
+        } else {
+            // HRD/Admin → semua unit & semua user
+            $units = \App\Models\UnitKerja::all();
+            $users = User::with('employmentDetail.unit')->get();
         }
-        // Kalau tidak ada range tanggal, pakai filter bulan
-        elseif ($request->filled('bulan')) {
+
+        // === Query absensi ===
+        $query = Absensi::with(['user.employmentDetail.unit', 'latenote']);
+
+        if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
+            $query->whereBetween('tanggal', [$request->tanggal_awal, $request->tanggal_akhir]);
+        } elseif ($request->filled('bulan')) {
             $bulan = \Carbon\Carbon::parse($request->bulan);
             $query->whereMonth('tanggal', $bulan->month)
                 ->whereYear('tanggal', $bulan->year);
         }
 
-        // Filter pegawai
         if ($request->filled('pegawai')) {
             $query->where('user_id', $request->pegawai);
         }
 
+        if ($request->filled('unit')) {
+            $query->whereHas('user.employmentDetail', function ($q) use ($request) {
+                $q->where('unit_kerja_id', $request->unit);
+            });
+        }
+
+        // 🔒 Kalau kepala → wajib filter unitnya sendiri
+        if ($auth->role === 'kepala' && isset($unitId)) {
+            $query->whereHas('user.employmentDetail', function ($q) use ($unitId) {
+                $q->where('unit_kerja_id', $unitId);
+            });
+        }
+
         $absensis = $query->get();
 
-        $selectedUser = null;
-        if ($request->filled('pegawai')) {
-            $selectedUser = User::find($request->pegawai);
-        }
+        $selectedUser = $request->filled('pegawai')
+            ? User::find($request->pegawai)
+            : null;
 
         $totalMenit = $absensis->sum('terlambat');
         $totalHari  = $absensis->where('terlambat', '>', 0)->count();
 
-        return view('absensis.index', compact('users', 'absensis', 'selectedUser', 'totalMenit', 'totalHari'));
+        return view('absensis.index', compact(
+            'users',
+            'absensis',
+            'selectedUser',
+            'totalMenit',
+            'totalHari',
+            'units'
+        ));
     }
+
+
+
+
     /**
      * Show the form for creating a new resource.
      */

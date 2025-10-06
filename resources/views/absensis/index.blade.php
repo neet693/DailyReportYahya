@@ -22,15 +22,31 @@
                     </div>
                     <div class="col-md-12">
                         <label for="pegawai" class="form-label">Pegawai</label>
-                        <select name="pegawai" id="pegawai" class="form-control">
+                        <select name="pegawai" id="pegawai" class="form-control select2">
                             <option value="">Semua Pegawai</option>
                             @foreach ($users as $user)
                                 <option value="{{ $user->id }}" {{ request('pegawai') == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }}
+                                    {{ $user->name }} ({{ $user->employmentDetail->unit->name ?? '-' }})
                                 </option>
                             @endforeach
                         </select>
                     </div>
+
+                    <div class="col-md-12">
+                        <label for="unit" class="form-label">Unit</label>
+                        <select name="unit" id="unit" class="form-control"
+                            {{ auth()->user()->role === 'kepala' ? 'disabled' : '' }}>
+                            <option value="">Semua Unit</option>
+                            @foreach ($units as $unit)
+                                <option value="{{ $unit->id }}"
+                                    {{ request('unit', auth()->user()->employmentDetail->unit_kerja_id ?? null) == $unit->id ? 'selected' : '' }}>
+                                    {{ $unit->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary w-100">Filter</button>
                     </div>
@@ -59,7 +75,7 @@
         </div>
 
         {{-- Table --}}
-        <table class="table table-bordered table-striped align-middle">
+        <table id="absensiTable" class="table table-bordered table-striped align-middle">
             <thead>
                 <tr>
                     <th>Nama</th>
@@ -175,4 +191,5 @@
             }
         });
     </script>
+
 @endsection

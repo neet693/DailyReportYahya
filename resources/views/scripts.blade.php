@@ -164,4 +164,25 @@
     }
 </script>
 
+
+<script>
+    $(document).ready(function() {
+        $('#absensiTable').DataTable({
+            responsive: true,
+            pageLength: 25,
+            order: [
+                [2, 'asc']
+            ], // urut default berdasarkan tanggal
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json'
+            }
+        });
+        // Select2 untuk pegawai
+        $('#pegawai').select2({
+            placeholder: "Pilih pegawai",
+            allowClear: true
+        });
+    });
+</script>
+
 {{-- End Script --}}

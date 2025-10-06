@@ -121,7 +121,10 @@ class HomeController extends Controller
             },
             'agendas',
             'units'
-        ])->where('role', '!=', User::ROLE_ADMIN);
+        ])->where('role', '!=', User::ROLE_ADMIN)
+            ->whereHas('employmentDetail', function ($q) {
+                $q->where('is_active', true);   // ✅ hanya pegawai aktif
+            });
 
         if ($unitId) {
             $query->whereHas('units', fn($q) => $q->where('unit_kerjas.id', $unitId));
@@ -143,6 +146,9 @@ class HomeController extends Controller
             'assigner'
         ])
             ->whereMonth('assignment_date', $month)
+            ->whereHas('user.employmentDetail', function ($q) {
+                $q->where('is_active', true);
+            })
             ->orderBy('assignment_date', 'asc');
 
         // Filter penugasan berdasarkan unit_id

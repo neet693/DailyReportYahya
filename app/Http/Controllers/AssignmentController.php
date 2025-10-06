@@ -14,19 +14,27 @@ class AssignmentController extends Controller
         $currentUser = auth()->user();
 
         $assignments = Assignment::query()
+            ->when($currentUser->isAdmin() || $currentUser->isHRD(), function ($query) {
+                // Admin & HRD bisa lihat semua penugasan
+                return $query;
+            })
             ->when($currentUser->isKepalaUnit(), function ($query) use ($currentUser) {
-                return $query->whereHas('user.units', function ($q) use ($currentUser) {
-                    $q->whereIn('unit_id', $currentUser->units->pluck('id'));
-                });
+                // Kepala unit hanya melihat penugasan di unit induknya (employment_detail->unit_kerja_id)
+                $unitId = optional($currentUser->employmentDetail)->unit_kerja_id;
+
+                return $query->where('unit_id', $unitId);
             })
             ->when($currentUser->isPegawai(), function ($query) use ($currentUser) {
+                // Pegawai biasa hanya melihat penugasan dirinya sendiri
                 return $query->where('user_id', $currentUser->id);
             })
             ->with(['user', 'assigner'])
+            ->latest()
             ->get();
 
-        return view('assignments.index', compact(['assignments', 'currentUser']));
+        return view('assignments.index', compact('assignments', 'currentUser'));
     }
+
 
     public function create()
     {
