@@ -7,6 +7,34 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script type="text/javascript" src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
 <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
+<script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.15.3/dist/echo.iife.js"></script>
+
+<script>
+    // pastikan variabel env dari Laravel
+    const pusherKey = "{{ env('PUSHER_APP_KEY') }}";
+    const pusherCluster = "{{ env('PUSHER_APP_CLUSTER') }}";
+
+    // Inisialisasi Pusher
+    window.Pusher = Pusher;
+
+    // Inisialisasi Laravel Echo
+    window.Echo = new Echo({
+        broadcaster: 'pusher',
+        key: pusherKey,
+        cluster: pusherCluster,
+        forceTLS: true,
+        encrypted: true,
+        wsHost: `ws-${pusherCluster}.pusher.com`,
+        wsPort: 443,
+        wssPort: 443,
+        enabledTransports: ['ws', 'wss'],
+        disableStats: true,
+        logToConsole: true // tambahkan agar bisa lihat koneksi di console
+    });
+</script>
+
+
 <script>
     $(document).ready(function() {
         $('#myTable').DataTable({
@@ -95,27 +123,6 @@
 </script>
 
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const htmlElement = document.documentElement;
-        const themeIcon = document.getElementById('theme-icon');
-
-        // Load saved theme
-        const savedTheme = localStorage.getItem('bsTheme') || 'light';
-        htmlElement.setAttribute('data-bs-theme', savedTheme);
-        themeIcon.className = savedTheme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
-
-        themeToggleBtn.addEventListener('click', function(e) {
-            e.preventDefault(); // biar tidak reload
-            const currentTheme = htmlElement.getAttribute('data-bs-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            htmlElement.setAttribute('data-bs-theme', newTheme);
-            localStorage.setItem('bsTheme', newTheme);
-            themeIcon.className = newTheme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
-        });
-    });
-</script>
 
 {{-- Script untuk upload file rapat trix --}}
 <script>

@@ -22,18 +22,17 @@ class MessageController extends Controller
         return view('chats.modal', compact('chatUsers'));
     }
 
-
-
-
     public function fetchMessages(Request $request)
     {
         $messages = Message::where(function ($q) use ($request) {
-            $q->where('sender_id', auth()->id())->where('receiver_id', $request->receiver_id);
+            $q->where('sender_id', auth()->id())
+                ->where('receiver_id', $request->receiver_id);
         })->orWhere(function ($q) use ($request) {
-            $q->where('sender_id', $request->receiver_id)->where('receiver_id', auth()->id());
-        })->get();
+            $q->where('sender_id', $request->receiver_id)
+                ->where('receiver_id', auth()->id());
+        })->orderBy('created_at', 'asc')->get();
 
-        // Tandai sebagai sudah dibaca
+        // Tandai sudah dibaca
         Message::where('sender_id', $request->receiver_id)
             ->where('receiver_id', auth()->id())
             ->where('is_read', false)
@@ -50,6 +49,7 @@ class MessageController extends Controller
             'message' => $request->message,
         ]);
 
+        // 🔹 Jangan pakai ->toOthers(), biar pengirim juga dapat broadcast
         broadcast(new MessageSent($message))->toOthers();
 
         return response()->json($message);

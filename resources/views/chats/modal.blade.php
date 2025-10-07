@@ -1,240 +1,301 @@
-    <style>
-        #chat-bubble-btn {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            background-color: #0d6efd;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 28px;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
+{{-- ===== CHAT MODAL - MINIMAL CLEAN VERSION ===== --}}
+<style>
+    #chat-bubble-btn {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        background-color: #0d6efd;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 58px;
+        height: 58px;
+        font-size: 26px;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        transition: 0.2s;
+    }
 
-        body {
-            background: #f5f6fa;
-        }
+    #chat-bubble-btn:hover {
+        transform: scale(1.08);
+        background-color: #0b5ed7;
+    }
 
-        .chat-container {
-            display: flex;
-            height: 75vh;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            background: #fff;
-        }
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 70vh;
+        border-radius: 16px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
 
-        .sidebar {
-            width: 80px;
-            background: #2f2f3a;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 15px 0;
-        }
+    .chat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        background: #fff;
+        border-bottom: 1px solid #e5e5e5;
+        position: relative;
+    }
 
-        .sidebar i {
-            font-size: 20px;
-            margin: 20px 0;
-            cursor: pointer;
-        }
+    .chat-messages {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        background: #f5f7fa;
+        overflow-y: auto;
+        font-size: 14px;
+        gap: 10px;
+        /* beri jarak antar pesan */
+    }
 
-        .chat-list {
-            width: 300px;
-            border-right: 1px solid #e5e5e5;
-            padding: 15px;
-            overflow-y: auto;
-        }
+    .message {
+        display: block;
+        /* penting: agar vertikal */
+        width: fit-content;
+        max-width: 70%;
+        padding: 10px 14px;
+        border-radius: 16px;
+        line-height: 1.5;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+    }
 
-        .chat-list .chat-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            cursor: pointer;
-        }
+    .message.me {
+        align-self: flex-end;
+        background: #d0ebff;
+        border-bottom-right-radius: 4px;
+    }
 
-        .chat-item img {
-            width: 40px;
-            height: 40px;
-            object-fit: cover;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
+    .message.them {
+        align-self: flex-start;
+        background: #fff;
+        border: 1px solid #e5e5e5;
+        border-bottom-left-radius: 4px;
+    }
 
-        .chat-item .info {
-            flex: 1;
-        }
+    .chat-footer {
+        background: #fff;
+        padding: 10px 15px;
+        border-top: 1px solid #e5e5e5;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
 
-        .chat-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            background: #f1f4f9;
-        }
+    #chat-message {
+        flex: 1;
+        border-radius: 20px;
+        border: 1px solid #ddd;
+        padding: 8px 14px;
+        font-size: 14px;
+        outline: none;
+        transition: 0.2s;
+    }
 
-        .chat-header {
-            padding: 15px;
-            border-bottom: 1px solid #e5e5e5;
-            background: #fff;
-            font-weight: bold;
-        }
+    #chat-message:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15);
+    }
 
-        .chat-messages {
-            padding: 15px;
-            overflow-y: auto;
-            flex: 1;
-        }
+    .btn-send {
+        border-radius: 50%;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0d6efd;
+        color: #fff;
+        border: none;
+        transition: 0.2s;
+    }
 
-        .message {
-            margin-bottom: 20px;
-            max-width: 60%;
-            padding: 10px 15px;
-            border-radius: 15px;
-            position: relative;
-            font-size: 14px;
-            line-height: 1.5;
-        }
+    .btn-send:hover {
+        background: #0b5ed7;
+        transform: scale(1.05);
+    }
 
-        .message.me {
-            background: #d1e7dd;
-            margin-left: auto;
-            border-bottom-right-radius: 0;
-        }
+    /* === Select2 Custom === */
+    .select2-container--default .select2-selection--single {
+        height: 40px !important;
+        border-radius: 10px !important;
+        border: 1px solid #ddd !important;
+        display: flex !important;
+        align-items: center !important;
+        padding: 4px 6px !important;
+    }
 
-        .message.them {
-            background: #fff;
-            margin-right: auto;
-            border-bottom-left-radius: 0;
-        }
+    .select2-selection__rendered {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        font-size: 13px !important;
+        color: #333 !important;
+    }
 
-        .chat-footer {
-            padding: 15px;
-            background: #fff;
-            display: flex;
-            border-top: 1px solid #e5e5e5;
-        }
+    .select2-results__option {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 6px !important;
+        font-size: 13px !important;
+    }
 
-        .chat-footer input {
-            flex: 1;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            padding: 10px 15px;
-            outline: none;
-        }
+    .select2-results__option img {
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+    }
 
-        .chat-footer button {
-            margin-left: 10px;
-        }
-    </style>
+    .select2-results__option small {
+        color: #6c757d;
+        display: block;
+        font-size: 12px;
+    }
+</style>
 
-    <!-- Tombol Bulat dengan Notifikasi -->
-    <div class="position-fixed bottom-0 end-0 m-4" style="z-index: 1050;">
-        <div class="position-relative">
-            <button id="chat-bubble-btn" data-bs-toggle="modal" data-bs-target="#chatModal"
-                class="btn btn-primary rounded-circle" style="width: 60px; height: 60px; font-size: 28px;">
-                💬
-            </button>
 
-            @if ($chatUsers->sum('unread_count') > 0)
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    {{ $chatUsers->sum('unread_count') }}
-                </span>
-            @endif
-        </div>
+{{-- ===== FLOATING BUTTON ===== --}}
+<div class="position-fixed bottom-0 end-0 m-4" style="z-index:1050;">
+    <div class="position-relative">
+        <button id="chat-bubble-btn" data-bs-toggle="modal" data-bs-target="#chatModal">💬</button>
+        @if ($chatUsers->sum('unread_count') > 0)
+            <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">{{ $chatUsers->sum('unread_count') }}</span>
+        @endif
     </div>
+</div>
 
-    <!-- Modal Chat -->
-    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="chat-container">
-                        <!-- Sidebar -->
-                        <div class="sidebar">
-                            <i class="bi bi-chat-dots-fill"></i>
-                            <i class="bi bi-people-fill"></i>
-                            <i class="bi bi-gear-fill"></i>
-                        </div>
-
-                        <!-- Chat List -->
-                        <div class="chat-list">
-                            @foreach ($chatUsers as $user)
-                                <div class="chat-item" onclick="selectUser({{ $user->id }}, '{{ $user->name }}')">
-                                    <img src="{{ $user->profile_image ? asset('profile_images/' . $user->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) }}"
-                                        class="rounded-circle profile-img" alt="Foto Profil {{ $user->name }}">
-                                    <div class="info">
-                                        <div>{{ $user->name }}</div>
-                                        <small class="text-muted">Klik untuk chat</small>
-                                    </div>
-                                    @if ($user->unread_count > 0)
-                                        <span class="badge bg-danger ms-auto">{{ $user->unread_count }}</span>
-                                    @endif
-                                </div>
+{{-- ===== MODAL CHAT ===== --}}
+<div class="modal fade" id="chatModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4">
+            <div class="modal-body p-0">
+                <div class="chat-container">
+                    {{-- HEADER: SELECT2 DI SINI --}}
+                    <div class="chat-header">
+                        <h6>Pilih User untuk di chat -</h6>
+                        <select id="user-search" class="form-select" style="width: 300px;">
+                            <option value="">Pilih user untuk chat...</option>
+                            @foreach ($chatUsers as $u)
+                                <option value="{{ $u->id }}"
+                                    data-photo="{{ $u->profile_image ? asset('profile_images/' . $u->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($u->name) }}"
+                                    data-unit="{{ $u->employmentDetail?->unit?->name ?? '-' }}">
+                                    {{ $u->name }}
+                                </option>
                             @endforeach
-                        </div>
+                        </select>
+                    </div>
 
+                    {{-- AREA CHAT --}}
+                    <div class="chat-messages" id="chat-box"></div>
 
-                        <!-- Chat Area -->
-                        <div class="chat-area">
-                            <div class="chat-header" id="chat-with">Pilih user untuk mulai chat</div>
-                            <div class="chat-messages" id="chat-box"></div>
-                            <div class="chat-footer">
-                                <input type="text" id="chat-message" placeholder="Tulis pesan..." />
-                                <button class="btn btn-primary" onclick="sendMessage()">Kirim</button>
-                            </div>
-                        </div>
+                    {{-- FOOTER --}}
+                    <div class="chat-footer">
+                        <input type="text" id="chat-message" placeholder="Tulis pesan..." />
+                        <button class="btn-send" id="send-btn"><i class="bi bi-send-fill"></i></button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+{{-- ===== SCRIPTS ===== --}}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-    <script>
-        let selectedUserId = null;
-        const authUserId = {{ auth()->id() }};
+<script>
+    let selectedUserId = null;
+    const authUserId = {{ auth()->id() }};
 
-        function selectUser(userId, userName) {
-            selectedUserId = userId;
-            document.getElementById('chat-with').innerText = 'Chat dengan ' + userName;
-            fetch('/chat/messages', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        receiver_id: userId
-                    })
-                })
-                .then(res => res.json())
-                .then(messages => {
-                    const box = document.getElementById('chat-box');
-                    box.innerHTML = '';
-                    messages.forEach(msg => {
-                        const isMe = msg.sender_id == authUserId;
-                        box.innerHTML += `
-                    <div class="message ${isMe ? 'me' : 'them'}">
-                        ${msg.message}
+    $(function() {
+        // Format tampilan user di select2
+        function formatUser(user) {
+            if (!user.id) return user.text;
+            const photo = $(user.element).data('photo');
+            const unit = $(user.element).data('unit') || '-';
+            return $(`
+                <div class="d-flex align-items-center">
+                    <img src="${photo}" width="32" height="32" class="rounded-circle me-2" style="object-fit:cover;">
+                    <div>
+                        <div class="fw-semibold">${user.text}</div>
+                        <small class="text-muted">${unit}</small>
                     </div>
-                `;
-                    });
-                    box.scrollTop = box.scrollHeight;
-                });
+                </div>
+            `);
         }
 
-        function sendMessage() {
-            const message = document.getElementById('chat-message').value;
-            if (!message.trim()) return;
+        // Inisialisasi Select2
+        $('#user-search').select2({
+            placeholder: 'Pilih user...',
+            allowClear: true,
+            width: 'resolve',
+            dropdownParent: $('#chatModal'),
+            templateResult: formatUser,
+            templateSelection: formatUser,
+            minimumResultsForSearch: 1
+        });
 
-            fetch('/chat/send', {
+        // Ketika user dipilih, langsung buka chat
+        $('#user-search').on('select2:select', function(e) {
+            const data = e.params.data;
+            openChatForUser(data.id, data.text);
+        });
+
+        $('#send-btn').on('click', sendMessage);
+        $('#chat-message').on('keypress', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    });
+
+    function openChatForUser(userId, userName) {
+        selectedUserId = parseInt(userId);
+        console.log('📱 Chat dibuka dengan user:', selectedUserId);
+
+        $('#chat-box').html('<p class="text-center text-muted small">Memuat pesan...</p>');
+
+        fetch('/chat/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    receiver_id: userId
+                })
+            })
+            .then(res => res.json())
+            .then(messages => {
+                $('#chat-box').html('');
+                messages.forEach(msg => {
+                    const isMe = msg.sender_id == authUserId;
+                    $('#chat-box').append(
+                        `<div class="message ${isMe ? 'me' : 'them'}">${escapeHtml(msg.message)}</div>`
+                    );
+                });
+                $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+                $('#chat-message').focus();
+            });
+    }
+
+
+    // Kirim pesan
+    function sendMessage() {
+        const message = $('#chat-message').val().trim();
+        if (!message || !selectedUserId) return;
+        fetch('/chat/send', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -242,29 +303,53 @@
                 },
                 body: JSON.stringify({
                     receiver_id: selectedUserId,
-                    message: message
+                    message
                 })
-            }).then(res => res.json()).then(data => {
-                const box = document.getElementById('chat-box');
-                box.innerHTML += `
-                <div class="message me">
-                    ${data.message}
-                </div>
-            `;
-                document.getElementById('chat-message').value = '';
-                box.scrollTop = box.scrollHeight;
+            })
+            .then(res => res.json())
+            .then(data => {
+                $('#chat-box').append(`<div class="message me">${escapeHtml(data.message)}</div>`);
+                $('#chat-message').val('');
+                $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
             });
-        }
+    }
 
-        window.Echo.private('chat.{{ auth()->id() }}')
-            .listen('MessageSent', (e) => {
-                if (e.message.sender_id == selectedUserId) {
-                    document.getElementById('chat-box').innerHTML += `
-                    <div class="message them">
-                        ${e.message.message}
-                    </div>
-                `;
-                    document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
-                }
-            });
-    </script>
+    function escapeHtml(text) {
+        return String(text).replace(/[&<>"'`=\/]/g, s => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            '/': '&#x2F;',
+            '`': '&#x60;',
+            '=': '&#x3D;'
+        })[s]);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+            if (!window.Echo) {
+                // console.error('❌ Echo belum siap, listener tidak dijalankan!');
+                return;
+            }
+
+            // console.log('✅ Echo listener aktif untuk chat.{{ auth()->id() }}');
+
+            window.Echo.private('chat.{{ auth()->id() }}')
+                .listen('.MessageSent', (e) => {
+                    // console.log('📩 Pesan realtime diterima:', e.message);
+
+                    if (e.message.sender_id === selectedUserId) {
+                        $('#chat-box').append(`
+                        <div class="message them">${escapeHtml(e.message.message)}</div>
+                    `);
+                        $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+                    } else {
+                        // console.log('💬 Pesan dari user lain:', e.message.sender_id);
+                    }
+                });
+
+        }, 1000); // kasih delay 1 detik agar Echo benar-benar sudah siap
+    });
+</script>

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <div class="container">
+        <div class="container mt-4">
             @include('toaster')
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                 <h5 class="fw-bold mb-0">Tugas Hari Ini</h5>
@@ -375,6 +375,29 @@
         </div>
 
         @include('chats.modal')
+
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const themeToggleBtn = document.getElementById('theme-toggle');
+                const htmlElement = document.documentElement;
+                const themeIcon = document.getElementById('theme-icon');
+
+                // Load saved theme
+                const savedTheme = localStorage.getItem('bsTheme') || 'light';
+                htmlElement.setAttribute('data-bs-theme', savedTheme);
+                themeIcon.className = savedTheme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+
+                themeToggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault(); // biar tidak reload
+                    const currentTheme = htmlElement.getAttribute('data-bs-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    htmlElement.setAttribute('data-bs-theme', newTheme);
+                    localStorage.setItem('bsTheme', newTheme);
+                    themeIcon.className = newTheme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+                });
+            });
+        </script>
 
     </div>
 @endsection
