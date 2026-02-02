@@ -98,6 +98,18 @@ class HomeController extends Controller
 
         $usersWithTasks = $usersWithTasks->sortByDesc(fn($u) => $u->id === auth()->id());
 
+        $todayAssignments = $this->getAssignmentsWithUsers($month, $unitId, true);
+
+        /** tempelin ke user object */
+        $todayAssignments->groupBy('user_id')->each(function ($items, $userId) use ($usersWithTasks) {
+            if ($user = $usersWithTasks->firstWhere('id', $userId)) {
+                $user->todayAssignments = $items;
+            }
+        });
+
+        /** default empty collection biar blade aman */
+        $usersWithTasks->each(fn($u) => $u->todayAssignments ??= collect());
+
         $announcements = Announcement::where(function ($query) use ($user) {
             $query->where('category', 'umum')
                 ->orWhere(function ($q) use ($user) {
@@ -105,7 +117,10 @@ class HomeController extends Controller
                 });
         })->get();
 
-        return view('home', compact('units', 'usersWithTasks', 'announcements', 'assignments', 'chatUsers', 'agendas'));
+        $notifications = $this->buildUserTimeline($user);
+
+
+        return view('home', compact('units', 'usersWithTasks', 'announcements', 'assignments', 'chatUsers', 'agendas', 'notifications'));
     }
 
 
@@ -137,24 +152,31 @@ class HomeController extends Controller
         return $query->get();
     }
 
+    private function getAssignmentsWithUsers(
+        int|string $month,
+        ?int $unitId = null,
+        bool $onlyToday = false
+    ) {
+        $today = now()->toDateString();
+        $currentYear = now()->year; // Tambahkan ini (2026)
 
-    private function getAssignmentsWithUsers(string $month, ?int $unitId = null)
-    {
         $query = Assignment::with([
             'user.employmentDetail.unit',
-            'user.units', // include user units dari pivot
+            'user.units',
             'assigner'
         ])
             ->whereMonth('assignment_date', $month)
-            ->whereHas('user.employmentDetail', function ($q) {
-                $q->where('is_active', true);
-            })
+            ->whereYear('assignment_date', $currentYear) // WAJIB: Kunci di tahun 2026 saja
+            ->whereHas('user.employmentDetail', fn($q) => $q->where('is_active', true))
             ->orderBy('assignment_date', 'asc');
 
-        // Filter penugasan berdasarkan unit_id
         if ($unitId) {
-            $query->where('unit_id', $unitId); // Filter penugasan dengan unit_id
+            $query->where('unit_id', $unitId);
         }
+
+        $onlyToday
+            ? $query->whereDate('assignment_date', $today)
+            : $query->whereDate('assignment_date', '!=', $today);
 
         return $query->get();
     }
@@ -185,6 +207,63 @@ class HomeController extends Controller
 
         return view('dashboard.pegawai-unit', compact('pegawai', 'unit'));
     }
+
+    private function buildUserTimeline(User $user)
+    {
+        // 1. Ambil Pengumuman
+        $announcements = Announcement::where('category', 'umum')
+            ->orWhere(function ($q) use ($user) {
+                $q->where('category', 'personal')->where('recipient_id', $user->id);
+            })->get();
+
+        // 2. Ambil Agenda (Pastikan relasi agendas di model User sudah benar)
+        $agendas = $user->agendas()->get();
+
+        // 3. Ambil Penugasan
+        $assignments = Assignment::where('user_id', $user->id)->get();
+
+        // 4. Gabungkan secara manual agar struktur field-nya seragam
+        $data = collect();
+
+        foreach ($announcements as $a) {
+            $data->push((object)[
+                'type' => 'announcements',
+                'title' => $a->title,
+                'description' => $a->content,
+                'date' => $a->created_at,
+                'progress' => null,
+                // 'route' => route('announcements.show', $a->id)
+                'route' => route('announcements.index')
+            ]);
+        }
+
+        foreach ($agendas as $ag) {
+            $data->push((object)[
+                'type' => 'agendas',
+                'title' => $ag->title,
+                'description' => $ag->description,
+                'date' => $ag->agenda_date,
+                'progress' => null,
+                // 'route' => route('agendas.show', $ag->id)
+                'route' => route('agendas.index')
+            ]);
+        }
+
+        foreach ($assignments as $as) {
+            $data->push((object)[
+                'type' => 'assignments',
+                'title' => $as->title,
+                'description' => $as->description,
+                'date' => $as->assignment_date,
+                'progress' => $as->progres,
+                // 'route' => route('assignments.show', $as->id)
+                'route' => route('assignments.index')
+            ]);
+        }
+        return $data->sortByDesc('date')->values();
+    }
+
+
 
     public function import(Request $request)
     {

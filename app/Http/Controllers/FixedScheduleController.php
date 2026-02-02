@@ -94,4 +94,10 @@ class FixedScheduleController extends Controller
 
         return redirect()->route('home')->with('success', 'Jadwal tetap berhasil diperbarui.');
     }
+
+    public function destroy(FixedTask $fixedTask)
+    {
+        $fixedTask->delete();
+        return redirect()->route('home');
+    }
 }

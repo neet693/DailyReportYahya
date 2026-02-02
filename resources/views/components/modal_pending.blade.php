@@ -1,5 +1,5 @@
 <div class="modal fade" id="penugasanPendingModal{{ $assignment->id }}" tabindex="-1"
-    aria-labelledby="penugasanPendingModalLabel{{ $assignment->id }}" aria-hidden="true">
+    aria-labelledby="penugasanPendingModalLabel{{ $assignment->id }}" aria-hidden="true" data-bs-backdrop="false">
     <div class="modal-dialog">
         <form method="POST" action="{{ route('assignments.markAsPending', $assignment) }}">
             @csrf

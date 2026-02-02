@@ -1,9 +1,8 @@
 {{-- ===== CHAT MODAL - MINIMAL CLEAN VERSION ===== --}}
 <style>
     #chat-bubble-btn {
-        position: fixed;
-        bottom: 90px;
-        right: 20px;
+        position: relative;
+        /* ⬅️ PENTING */
         background-color: #0d6efd;
         color: #fff;
         border: none;
@@ -11,14 +10,32 @@
         width: 58px;
         height: 58px;
         font-size: 26px;
-        z-index: 1000;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         transition: 0.2s;
     }
 
+
     #chat-bubble-btn:hover {
         transform: scale(1.08);
         background-color: #0b5ed7;
+    }
+
+    .chat-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #dc3545;
+        color: #fff;
+        font-size: 11px;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        pointer-events: none;
     }
 
     .chat-container {
@@ -164,13 +181,18 @@
 {{-- ===== FLOATING BUTTON ===== --}}
 <div class="position-fixed bottom-0 end-0 m-4" style="z-index:1050;">
     <div class="position-relative">
-        <button id="chat-bubble-btn" data-bs-toggle="modal" data-bs-target="#chatModal">💬</button>
+        <button id="chat-bubble-btn" data-bs-toggle="modal" data-bs-target="#chatModal">
+            💬
+        </button>
+
         @if ($chatUsers->sum('unread_count') > 0)
-            <span
-                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">{{ $chatUsers->sum('unread_count') }}</span>
+            <span class="chat-badge">
+                {{ $chatUsers->sum('unread_count') }}
+            </span>
         @endif
     </div>
 </div>
+
 
 {{-- ===== MODAL CHAT ===== --}}
 <div class="modal fade" id="chatModal" tabindex="-1" aria-hidden="true">

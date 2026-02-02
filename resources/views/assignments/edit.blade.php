@@ -17,7 +17,10 @@
                                 <select name="user_id" class="form-control">
                                     @foreach ($users as $user)
                                         @if ($user->id != auth()->user()->id)
-                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                            <option value="{{ $user->id }}"
+                                                {{ old('user_id', $assignment->user_id) == $user->id ? 'selected' : '' }}>
+                                                {{ $user->name }}
+                                            </option>
                                         @endif
                                     @endforeach
                                 </select>
@@ -41,7 +44,8 @@
                                 <input id="assignment_date" type="date"
                                     class="form-control @error('assignment_date') is-invalid @enderror"
                                     name="assignment_date"
-                                    value="{{ old('assignment_date', $assignment->assignment_date) }}" required autofocus>
+                                    value="{{ old('assignment_date', optional($assignment->assignment_date)->format('Y-m-d')) }}"
+                                    required>
 
                                 @error('assignment_date')
                                     <span class="invalid-feedback" role="alert">
@@ -55,8 +59,9 @@
                                 <input id="start_assignment_time" type="time"
                                     class="form-control @error('start_assignment_time') is-invalid @enderror"
                                     name="start_assignment_time"
-                                    value="{{ old('start_assignment_time', $assignment->start_assignment_time) }}" required
-                                    autocomplete="start_assignment_time" autofocus>
+                                    value="{{ old('start_assignment_time', optional($assignment->start_assignment_time)->format('H:i')) }}"
+                                    required>
+
 
                                 @error('start_assignment_time')
                                     <span class="invalid-feedback" role="alert">
@@ -70,8 +75,9 @@
                                 <input id="end_assignment_time" type="time"
                                     class="form-control @error('end_assignment_time') is-invalid @enderror"
                                     name="end_assignment_time"
-                                    value="{{ old('end_assignment_time', $assignment->end_assignment_time) }}" required
-                                    autocomplete="end_assignment_time" autofocus>
+                                    value="{{ old('end_assignment_time', optional($assignment->end_assignment_time)->format('H:i')) }}"
+                                    required>
+
 
                                 @error('end_assignment_time')
                                     <span class="invalid-feedback" role="alert">
