@@ -24,6 +24,7 @@ use App\Http\Controllers\SwitchUserController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\UnitKerjaController;
+use App\Http\Controllers\WorkProgramController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -63,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('announcements', AnnouncementController::class);
     Route::resource('profile', ProfileController::class);
     Route::resource('jobdesks', JobDeskController::class);
+    Route::resource('work-programs', WorkProgramController::class);
 
     //MeetingController
     Route::resource('meetings', MeetingController::class);

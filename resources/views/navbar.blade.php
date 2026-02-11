@@ -34,6 +34,8 @@
                             href="{{ route('Unit.index') }}">Unit</a>
                         <a class="nav-link {{ request()->is('keterlambatan*') ? 'active' : '' }}"
                             href="{{ route('keterlambatan.index') }}">Notes Terlambat</a>
+                        <a class="nav-link {{ request()->is('work-programs*') ? 'active' : '' }}"
+                            href="{{ route('work-programs.index') }}">Program Kerja</a>
                         @if (Auth::user()->isKepalaUnit() || Auth::user()->isHRD())
                             <a class="nav-link {{ request()->is('absensi*') ? 'active' : '' }}"
                                 href="{{ route('absensi.index') }}">Absensi</a>
