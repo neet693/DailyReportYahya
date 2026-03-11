@@ -18,7 +18,9 @@ return new class extends Migration
             $table->enum('jenis_pegawai', ['Pegawai Tetap', 'Pegawai Tidak Tetap']);
             $table->foreignId('unit_kerja_id')->nullable()->constrained('unit_kerjas')->onDelete('set null');
             $table->date('start_date');
+            $table->time('start_time')->nullable();
             $table->date('end_date');
+            $table->time('end_time')->nullable();
             $table->text('description');
             $table->enum('status_permohonan', ['Menunggu Persetujuan', 'Disetujui', 'Ditolak'])->default('Menunggu Persetujuan');
             $table->foreignId('approver_id')->nullable();

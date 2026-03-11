@@ -38,7 +38,12 @@ class PermissionRequestController extends Controller
         // Hitung durasi per izin
         $durations = [];
         foreach ($permissionRequests as $request) {
-            $durations[$request->id] = $this->calculateDuration($request->start_date, $request->end_date);
+            $durations[$request->id] = $this->calculateDuration(
+                $request->start_date,
+                $request->end_date,
+                $request->start_time,
+                $request->end_time
+            );
         }
 
         return view('permission-requests.index', compact('permissionRequests', 'durations'));
@@ -49,20 +54,44 @@ class PermissionRequestController extends Controller
     /**
      * Hitung durasi perizinan antara dua tanggal.
      */
-    private function calculateDuration($startDate, $endDate)
+    private function calculateDuration($startDate, $endDate, $startTime = null, $endTime = null)
     {
         $start = Carbon::parse($startDate);
         $end = Carbon::parse($endDate);
 
-        if ($start->eq($end)) {
-            return ['days' => 0, 'hours' => 23, 'minutes' => 59];
+        if ($startTime) {
+            $start->setTimeFromTimeString($startTime);
+        } else {
+            $start->setTime(0, 0);
         }
 
-        return [
-            'days' => $start->diffInDays($end) . ' hari',
-            'hours' => 23,
-            'minutes' => 59
-        ];
+        if ($endTime) {
+            $end->setTimeFromTimeString($endTime);
+        } else {
+            $end->setTime(23, 59);
+        }
+
+        $diff = $start->diff($end);
+
+        $parts = [];
+
+        if ($diff->d > 0) {
+            $parts[] = $diff->d . ' hari';
+        }
+
+        if ($diff->h > 0) {
+            $parts[] = $diff->h . ' jam';
+        }
+
+        if ($diff->i > 0) {
+            $parts[] = $diff->i . ' menit';
+        }
+
+        if (empty($parts)) {
+            return 'Kurang dari 1 menit';
+        }
+
+        return implode(' ', $parts);
     }
 
 
@@ -81,7 +110,9 @@ class PermissionRequestController extends Controller
             'jabatan' => 'required',
             'jenis_pegawai' => 'required',
             'start_date' => 'required|date',
+            'start_time' => 'nullable|date_format:H:i',
             'end_date' => 'required|date',
+            'end_time' => 'nullable|date_format:H:i',
             'description' => 'required',
             'unit_kerja_id' => 'required|exists:unit_kerjas,id',
         ]);

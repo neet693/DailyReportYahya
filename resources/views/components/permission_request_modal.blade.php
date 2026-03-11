@@ -11,9 +11,7 @@
                 <p>Jabatan: {{ $data->jabatan }}</p>
                 <p>Status Pegawai: {{ $data->jenis_pegawai }}</p>
                 <p>Memohon izin tidak bekerja selama:
-                    {{ $durations[$data->id]['days'] }} hari,
-                    {{ $durations[$data->id]['hours'] }} jam,
-                    {{ $durations[$data->id]['minutes'] }} menit
+                    <strong>{{ $durations[$data->id] }}</strong>
                 </p>
                 <p>Hari / Tanggal: <br>{{ $data->start_date->format('l, d F Y') }} s/d
                     {{ $data->end_date->format('l, d F Y') }} </p>

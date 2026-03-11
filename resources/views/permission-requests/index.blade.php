@@ -69,8 +69,10 @@
                                             <form action="{{ route('permissionrequest.destroy', $data->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger" title="Hapus"><i
-                                                        class="bi bi-trash"></i></button>
+                                                <button type="submit" class="btn btn-danger" title="Hapus"
+                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus permohonan izin ini?')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
                                             </form>
                                         </li>
                                     @endcan

@@ -42,8 +42,18 @@
             </div>
 
             <div class="form-group">
+                <label for="start_time">Jam Mulai:</label>
+                <input type="time" name="start_time" id="start_time" class="form-control">
+            </div>
+
+            <div class="form-group">
                 <label for="end_date">Tanggal Selesai:</label>
                 <input type="date" name="end_date" id="end_date" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="end_time">Jam Selesai:</label>
+                <input type="time" name="end_time" id="end_time" class="form-control">
             </div>
 
             <div class="form-group">
