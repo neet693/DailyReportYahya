@@ -16,7 +16,7 @@ class PermissionRequestController extends Controller
         $user = Auth::user();
 
         // 🔁 Redirect jika bukan admin, kepala, atau hrd
-        if (!in_array($user->role, ['admin', 'kepala', 'hrd'])) {
+        if (!in_array($user->role, ['admin', 'kepala', 'hrd', 'tu'])) {
             return redirect()->route('permissionrequest.create');
         }
 
