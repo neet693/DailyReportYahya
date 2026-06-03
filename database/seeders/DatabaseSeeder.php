@@ -25,8 +25,8 @@ class DatabaseSeeder extends Seeder
         // Buat User Aloy
         $aloy = User::create([
             'name' => 'Aloy',
-            'email' => 'aloy@skysimpeg.com',
-            'password' => bcrypt('rusakdeh'), // Ganti dengan kata sandi yang aman
+            'email' => 'aloy@skysimpeg.sch.id',
+            'password' => 'rusakdeh', // Ganti dengan kata sandi yang aman
             'role' => 'kepala',
             'address' => 'Alamat',
             'gender' => '',
@@ -47,8 +47,8 @@ class DatabaseSeeder extends Seeder
         // Buat User Admin
         User::create([
             'name' => 'Admin',
-            'email' => 'admin@dailyreportyahya.com',
-            'password' => bcrypt('rusakdeh'), // Ganti dengan kata sandi yang aman
+            'email' => 'admin@skysimpeg.sch.id',
+            'password' => 'rusakdeh', // Ganti dengan kata sandi yang aman
             'role' => 'admin',
             'address' => 'Alamat',
             'gender' => '',

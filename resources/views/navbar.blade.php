@@ -36,6 +36,8 @@
                             href="{{ route('keterlambatan.index') }}">Notes Terlambat</a>
                         <a class="nav-link {{ request()->is('work-programs*') ? 'active' : '' }}"
                             href="{{ route('work-programs.index') }}">Program Kerja</a>
+                        <a class="nav-link {{ request()->is('piket*') ? 'active' : '' }}"
+                            href="{{ route('piket.index') }}">Piket</a>
                         @if (Auth::user()->isKepalaUnit() || Auth::user()->isHRD())
                             <a class="nav-link {{ request()->is('absensi*') ? 'active' : '' }}"
                                 href="{{ route('absensi.index') }}">Absensi</a>

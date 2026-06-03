@@ -12,6 +12,24 @@
     --fwmedium: 500;
     --fwregular: 400;
     --fwlight: 300;
+
+    --fc-border-color: #e5e7eb;
+
+    --fc-page-bg-color: #ffffff;
+    --fc-neutral-bg-color: #f8fafc;
+
+    --fc-button-bg-color: #0d6efd;
+    --fc-button-border-color: #0d6efd;
+
+    --fc-button-hover-bg-color: #0b5ed7;
+    --fc-button-hover-border-color: #0b5ed7;
+
+    --fc-button-active-bg-color: #0a58ca;
+    --fc-button-active-border-color: #0a58ca;
+
+    --fc-today-bg-color: rgba(13, 110, 253, 0.08);
+
+    --fc-event-border-color: transparent;
 }
 
 body {
@@ -90,7 +108,9 @@ body {
     box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.15) !important;
     position: relative;
     padding: 1.25rem;
-    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.3s ease;
 }
 
 .card-custom::before {
@@ -167,4 +187,59 @@ body {
 .scroll-container::-webkit-scrollbar-thumb {
     background-color: var(--darkgrey);
     border-radius: 10px;
+}
+.fc {
+    font-size: 14px;
+}
+
+.fc-theme-standard {
+    border-radius: 12px;
+}
+
+.fc-scrollgrid {
+    border-radius: 12px;
+    overflow: hidden;
+}
+.fc-toolbar-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.fc-button {
+    border-radius: 8px !important;
+    box-shadow: none !important;
+}
+.fc-col-header-cell {
+    background: #f8fafc;
+    padding: 10px 0;
+}
+
+.fc-col-header-cell-cushion {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+}
+.fc-daygrid-day-frame {
+    min-height: 80px !important;
+}
+
+.fc-daygrid-day-top {
+    padding: 6px;
+}
+
+.fc-daygrid-day-number {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    text-decoration: none !important;
+}
+.fc-day-today {
+    border: 2px solid #0d6efd !important;
+}
+.fc-event {
+    border-radius: 6px !important;
+    font-size: 11px;
+    padding: 2px 6px;
+    font-weight: 500;
 }

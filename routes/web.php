@@ -25,6 +25,8 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\UnitKerjaController;
 use App\Http\Controllers\WorkProgramController;
+use App\Http\Controllers\PiketPengajuanController;
+use App\Http\Controllers\PiketKuotaController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -130,6 +132,20 @@ Route::middleware(['auth', 'role:kepala,pegawai'])->group(function () {
     Route::get('/fixed-schedule/{fixedTask}/edit', [FixedScheduleController::class, 'edit'])->name('fixed-schedule.edit');
     Route::put('/fixed-schedule/{fixedTask}', [FixedScheduleController::class, 'update'])->name('fixed-schedule.update');
     Route::delete('/fixed-schedule/{fixedTask}', [FixedScheduleController::class, 'destroy'])->name('fixed-schedule.destroy');
+
+
+    //Piket harian
+    Route::resource('piket', PiketPengajuanController::class);
+
+    Route::get('/piket-harian/events', [PiketPengajuanController::class, 'events'])->name('piket-harian.events');
+
+    Route::get('/piket-harian/pengaturan', [PiketKuotaController::class, 'create'])->name('piket-harian.pengaturan');
+    Route::post('/piket-harian', [PiketKuotaController::class, 'store'])->name('piket-harian.store');
+    Route::put('/piket/{piketPengajuan}/approve', [PiketPengajuanController::class, 'approve'])
+        ->name('piket.approve');
+
+    Route::put('/piket/{piketPengajuan}/cancel', [PiketPengajuanController::class, 'cancel'])
+        ->name('piket.cancel');
 });
 
 Route::middleware(['auth', 'role:admin,kepala,hrd'])->group(function () {
