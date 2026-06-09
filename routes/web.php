@@ -112,6 +112,24 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/chat/send', [MessageController::class, 'sendMessage']);
     //Route Keterlambatan
     Route::resource('keterlambatan', LateNotesController::class);
+
+    //Piket harian
+    Route::resource('piket', PiketPengajuanController::class);
+
+    Route::get('/piket-harian/events', [PiketPengajuanController::class, 'events'])->name('piket-harian.events');
+
+    Route::get('/piket-harian/pengaturan', [PiketKuotaController::class, 'create'])->name('piket-harian.pengaturan');
+    Route::post('/piket-harian', [PiketKuotaController::class, 'store'])->name('piket-harian.store');
+    Route::put('/piket/{piketPengajuan}/approve', [PiketPengajuanController::class, 'approve'])
+        ->name('piket.approve');
+
+    Route::put('/piket/{piketPengajuan}/reject', [PiketPengajuanController::class, 'reject'])
+        ->name('piket.reject');
+
+    Route::get(
+        '/piket-harian/check-user',
+        [PiketPengajuanController::class, 'checkUserQuota']
+    );
 });
 
 // Route untuk HRD daftar pegawai
@@ -132,20 +150,6 @@ Route::middleware(['auth', 'role:kepala,pegawai'])->group(function () {
     Route::get('/fixed-schedule/{fixedTask}/edit', [FixedScheduleController::class, 'edit'])->name('fixed-schedule.edit');
     Route::put('/fixed-schedule/{fixedTask}', [FixedScheduleController::class, 'update'])->name('fixed-schedule.update');
     Route::delete('/fixed-schedule/{fixedTask}', [FixedScheduleController::class, 'destroy'])->name('fixed-schedule.destroy');
-
-
-    //Piket harian
-    Route::resource('piket', PiketPengajuanController::class);
-
-    Route::get('/piket-harian/events', [PiketPengajuanController::class, 'events'])->name('piket-harian.events');
-
-    Route::get('/piket-harian/pengaturan', [PiketKuotaController::class, 'create'])->name('piket-harian.pengaturan');
-    Route::post('/piket-harian', [PiketKuotaController::class, 'store'])->name('piket-harian.store');
-    Route::put('/piket/{piketPengajuan}/approve', [PiketPengajuanController::class, 'approve'])
-        ->name('piket.approve');
-
-    Route::put('/piket/{piketPengajuan}/cancel', [PiketPengajuanController::class, 'cancel'])
-        ->name('piket.cancel');
 });
 
 Route::middleware(['auth', 'role:admin,kepala,hrd'])->group(function () {

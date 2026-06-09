@@ -20,11 +20,19 @@ class PiketService
             return 0;
         }
 
-        $terpakai = PiketPengajuan::whereHas('user.employmentDetail', function ($q) use ($unitId) {
-            $q->where('unit_kerja_id', $unitId);
-        })
-            // ->whereDate('tanggal_piket', $tanggal)
-            ->where('status', 'approved')
+        // $terpakai = PiketPengajuan::whereHas('user.employmentDetail', function ($q) use ($unitId) {
+        //     $q->where('unit_kerja_id', $unitId);
+        // })
+        //     // ->whereDate('tanggal_piket', $tanggal)
+        //     ->where('status', 'approved')
+        //     ->count();
+
+        $terpakai = PiketPengajuan::query()
+            ->whereDate('tanggal_piket', $tanggal)
+            ->whereIn('status', [
+                'pending',
+                'approved'
+            ])
             ->count();
 
         $jumlah = $kuota->total_kuota;

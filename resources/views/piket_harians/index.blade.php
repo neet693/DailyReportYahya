@@ -11,6 +11,12 @@
             </a>
         @endif
 
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <div class="mt-5" id="calendar"></div>
         @include('components.piket-modal')
 
@@ -36,28 +42,7 @@
                 events: '/piket-harian/events',
 
                 dateClick: function(info) {
-                    // if (Number(sisa) <= 0) {
-                    //     alert('Kuota FULL');
-                    //     return;
-                    // }
                     openPiketModal(info.dateStr);
-
-                    // dateClick: function(info) {
-
-                    //     const events = calendar.getEvents();
-
-                    //     const event = events.find(e =>
-                    //         e.startStr.startsWith(info.dateStr)
-                    //     );
-
-                    //     const sisa = event?.extendedProps?.sisa_kuota ?? 0;
-
-                    //     if (Number(sisa) <= 0) {
-                    //         alert('Kuota FULL');
-                    //         return;
-                    //     }
-
-                    //     openPiketModal(info.dateStr);
                 },
 
                 eventContent: function(arg) {
@@ -84,7 +69,7 @@
                             ${title}
                         </div>
                         <div style="opacity:0.85;">
-                            Sisa kuota: ${sisaNum}
+                            Personel Tersedia: ${sisaNum} ORANG
                         </div>
                     </div>
                 `

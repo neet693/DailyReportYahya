@@ -105,12 +105,33 @@ class PiketPengajuanController extends Controller
             )
             ->exists();
 
+        // if ($exists) {
+        //     return back()->withErrors([
+        //         'tanggal_piket' =>
+        //         'Anda sudah mengajukan tanggal tersebut.'
+        //     ]);
+        // }
         if ($exists) {
-            return back()->withErrors([
-                'tanggal_piket' =>
+            return back()->with(
+                'error',
                 'Anda sudah mengajukan tanggal tersebut.'
-            ]);
+            );
         }
+
+        $service = app(PiketService::class);
+
+        $sisaKuota = $service->getSisaKuota(
+            $user->employmentDetail->unit_kerja_id,
+            $validated['tanggal_piket']
+        );
+
+        if ($sisaKuota <= 0) {
+            return back()->with(
+                'error',
+                'Kuota piket pada tanggal tersebut sudah penuh.'
+            );
+        }
+
 
         $status = 'pending';
 
@@ -168,9 +189,22 @@ class PiketPengajuanController extends Controller
         //
     }
 
-    public function approve(
-        PiketPengajuan $piketPengajuan
-    ) {
+    public function approve(PiketPengajuan $piketPengajuan)
+    {
+        $user = auth()->user();
+
+        if (!$user->isKepalaUnit()) {
+            abort(403);
+        }
+
+        if (
+            $piketPengajuan->user->employmentDetail->unit_kerja_id
+            !==
+            $user->employmentDetail->unit_kerja_id
+        ) {
+            abort(403);
+        }
+
         if ($piketPengajuan->status !== 'pending') {
             return back()->withErrors([
                 'error' => 'Pengajuan sudah diproses.'
@@ -189,9 +223,8 @@ class PiketPengajuanController extends Controller
         );
     }
 
-    public function cancel(
-        PiketPengajuan $piketPengajuan
-    ) {
+    public function cancel(PiketPengajuan $piketPengajuan)
+    {
         if (
             $piketPengajuan->user_id !== auth()->id()
         ) {
@@ -205,6 +238,41 @@ class PiketPengajuanController extends Controller
         return back()->with(
             'success',
             'Pengajuan dibatalkan.'
+        );
+    }
+
+    public function reject(PiketPengajuan $piketPengajuan)
+    {
+        $user = auth()->user();
+
+        if (!$user->isKepalaUnit()) {
+            abort(403);
+        }
+
+        if (
+            $piketPengajuan->user->employmentDetail->unit_kerja_id
+            !==
+            $user->employmentDetail->unit_kerja_id
+        ) {
+            abort(403);
+        }
+
+        if ($piketPengajuan->status !== 'pending') {
+            return back()->with(
+                'error',
+                'Pengajuan sudah diproses.'
+            );
+        }
+
+        $piketPengajuan->update([
+            'status' => 'rejected',
+            'approved_by' => $user->id,
+            'approved_at' => now(),
+        ]);
+
+        return back()->with(
+            'success',
+            'Pengajuan ditolak.'
         );
     }
 
@@ -226,5 +294,19 @@ class PiketPengajuanController extends Controller
             'piket-pengajuan.approval',
             compact('pengajuans')
         );
+    }
+
+    public function checkUserQuota()
+    {
+        $user = auth()->user();
+
+        $aktif = PiketPengajuan::query()
+            ->where('user_id', $user->id)
+            ->whereIn('status', ['pending', 'approved'])
+            ->exists();
+
+        return response()->json([
+            'can_apply' => !$aktif
+        ]);
     }
 }

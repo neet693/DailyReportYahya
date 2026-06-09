@@ -40,22 +40,62 @@ class PiketKuotaController extends Controller
         ));
     }
 
+    // public function store(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'unit_kerja_id' => ['required', 'exists:unit_kerjas,id'],
+    //         'tanggal_mulai' => ['required', 'date'],
+    //         'tanggal_selesai' => ['required', 'date', 'after_or_equal:tanggal_mulai'],
+    //         'total_kuota' => ['required', 'integer', 'min:1'],
+    //     ]);
+
+    //     $validated['dibuat_oleh'] = auth()->id();
+
+    //     PiketKuota::create($validated);
+
+    //     return redirect()
+    //         ->back()
+    //         ->with('success', 'Kuota berhasil dibuat.');
+    // }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'unit_kerja_id' => ['required', 'exists:unit_kerjas,id'],
-            'tanggal_mulai' => ['required', 'date'],
-            'tanggal_selesai' => ['required', 'date', 'after_or_equal:tanggal_mulai'],
-            'total_kuota' => ['required', 'integer', 'min:1'],
+            'unit_kerja_id' => [
+                'required',
+                'exists:unit_kerjas,id'
+            ],
+
+            'tanggal' => [
+                'required',
+                'array'
+            ],
+
+            'kuota' => [
+                'required',
+                'array'
+            ],
         ]);
 
-        $validated['dibuat_oleh'] = auth()->id();
+        foreach ($request->tanggal as $index => $tanggal) {
 
-        PiketKuota::create($validated);
+            PiketKuota::updateOrCreate(
+                [
+                    'unit_kerja_id' => $request->unit_kerja_id,
+                    'tanggal_mulai' => $tanggal,
+                    'tanggal_selesai' => $tanggal,
+                ],
+                [
+                    'total_kuota' => $request->kuota[$index],
+                    'dibuat_oleh' => auth()->id(),
+                ]
+            );
+        }
 
-        return redirect()
-            ->back()
-            ->with('success', 'Kuota berhasil dibuat.');
+        return back()->with(
+            'success',
+            'Semua kuota berhasil disimpan.'
+        );
     }
 
     public function edit(PiketKuota $piketKuota)

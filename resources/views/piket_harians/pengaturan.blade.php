@@ -9,39 +9,56 @@
         <div class="card mb-4">
             <div class="card-body">
 
-                <form action="{{ route('piket-harian.store') }}" method="POST">
-                    @csrf
+                <div class="row mb-3">
 
-                    <div class="row">
+                    <div class="col-md-3">
+                        <label>Unit Kerja</label>
 
-                        <div class="col-md-3">
-                            <label>Unit Kerja</label>
-
-                            <input type="text" class="form-control" value="{{ $unit?->name ?? 'Tidak ada unit' }}" disabled>
-
-                            <input type="hidden" name="unit_kerja_id"
-                                value="{{ auth()->user()->employmentDetail?->unit_kerja_id }}">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>Tanggal Mulai</label>
-                            <input type="date" name="tanggal_mulai" class="form-control">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>Tanggal Selesai</label>
-                            <input type="date" name="tanggal_selesai" class="form-control">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>Limit Kuota Piket</label>
-                            <input type="number" name="total_kuota" class="form-control">
-                        </div>
-
+                        <input type="text" class="form-control" value="{{ $unit?->name ?? 'Tidak ada unit' }}" disabled>
                     </div>
 
-                    <button class="btn btn-primary mt-3">
-                        Simpan
+                    <div class="col-md-3">
+                        <label>Tanggal Mulai</label>
+
+                        <input type="date" id="tanggal_mulai" class="form-control">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label>Tanggal Selesai</label>
+
+                        <input type="date" id="tanggal_selesai" class="form-control">
+                    </div>
+
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="button" id="generateTanggal" class="btn btn-primary w-100">
+                            Generate Tanggal
+                        </button>
+                    </div>
+
+                </div>
+
+                <form action="{{ route('piket-harian.store') }}" method="POST">
+
+                    @csrf
+
+                    <input type="hidden" name="unit_kerja_id"
+                        value="{{ auth()->user()->employmentDetail?->unit_kerja_id }}">
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th width="40%">Tanggal</th>
+                                <th width="40%">Kuota</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tanggalContainer">
+
+                        </tbody>
+                    </table>
+
+                    <button class="btn btn-success">
+                        Simpan Semua Kuota
                     </button>
 
                 </form>
@@ -49,29 +66,41 @@
             </div>
         </div>
 
-        {{-- LIST DATA --}}
+        {{-- LIST DATA KUOTA --}}
         <div class="card">
             <div class="card-body">
 
-                <table class="table">
+                <h5>Daftar Kuota Piket</h5>
+
+                <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Unit</th>
-                            <th>Periode</th>
-                            <th>Limit Kuota Piket</th>
+                            <th>Tanggal</th>
+                            <th>Kuota</th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        @foreach ($piketKuotas as $item)
+                        @forelse ($piketKuotas as $item)
                             <tr>
                                 <td>{{ $item->unitKerja->name }}</td>
+
                                 <td>
-                                    {{ $item->tanggal_mulai->format('d M Y') }} -
-                                    {{ $item->tanggal_selesai->format('d M Y') }}
+                                    {{ $item->tanggal_mulai->format('d M Y') }}
                                 </td>
-                                <td>{{ $item->total_kuota }}</td>
+
+                                <td>
+                                    {{ $item->total_kuota }}
+                                </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    Belum ada pengaturan kuota
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
 
@@ -103,11 +132,11 @@
 
                                 <td>
                                     @if ($item->status === 'approved')
-                                        <span class="badge bg-success">Approved</span>
+                                        <span class="badge bg-success">Di Setujui</span>
                                     @elseif ($item->status === 'pending')
                                         <span class="badge bg-warning">Pending</span>
-                                    @elseif ($item->status === 'cancelled')
-                                        <span class="badge bg-danger">Cancelled</span>
+                                    @elseif ($item->status === 'rejected')
+                                        <span class="badge bg-danger">Di Tolak</span>
                                     @endif
                                 </td>
 
@@ -126,13 +155,12 @@
                                         </form>
 
                                         {{-- REJECT --}}
-                                        <form action="{{ route('piket.cancel', $item->id) }}" method="POST"
+                                        <form action="{{ route('piket.reject', $item->id) }}" method="POST"
                                             class="d-inline">
                                             @csrf
                                             @method('PUT')
 
-                                            <button class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Reject pengajuan ini?')">
+                                            <button class="btn btn-sm btn-danger">
                                                 Reject
                                             </button>
                                         </form>
@@ -155,4 +183,61 @@
         </div>
 
     </div>
+    <script>
+        document
+            .getElementById('generateTanggal')
+            .addEventListener('click', function() {
+
+                const mulai =
+                    document.getElementById('tanggal_mulai').value;
+
+                const selesai =
+                    document.getElementById('tanggal_selesai').value;
+
+                if (!mulai || !selesai) {
+                    alert('Pilih tanggal terlebih dahulu');
+                    return;
+                }
+
+                const start = new Date(mulai);
+                const end = new Date(selesai);
+
+                const container =
+                    document.getElementById('tanggalContainer');
+
+                container.innerHTML = '';
+
+                for (
+                    let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)
+                ) {
+
+                    const tanggal =
+                        d.toISOString().split('T')[0];
+
+                    container.innerHTML += `
+                <tr>
+
+                    <td>
+                        ${tanggal}
+
+                        <input
+                            type="hidden"
+                            name="tanggal[]"
+                            value="${tanggal}">
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            name="kuota[]"
+                            class="form-control"
+                            value="1"
+                            min="0">
+                    </td>
+
+                </tr>
+            `;
+                }
+            });
+    </script>
 @endsection
