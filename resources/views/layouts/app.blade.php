@@ -50,16 +50,16 @@
 
 <body style="margin: 0; min-height: 100vh; display: flex; flex-direction: column;">
     <div style="flex: 1;">
-        @include('navbar')
+        @include('layouts.navbar')
 
         <main class="bg-body">
             @yield('content')
         </main>
     </div>
 
-    @include('footer')
+    @include('layouts.footer')
 
-    @include('scripts')
+    @include('layouts.scripts')
 </body>
 
 
