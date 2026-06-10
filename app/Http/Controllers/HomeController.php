@@ -35,7 +35,6 @@ class HomeController extends Controller
             ])
             ->get();
 
-
         if (!$user->isAdmin() && !$user->employmentDetail) {
             return redirect()->route('profile.index')->with('error', 'Lengkapi data unit kerja terlebih dahulu.');
         }
@@ -135,6 +134,7 @@ class HomeController extends Controller
                 }
             },
             'agendas',
+            'latestLogin',
             'units'
         ])->where('role', '!=', User::ROLE_ADMIN)
             ->whereHas('employmentDetail', function ($q) {

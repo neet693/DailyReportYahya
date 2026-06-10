@@ -12,6 +12,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobDeskController;
 use App\Http\Controllers\LateNotesController;
 use App\Http\Controllers\LogAgendaController;
+use App\Http\Controllers\LoginLogController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PegawaiController;
@@ -130,6 +131,8 @@ Route::middleware(['auth'])->group(function () {
         '/piket-harian/check-user',
         [PiketPengajuanController::class, 'checkUserQuota']
     );
+
+    Route::get('/login-logs', [LoginLogController::class, 'index'])->name('login-logs.index');
 });
 
 // Route untuk HRD daftar pegawai

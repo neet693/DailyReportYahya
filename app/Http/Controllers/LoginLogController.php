@@ -12,7 +12,59 @@ class LoginLogController extends Controller
      */
     public function index()
     {
-        //
+        $unitKerjaId = auth()->user()
+            ->employmentDetail
+            ->unit_kerja_id;
+
+        // Ranking Login
+        $loginStats = LoginLog::selectRaw(
+            'user_id, COUNT(*) as total_login'
+        )
+            ->whereHas(
+                'user.employmentDetail',
+                fn($q) => $q->where('unit_kerja_id', $unitKerjaId)
+            )
+            ->with([
+                'user',
+                'user.employmentDetail'
+            ])
+            ->groupBy('user_id')
+            ->orderByDesc('total_login')
+            ->get();
+
+        // Total login bulan ini
+        $totalLoginBulanIni = LoginLog::whereMonth(
+            'login_at',
+            now()->month
+        )
+            ->whereYear(
+                'login_at',
+                now()->year
+            )
+            ->whereHas(
+                'user.employmentDetail',
+                fn($q) => $q->where('unit_kerja_id', $unitKerjaId)
+            )
+            ->count();
+
+        // Login terakhir
+        $lastLogin = LoginLog::with('user')
+            ->whereHas(
+                'user.employmentDetail',
+                fn($q) => $q->where('unit_kerja_id', $unitKerjaId)
+            )
+            ->latest('login_at')
+            ->first();
+
+        // Jumlah pegawai yang pernah login
+        $pegawaiAktif = $loginStats->count();
+
+        return view('login-logs.dashboard', compact(
+            'loginStats',
+            'totalLoginBulanIni',
+            'lastLogin',
+            'pegawaiAktif'
+        ));
     }
 
     /**

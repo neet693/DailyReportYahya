@@ -37,7 +37,7 @@ class User extends Authenticatable
     {
         return $this->role === self::ROLE_HRD;
     }
-    
+
     public function isTU()
     {
         return $this->role === self::ROLE_TU;
@@ -194,5 +194,15 @@ class User extends Authenticatable
     public function fixedSchedules()
     {
         return $this->hasMany(FixedTask::class);
+    }
+
+    public function loginLogs()
+    {
+        return $this->hasMany(LoginLog::class);
+    }
+
+    public function latestLogin()
+    {
+        return $this->hasOne(LoginLog::class)->latestOfMany('login_at');
     }
 }

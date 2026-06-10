@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('login_logs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->ipAddress('ip_address')->nullable();
+            $table->text('user_agent')->nullable();
+            $table->timestamp('login_at')->nullable();
+            $table->timestamp('logout_at')->nullable();
             $table->timestamps();
         });
     }

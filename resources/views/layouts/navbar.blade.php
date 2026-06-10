@@ -43,6 +43,10 @@
                                 href="{{ route('absensi.index') }}">Absensi</a>
                             <a class="nav-link {{ request()->is('renungan-absensi*') ? 'active' : '' }}"
                                 href="{{ route('renungan-absensi.index') }}">Absensi Renungan</a>
+                            <a href="{{ route('login-logs.index') }}" class="nav-link">
+                                <i class="fas fa-chart-line"></i>
+                                Aktivitas Unit
+                            </a>
                         @endif
                     </div>
                 </li>
