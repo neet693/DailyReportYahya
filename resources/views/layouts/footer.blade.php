@@ -9,7 +9,7 @@
             <div>
                 <span class="fw-semibold" data-bs-toggle="tooltip" data-bs-placement="top"
                     title="Dibuat oleh Dave Guardyan Pakpahan">
-                    SKY SIMPEG
+                    {{ config('app.name') }}
                 </span>
                 <div style="font-size: 0.85rem;" class="text-white-50">
                     Powered by IT Department Yahya
