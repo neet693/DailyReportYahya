@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Imports\UsersImport;
-use App\Models\Agenda;
+// use App\Models\Agenda;
 use App\Models\Announcement;
 use App\Models\Assignment;
 use App\Models\EmploymentDetail;
@@ -211,16 +211,31 @@ class HomeController extends Controller
     private function buildUserTimeline(User $user)
     {
         // 1. Ambil Pengumuman
-        $announcements = Announcement::where('category', 'umum')
-            ->orWhere(function ($q) use ($user) {
-                $q->where('category', 'personal')->where('recipient_id', $user->id);
-            })->get();
+        $announcements = Announcement::where(function ($query) use ($user) {
+            $query->where('category', 'umum')
+                ->orWhere(function ($q) use ($user) {
+                    $q->where('category', 'personal')
+                        ->where('recipient_id', $user->id);
+                });
+        })
+            ->whereDate('created_at', '>=', now()->subDays(30))
+            ->get();
 
         // 2. Ambil Agenda (Pastikan relasi agendas di model User sudah benar)
-        $agendas = $user->agendas()->get();
+        $agendas = $user->agendas()
+            ->where(function ($q) {
+                $q->whereDate('end_date', '>=', now())
+                    ->orWhereDate('start_date', '>=', now()->subDays(30));
+            })
+            ->get();
 
         // 3. Ambil Penugasan
-        $assignments = Assignment::where('user_id', $user->id)->get();
+        $assignments = Assignment::where('user_id', $user->id)
+            ->where(function ($q) {
+                $q->whereNull('progres')
+                    ->orWhere('progres', '!=', 'Selesai');
+            })
+            ->get();
 
         // 4. Gabungkan secara manual agar struktur field-nya seragam
         $data = collect();
@@ -260,7 +275,9 @@ class HomeController extends Controller
                 'route' => route('assignments.index')
             ]);
         }
-        return $data->sortByDesc('date')->values();
+        return $data
+            ->sortByDesc('date')
+            ->groupBy(fn($item) => Carbon::parse($item->date)->format('Y-m'));
     }
 
 

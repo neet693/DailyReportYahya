@@ -9,30 +9,36 @@ use Illuminate\Http\Request;
 
 class AssignmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $currentUser = auth()->user();
 
-        $assignments = Assignment::query()
-            ->when($currentUser->isAdmin() || $currentUser->isHRD(), function ($query) {
-                // Admin & HRD bisa lihat semua penugasan
-                return $query;
-            })
-            ->when($currentUser->isKepalaUnit(), function ($query) use ($currentUser) {
-                // Kepala unit hanya melihat penugasan di unit induknya (employment_detail->unit_kerja_id)
-                $unitId = optional($currentUser->employmentDetail)->unit_kerja_id;
+        $status = $request->status; // all | Pending | Selesai
+        $search = $request->search;
 
-                return $query->where('unit_id', $unitId);
+        $assignments = Assignment::query()
+            ->when($currentUser->isAdmin() || $currentUser->isHRD(), fn($q) => $q)
+            ->when($currentUser->isKepalaUnit(), function ($q) use ($currentUser) {
+                $unitId = optional($currentUser->employmentDetail)->unit_kerja_id;
+                $q->where('unit_id', $unitId);
             })
-            ->when($currentUser->isPegawai(), function ($query) use ($currentUser) {
-                // Pegawai biasa hanya melihat penugasan dirinya sendiri
-                return $query->where('user_id', $currentUser->id);
+            ->when($currentUser->isPegawai(), fn($q) => $q->where('user_id', $currentUser->id))
+
+            // 🔥 FILTER STATUS
+            ->when($status && $status !== 'all', function ($q) use ($status) {
+                $q->where('progres', $status);
             })
+
+            // 🔥 SEARCH
+            ->when($search, function ($q) use ($search) {
+                $q->where('title', 'like', "%$search%");
+            })
+
             ->with(['user', 'assigner'])
             ->latest()
             ->get();
 
-        return view('assignments.index', compact('assignments', 'currentUser'));
+        return view('assignments.index', compact('assignments', 'currentUser', 'status', 'search'));
     }
 
 
