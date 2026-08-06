@@ -123,31 +123,65 @@ class HomeController extends Controller
     }
 
 
+    // private function getUsersWithTasks(string $today, ?int $unitId = null, ?string $search = null)
+    // {
+    //     $query = User::with([
+    //         'jobdesk',
+    //         'tasks' => function ($query) use ($today, $unitId) {
+    //             $query->todayOrPending($today);
+    //             if ($unitId) {
+    //                 $query->where('unit_id', $unitId);
+    //             }
+    //         },
+    //         'agendas',
+    //         'latestLogin',
+    //         'units'
+    //     ])->where('role', '!=', User::ROLE_ADMIN)
+    //         ->whereHas('employmentDetail', function ($q) {
+    //             $q->where('is_active', true);   // ✅ hanya pegawai aktif
+    //         });
+
+    //     if ($unitId) {
+    //         $query->whereHas('units', fn($q) => $q->where('unit_kerjas.id', $unitId));
+    //     }
+
+    //     if ($search) {
+    //         $query->where('name', 'like', '%' . $search . '%');
+    //     }
+
+    //     return $query->get();
+    // }
+
     private function getUsersWithTasks(string $today, ?int $unitId = null, ?string $search = null)
     {
         $query = User::with([
             'jobdesk',
-            'tasks' => function ($query) use ($today, $unitId) {
+
+            'tasks' => function ($query) use ($today) {
                 $query->todayOrPending($today);
-                if ($unitId) {
-                    $query->where('unit_id', $unitId);
-                }
             },
+
             'agendas',
             'latestLogin',
             'units'
-        ])->where('role', '!=', User::ROLE_ADMIN)
+        ])
+            ->where('role', '!=', User::ROLE_ADMIN)
             ->whereHas('employmentDetail', function ($q) {
-                $q->where('is_active', true);   // ✅ hanya pegawai aktif
+                $q->where('is_active', true);
             });
 
+
         if ($unitId) {
-            $query->whereHas('units', fn($q) => $q->where('unit_kerjas.id', $unitId));
+            $query->whereHas('units', function ($q) use ($unitId) {
+                $q->where('unit_kerjas.id', $unitId);
+            });
         }
+
 
         if ($search) {
             $query->where('name', 'like', '%' . $search . '%');
         }
+
 
         return $query->get();
     }
